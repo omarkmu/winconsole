@@ -1,0 +1,18 @@
+[package]
+name = "winconsole"
+version = "0.1.0"
+authors = ["Omar M. <omarkmu@gmail.com>"]
+description = "A wrapper for console-related functions in the Windows API."
+license = "MIT"
+
+[features]
+default = []
+input = []
+
+[dependencies]
+cgmath = "0.16"
+rgb = "0.8"
+
+[dependencies.winapi]
+version = "0.3"
+features = ["consoleapi", "minwindef", "processenv", "utilapiset", "winbase", "wincon", "winnt", "winuser"]
