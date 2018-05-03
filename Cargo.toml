@@ -3,7 +3,7 @@ name = "winconsole"
 version = "0.1.0"
 authors = ["Omar M. <omarkmu@gmail.com>"]
 description = "A wrapper for console-related functions in the Windows API."
-license = "MIT"
+license = "MIT OR Apache-2.0"
 readme = "README.md"
 repository = "https://github.com/omarkmu/winconsole"
 
