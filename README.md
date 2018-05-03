@@ -1,6 +1,7 @@
+# winconsole
 This crate provides a wrapper for console-related functions in the Windows API.
 
-# Usage
+## Usage
 Add the following to `Cargo.toml`:
 ```toml
 [dependencies]
