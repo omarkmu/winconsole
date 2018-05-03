@@ -4,6 +4,7 @@ version = "0.1.0"
 authors = ["Omar M. <omarkmu@gmail.com>"]
 description = "A wrapper for console-related functions in the Windows API."
 license = "MIT"
+readme = "README.md"
 
 [features]
 default = []
