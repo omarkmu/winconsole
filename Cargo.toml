@@ -5,6 +5,7 @@ authors = ["Omar M. <omarkmu@gmail.com>"]
 description = "A wrapper for console-related functions in the Windows API."
 license = "MIT"
 readme = "README.md"
+repository = "https://github.com/omarkmu/winconsole"
 
 [features]
 default = []
@@ -17,3 +18,7 @@ rgb = "0.8"
 [dependencies.winapi]
 version = "0.3"
 features = ["consoleapi", "minwindef", "processenv", "utilapiset", "winbase", "wincon", "winnt", "winuser"]
+
+[package.metadata.docs.rs]
+all-features = true
+default-target = "x86_64-pc-windows-msvc"
