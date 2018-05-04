@@ -144,7 +144,7 @@ macro_rules! flags_internal {
 						ret.push_str(stringify!($member));
 					}
 				)+
-				write!(f, "{}({})", stringify!($name), &ret)
+				write!(f, "{}({})", $sname, &ret)
 			}
 		}
 	);
@@ -160,8 +160,29 @@ macro_rules! flags {
 		}
 	});
 }
+macro_rules! handle_boxed {
+	($x:expr) => {
+		{
+			use winapi::um::handleapi::INVALID_HANDLE_VALUE;
+			let handle = processenv::GetStdHandle($x);
+			if handle == INVALID_HANDLE_VALUE {
+				return os_err_boxed!();
+			}
+			handle
+		}
+	};
+}
 macro_rules! handle {
-	($x:expr) => (processenv::GetStdHandle($x));
+	($x:expr) => {
+		{
+			use winapi::um::handleapi::INVALID_HANDLE_VALUE;
+			let handle = processenv::GetStdHandle($x);
+			if handle == INVALID_HANDLE_VALUE {
+				return os_err!();
+			}
+			handle
+		}
+	};
 }
 macro_rules! make_colorref {
 	($x:expr) => ($x.r as u32 | (($x.g as u32) << 8) | (($x.b as u32) << 16));

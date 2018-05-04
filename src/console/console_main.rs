@@ -191,7 +191,7 @@ impl Console {
 		let mut res: CHAR = 0;
 		os_err_boxed!(unsafe {
 			let mut num: DWORD = 0;
-			let handle = handle!(STDIN);
+			let handle = handle_boxed!(STDIN);
 			let buffer_p = &mut res as *mut CHAR as *mut VOID;
 			let control_p: *mut CONSOLE_READCONSOLE_CONTROL = ptr::null_mut();
 			consoleapi::ReadConsoleA(handle, buffer_p, 1, &mut num, control_p)
@@ -590,7 +590,7 @@ impl Console {
 		let coords = COORD { X: column as i16, Y: row as i16 };
 
 		os_err_boxed!(unsafe {
-			let handle = handle!(STDOUT);
+			let handle = handle_boxed!(STDOUT);
 			let buffer_p = &mut (*buffer)[0] as *mut CHAR;
 			wincon::ReadConsoleOutputCharacterA(handle, buffer_p, max_length, coords, &mut num)
 		});
@@ -641,7 +641,7 @@ impl Console {
 		let coords = COORD { X: column as i16, Y: row as i16 };
 
 		os_err_boxed!(unsafe {
-			let handle = handle!(STDOUT);
+			let handle = handle_boxed!(STDOUT);
 			let buffer_p = &mut (*buffer)[0] as *mut WORD;
 			wincon::ReadConsoleOutputAttribute(handle, buffer_p, max_length, coords, &mut num)
 		});
@@ -701,7 +701,7 @@ impl Console {
 		let coords = COORD { X: width as i16, Y: height as i16};
 
 		os_err_boxed!(unsafe {
-			let handle = handle!(STDOUT);
+			let handle = handle_boxed!(STDOUT);
 			wincon::SetConsoleScreenBufferSize(handle, coords)
 		});
 		Ok(())
@@ -768,7 +768,7 @@ impl Console {
 
 		let coords = COORD {X: column as i16, Y: row as i16};
 		os_err_boxed!(unsafe {
-			let handle = handle!(STDOUT);
+			let handle = handle_boxed!(STDOUT);
 			wincon::SetConsoleCursorPosition(handle, coords)
 		});
 		Ok(())
@@ -1017,12 +1017,11 @@ impl Console {
 		let length = chars.len() as DWORD;
 		if length == 0 { return Ok(0); }
 
-		let result = unsafe {
-			let handle = handle!(STDOUT);
+		os_err_boxed!(unsafe {
+			let handle = handle_boxed!(STDOUT);
 			let chars_p = &(*chars)[0] as *const CHAR;
 			wincon::WriteConsoleOutputCharacterA(handle, chars_p, length, coords, &mut num)
-		};
-		os_err_boxed!(result);
+		});
 
 		Ok(num)
 	}
@@ -1075,12 +1074,11 @@ impl Console {
 			res.into_boxed_slice()
 		};
 
-		let result = unsafe {
-			let handle = handle!(STDOUT);
+		os_err_boxed!(unsafe {
+			let handle = handle_boxed!(STDOUT);
 			let attrs_p = &(*attrs)[0] as *const WORD;
 			wincon::WriteConsoleOutputAttribute(handle, attrs_p, length, coords, &mut num)
-		};
-		os_err_boxed!(result);
+		});
 
 		Ok(num)
 	}
