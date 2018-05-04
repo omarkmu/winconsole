@@ -166,10 +166,10 @@ impl Console {
 	/**
 	 * Reads a single character from the input buffer.
 	 * Note that this will wait for input from the user, and will only accept certain characters;
-	 * this will not return from a control key press.
+	 * this will not return from a control key press event.
 	 *
 	 * # Arguments
-	 * * `supress` - Should the character be returned without printing?
+	 * * `suppress` - Should the character be returned without printing?
 	 * 
 	 * # Examples
 	 * Gets a character and prints it to the console.
