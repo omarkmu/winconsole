@@ -74,7 +74,7 @@ impl Console {
 	 * # extern crate winconsole;
 	 * # use winconsole::console::Console;
 	 * # fn main() {
-	 * Console::fill_character('G', 0, 0, Some(10)).unwrap();
+	 * Console::fill_character('G', 0, 0, 10).unwrap();
 	 * # }
 	 * ```
 	 */
@@ -612,7 +612,7 @@ impl Console {
 	 * # extern crate winconsole;
 	 * # use winconsole::console::Console;
 	 * # fn main() {
-	 * let colors = Console::read_output_colors(0, 0, Some(1)).unwrap();
+	 * let colors = Console::read_output_colors(0, 0, 1).unwrap();
 	 * println!("{} {}", colors[0].0, colors[0].1);
 	 * # }
 	 * ```
