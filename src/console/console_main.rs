@@ -78,9 +78,9 @@ impl Console {
 	 * # }
 	 * ```
 	 */
-	pub fn fill_character(chr: char, column: u16, row: u16, max_length: Option<u32>) -> IoResult<u32> {
+	pub fn fill_character<T: Into<Option<u32>>>(chr: char, column: u16, row: u16, max_length: T) -> IoResult<u32> {
 		let coords = COORD { X: column as i16, Y: row as i16 };
-		let length = match max_length {
+		let length = match max_length.into() {
 			Some(len) => len,
 			None => {
 				let size = Console::get_buffer_size()?;
@@ -114,9 +114,9 @@ impl Console {
 	 * # }
 	 * ```
 	 */
-	pub fn fill_colors(colors: &(ConsoleColor, ConsoleColor), column: u16, row: u16, max_length: Option<u32>) -> IoResult<u32> {
+	pub fn fill_colors<T: Into<Option<u32>>>(colors: &(ConsoleColor, ConsoleColor), column: u16, row: u16, max_length: T) -> IoResult<u32> {
 		let coords = COORD { X: column as i16, Y: row as i16 };
-		let length = match max_length {
+		let length = match max_length.into() {
 			Some(len) => len,
 			None => {
 				let size = Console::get_buffer_size()?;
@@ -565,14 +565,14 @@ impl Console {
 	 * # }
 	 * ```
 	 */
-	pub fn read_output(column: u16, row: u16, max_length: Option<u32>) -> BoxedResult<String> {
+	pub fn read_output<T: Into<Option<u32>>>(column: u16, row: u16, max_length: T) -> BoxedResult<String> {
 		let buffer_size = Console::get_buffer_size()?;
 		if column >= buffer_size.x {
 			return Err(Box::new(ArgumentError::new("column", "column must be within the buffer")));
 		} else if row >= buffer_size.y {
 			return Err(Box::new(ArgumentError::new("row", "row must be within the buffer")));
 		}
-		let max_length = match max_length {
+		let max_length = match max_length.into() {
 			Some(len) => len,
 			None => {
 				let size = Console::get_buffer_size()?;
@@ -617,14 +617,14 @@ impl Console {
 	 * # }
 	 * ```
 	 */
-	pub fn read_output_colors(column: u16, row: u16, max_length: Option<u32>) -> BoxedResult<Vec<(ConsoleColor, ConsoleColor)>> {
+	pub fn read_output_colors<T: Into<Option<u32>>>(column: u16, row: u16, max_length: T) -> BoxedResult<Vec<(ConsoleColor, ConsoleColor)>> {
 		let buffer_size = Console::get_buffer_size()?;
 		if column >= buffer_size.x {
 			return Err(Box::new(ArgumentError::new("column", "column must be within the buffer")));
 		} else if row >= buffer_size.y {
 			return Err(Box::new(ArgumentError::new("row", "row must be within the buffer")));
 		}
-		let max_length = match max_length {
+		let max_length = match max_length.into() {
 			Some(len) => len,
 			None => {
 				let size = Console::get_buffer_size()?;
