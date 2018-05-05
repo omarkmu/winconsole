@@ -16,6 +16,14 @@ impl Console {
 		});
 		Ok(num)
 	}
+	pub(crate) fn num_mouse_buttons() -> IoResult<u32> {
+		let mut num: DWORD = 0;
+		os_err!(unsafe {
+			let num_p = &mut num as *mut DWORD;
+			wincon::GetNumberOfConsoleMouseButtons(num_p)
+		});
+		Ok(num)
+	}
     pub(crate) fn read_input(length: usize) -> IoResult<Vec<INPUT_RECORD>> {
 		let mut num: DWORD = 0;
 		let mut buffer: Box<[INPUT_RECORD]>;

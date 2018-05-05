@@ -38,6 +38,50 @@ impl InputContext {
 		Ok(events)
 	}
 	/**
+	 * Reads data from the input queue without discarding it.
+	 * 
+	 * # Arguments
+	 * * `max_length` - The maximum amount of input events to return.
+	 *
+	 * # Examples
+	 * ```
+	 * # extern crate winconsole;
+	 * # use winconsole::input::Input;
+	 * # fn main() {
+	 * let ctx = Input::start().unwrap();
+	 * let peeked = ctx.peek(5).unwrap();
+	 * println!("Peeked: {}", peeked.len());
+	 * for event in peeked.iter() {
+	 * 	println!("{}", event);
+	 * }
+	 * # }
+	 * ```
+	 */
+	pub fn peek(&mut self, max_length: usize) -> IoResult<Vec<InputEvent>> {
+		let mut len = max_length;
+		let mut ret = Vec::new();
+
+		if len > self.queue.len() {
+			loop {
+				self.collect(false)?;
+				if len == 0 {
+					break;
+				} else if len < 1000 {
+					len = 0;
+				} else {
+					len -= 1000;
+				}
+			}
+		}
+		let mut read = 0;
+		for event in self.queue.iter() {
+			read += 1;
+			if read > max_length { break; }
+			ret.push(event.clone());
+		}
+		Ok(ret)
+	}
+	/**
 	 * Returns a single input event, or InputEvent::None if none are available.
 	 *
 	 * # Examples

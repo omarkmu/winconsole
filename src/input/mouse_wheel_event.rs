@@ -6,7 +6,7 @@ use super::*;
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct MouseWheelEvent {
 	/// The direction and value of the scroll.
-	pub delta: i32,
+	pub delta: i16,
 	/// Did the scroll event occur on a horizontal scroll wheel?
 	pub horizontal: bool,
 	/// A ControlKeyState object describing the state of control keys.

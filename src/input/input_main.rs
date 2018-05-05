@@ -5,6 +5,39 @@ pub struct Input {}
 
 impl Input {
 	/**
+	 * Returns the number of input events which are available in the console
+	 * input buffer.
+	 * 
+	 * # Examples
+	 * ```
+	 * # extern crate winconsole;
+	 * # use winconsole::input::Input;
+	 * # fn main() {
+	 * let num = Input::get_num_input_events().unwrap();
+	 * println!("Input events available: {}", num);
+	 * # }
+	 * ```
+	 */
+	pub fn get_num_input_events() -> IoResult<u32> {
+		Console::num_input_events()
+	}
+	/**
+	 * Returns the number of mouse buttons available for the console.
+	 *
+	 * # Examples
+	 * ```
+	 * # extern crate winconsole;
+	 * # use winconsole::input::Input;
+	 * # fn main() {
+	 * let num = Input::get_num_mouse_buttons().unwrap();
+	 * println!("Mouse buttons available: {}", num);
+	 * # }
+	 * ```
+	 */
+	pub fn get_num_mouse_buttons() -> IoResult<u32> {
+		Console::num_mouse_buttons()
+	}
+	/**
 	 * Returns a boolean representing whether or not the key is currently pressed.
 	 *
 	 * # Arguments
@@ -67,9 +100,9 @@ impl Input {
 						mmev.modifiers = modifiers;
 						mmev.position = position;
 						ret.push(InputEvent::MouseMove(mmev));
-					} else if flags & (MOUSE_WHEELED | MOUSE_HWHEELED) != 0  {
+					} else if flags & (MOUSE_WHEELED | MOUSE_HWHEELED) != 0 {
 						let mut mwev = MouseWheelEvent::new();
-						mwev.delta = (mer.dwButtonState as i32) / 65536;
+						mwev.delta = ((mer.dwButtonState as i32) / 65536) as i16;
 						mwev.horizontal = flags & MOUSE_HWHEELED != 0;
 						mwev.modifiers = modifiers;
 						mwev.position = position;
