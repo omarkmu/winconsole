@@ -33,6 +33,3 @@ mod etc;
 /// Contains input-related structs and enums.
 #[cfg(feature = "input")]
 pub mod input;
-
-#[cfg(test)]
-mod tests;

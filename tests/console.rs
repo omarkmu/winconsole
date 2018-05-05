@@ -1,4 +1,7 @@
-use super::console::*;
+#![cfg(test)]
+extern crate winconsole;
+extern crate cgmath;
+use winconsole::console::*;
 use cgmath::Vector2;
 
 #[test]
