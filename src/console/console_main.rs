@@ -455,8 +455,8 @@ impl Console {
 			} else {
 				buffer_size.x as u32 * cursor_position.y as u32 + cursor_position.x as u32
 			};
-			state.output = Console::read_output(0, 0, Some(length))?;
-			state.output_colors = Console::read_output_colors(0, 0, Some(length))?;
+			state.output = Console::read_output(0, 0, length)?;
+			state.output_colors = Console::read_output_colors(0, 0, length)?;
 		}
 		Ok(state)
 	}
