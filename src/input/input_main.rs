@@ -76,8 +76,8 @@ impl Input {
 		for i in 0..5 {
 			button_status[i] = Console::get_key_state(BUTTON_VIRTUAL[i] as u32);
 		}
-		Console::flush_input().unwrap();
-		Ok(InputContext::new(Console::get_input_mode().unwrap(), button_status))
+		Console::flush_input()?;
+		Ok(InputContext::new(Console::get_input_mode()?, button_status))
 	}
 
 	pub(crate) fn convert_events(records: &Vec<INPUT_RECORD>, ctx: &mut InputContext) -> Vec<InputEvent> {
