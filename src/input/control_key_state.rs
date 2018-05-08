@@ -1,10 +1,10 @@
 flags! {
 	/**
-	 * Flags which represent the state of control keys.
-	 * 
-	 * # See
-	 * [KEY_EVENT_RECORD](https://docs.microsoft.com/en-us/windows/console/key-event-record-str).
-	 */
+	Flags which represent the state of control keys.
+	
+	# See
+	[KEY_EVENT_RECORD](https://docs.microsoft.com/en-us/windows/console/key-event-record-str).
+	*/
 	ControlKeyState<u16> {
 		/// Is caps-lock enabled?
 		CapsLockOn = 0x80,

@@ -1,6 +1,6 @@
 /**
- * Represents an input event which occurred as a result of window focus changing.
- */
+ Represents an input event which occurred as a result of window focus changing.
+*/
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct FocusEvent {
 	/// Is the window focused?
@@ -9,8 +9,8 @@ pub struct FocusEvent {
 
 impl FocusEvent {
 	/**
-	 * Returns an empty FocusEvent.
-	 */
+	Returns an empty FocusEvent.
+	*/
 	pub fn new() -> FocusEvent {
 		FocusEvent {
 			focused: false

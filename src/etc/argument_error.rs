@@ -12,12 +12,12 @@ pub struct ArgumentError {
 
 impl ArgumentError {
 	/**
-	 * Creates a new ArgumentError.
-	 *
-	 * # Arguments
-	 * * `argument` - The name of the offending argument.
-	 * * `message` - A message describing the error.
-	 */
+	Creates a new ArgumentError.
+	
+	# Arguments
+	* `argument` - The name of the offending argument.
+	* `message` - A message describing the error.
+	*/
 	pub fn new(argument: &str, message: &str) -> ArgumentError {
 		ArgumentError {
 			argument: String::from(argument),

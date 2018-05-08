@@ -45,21 +45,21 @@ macro_rules! buf_to_vec {
 	}
 }
 /**
- * Prints a colored message to the console.
- * This has a side effect of flushing the console output.
- * 
- * # Examples
- * ```
- * #[macro_use] extern crate winconsole;
- * use winconsole::console::ConsoleColor;
- * 
- * fn main() {
- * 	let thing = "world";
- * 	cprint!(ConsoleColor::Blue, "Hello, {}!", thing);
- * 	cprint!(ConsoleColor::Red, " Goodbye, world!");
- * }
- * ```
- */
+ Prints a colored message to the console.
+ This has a side effect of flushing the console output.
+ 
+ # Examples
+ ```
+ #[macro_use] extern crate winconsole;
+ use winconsole::console::ConsoleColor;
+ 
+ fn main() {
+ 	let thing = "world";
+ 	cprint!(ConsoleColor::Blue, "Hello, {}!", thing);
+ 	cprint!(ConsoleColor::Red, " Goodbye, world!");
+ }
+ ```
+*/
 #[macro_export]
 macro_rules! cprint {
     ($color:expr, $($arg:tt)*) => {
@@ -74,23 +74,23 @@ macro_rules! cprint {
 	}
 }
 /**
- * Prints a colored message to the console, with a newline.
- * This has a side effect of flushing the console output.
- * 
- * # Examples
- * ```
- * #[macro_use] extern crate winconsole;
- * use winconsole::console::{Console, ConsoleColor};
- * 
- * fn main() {
- * 	let person = "Ada";
- * 	print!("Hello, ");
- * 	Console::flush_output().unwrap();
- * 	cprintln!(ConsoleColor::Magenta, "{}.", person);
- * 	cprintln!(ConsoleColor::Blue, "How are you?");
- * }
- * ```
- */
+ Prints a colored message to the console, with a newline.
+ This has a side effect of flushing the console output.
+ 
+ # Examples
+ ```
+ #[macro_use] extern crate winconsole;
+ use winconsole::console::{Console, ConsoleColor};
+ 
+ fn main() {
+ 	let person = "Ada";
+ 	print!("Hello, ");
+ 	Console::flush_output().unwrap();
+ 	cprintln!(ConsoleColor::Magenta, "{}.", person);
+ 	cprintln!(ConsoleColor::Blue, "How are you?");
+ }
+ ```
+*/
 #[macro_export]
 macro_rules! cprintln {
     ($color: expr, $fmt:expr) => (cprint!($color, concat!($fmt, "\n")));

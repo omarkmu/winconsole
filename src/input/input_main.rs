@@ -5,72 +5,72 @@ pub struct Input {}
 
 impl Input {
 	/**
-	 * Returns the number of input events which are available in the console
-	 * input buffer.
-	 * 
-	 * # Examples
-	 * ```
-	 * # extern crate winconsole;
-	 * # use winconsole::input::Input;
-	 * # fn main() {
-	 * let num = Input::get_num_input_events().unwrap();
-	 * println!("Input events available: {}", num);
-	 * # }
-	 * ```
-	 */
+	Returns the number of input events which are available in the console
+	input buffer.
+	
+	# Examples
+	```
+	# extern crate winconsole;
+	# use winconsole::input::Input;
+	# fn main() {
+	let num = Input::get_num_input_events().unwrap();
+	println!("Input events available: {}", num);
+	# }
+	```
+	*/
 	pub fn get_num_input_events() -> IoResult<u32> {
 		Console::num_input_events()
 	}
 	/**
-	 * Returns the number of mouse buttons available for the console.
-	 *
-	 * # Examples
-	 * ```
-	 * # extern crate winconsole;
-	 * # use winconsole::input::Input;
-	 * # fn main() {
-	 * let num = Input::get_num_mouse_buttons().unwrap();
-	 * println!("Mouse buttons available: {}", num);
-	 * # }
-	 * ```
-	 */
+	Returns the number of mouse buttons available for the console.
+	
+	# Examples
+	```
+	# extern crate winconsole;
+	# use winconsole::input::Input;
+	# fn main() {
+	let num = Input::get_num_mouse_buttons().unwrap();
+	println!("Mouse buttons available: {}", num);
+	# }
+	```
+	*/
 	pub fn get_num_mouse_buttons() -> IoResult<u32> {
 		Console::num_mouse_buttons()
 	}
 	/**
-	 * Returns a boolean representing whether or not the key is currently pressed.
-	 *
-	 * # Arguments
-	 * * `key_code` - The KeyCode to retrieve the status of.
-	 * 
-	 * # Examples
-	 * ```
-	 * # extern crate winconsole;
-	 * # use winconsole::input::{Input, KeyCode};
-	 * # fn main() {
-	 * let pressed = Input::is_key_down(KeyCode::Return);
-	 * println!("Is [ENTER] pressed? {}", pressed);
-	 * # }
-	 * ```
-	 */
+	Returns a boolean representing whether or not the key is currently pressed.
+	
+	# Arguments
+	* `key_code` - The KeyCode to retrieve the status of.
+	
+	# Examples
+	```
+	# extern crate winconsole;
+	# use winconsole::input::{Input, KeyCode};
+	# fn main() {
+	let pressed = Input::is_key_down(KeyCode::Return);
+	println!("Is [ENTER] pressed? {}", pressed);
+	# }
+	```
+	*/
 	pub fn is_key_down(key_code: KeyCode) -> bool {
 		if key_code == KeyCode::None { return false; }
 		Console::get_key_state(key_code as u8 as u32)
 	}
 	/**
-	 * Creates and returns an InputContext, and initialises input.
-	 *
-	 * # Examples
-	 * ```
-	 * # extern crate winconsole;
-	 * # use winconsole::input::Input;
-	 * # fn main() {
-	 * let mut ctx = Input::start().unwrap();
-	 * let event = ctx.wait().unwrap();
-	 * println!("{}", event);
-	 * # }
-	 * ```
-	 */
+	Creates and returns an InputContext, and initialises input.
+	
+	# Examples
+	```
+	# extern crate winconsole;
+	# use winconsole::input::Input;
+	# fn main() {
+	let mut ctx = Input::start().unwrap();
+	let event = ctx.wait().unwrap();
+	println!("{}", event);
+	# }
+	```
+	*/
 	pub fn start() -> IoResult<InputContext> {
 		let mut ctx = InputContext::new(Console::get_input_mode()?);
 		ctx.reset();

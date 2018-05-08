@@ -1,19 +1,19 @@
 flags! {
 	/**
-	 * Settings related to console input.  
-	 * 
-	 * # See
-	 * [GetConsoleMode](https://docs.microsoft.com/en-us/windows/console/getconsolemode).
-	 */
+	Settings related to console input.  
+	
+	# See
+	[GetConsoleMode](https://docs.microsoft.com/en-us/windows/console/getconsolemode).
+	*/
 	InputSettings<u32> {
 		/// Should characters read be echoed to the console output?
 		EchoInput = 0x4,
 		/// Should insert mode be enabled?
 		InsertMode = 0x20,
 		/**
-		 * Should read functions return only when a newline is read?
-		 * Disabling this requires EchoInput to be disabled as well.
-		 */
+		Should read functions return only when a newline is read?
+		Disabling this requires EchoInput to be disabled as well.
+		*/
 		LineInput = 0x2,
 		/// Should mouse events be placed into the input buffer?
 		MouseInput = 0x10,

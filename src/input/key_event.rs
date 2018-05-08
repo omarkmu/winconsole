@@ -1,8 +1,8 @@
 use super::*;
 
 /**
- * Represents an input event which occurred on the keyboard.
- */
+ Represents an input event which occurred on the keyboard.
+*/
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct KeyEvent {
 	/// The character associated with the pressed key.
@@ -21,8 +21,8 @@ pub struct KeyEvent {
 
 impl KeyEvent {
 	/**
-	 * Returns an empty KeyEvent.
-	 */
+	Returns an empty KeyEvent.
+	*/
 	pub fn new() -> KeyEvent {
 		KeyEvent {
 			character: '\0',

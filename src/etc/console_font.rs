@@ -4,10 +4,10 @@ use cgmath::Vector2;
 #[derive(Clone, Debug, PartialEq)]
 pub struct ConsoleFont {
 	/**
-	 * An integer which describes the font family.
-	 * See the `tmPitchAndFamily` field
-	 * [here](https://msdn.microsoft.com/en-us/library/windows/desktop/dd145132(v=vs.85).aspx).
-	 */
+	An integer which describes the font family.
+	See the `tmPitchAndFamily` field
+	[here](https://msdn.microsoft.com/en-us/library/windows/desktop/dd145132(v=vs.85).aspx).
+	*/
 	pub family: u32,
 	/// The index of the font in the console font table.
 	pub index: u32,
@@ -16,15 +16,15 @@ pub struct ConsoleFont {
 	/// The font size.
 	pub size: Vector2<u16>,
 	/**
-	 * The font weight. Accepts values which are multiples of 100, with
-	 * 400 representing normal weight and 700 representing bold.
-	 */
+	The font weight. Accepts values which are multiples of 100, with
+	400 representing normal weight and 700 representing bold.
+	*/
 	pub weight: u32
 }
 impl ConsoleFont {
 	/**
-	 * Returns an empty ConsoleFont object.
-	 */
+	Returns an empty ConsoleFont object.
+	*/
 	pub fn new() -> ConsoleFont {
 		ConsoleFont {
 			name: String::new(),
