@@ -173,10 +173,10 @@ impl InputContext {
 		Ok(self.queue.remove(0))
 	}
 
-	pub(crate) fn new(original_mode: InputSettings, button_status: [bool; 5]) -> InputContext {
+	pub(crate) fn new(original_mode: InputSettings) -> InputContext {
 		InputContext {
-			button_status,
 			original_mode,
+			button_status: [false; 5],
 			repeat_enabled: true,
 			restore_on_drop: true,
 			held_keys: Vec::new(),

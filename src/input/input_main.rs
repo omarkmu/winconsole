@@ -72,12 +72,10 @@ impl Input {
 	 * ```
 	 */
 	pub fn start() -> IoResult<InputContext> {
-		let mut button_status = [false; 5];
-		for i in 0..5 {
-			button_status[i] = Console::get_key_state(BUTTON_VIRTUAL[i] as u32);
-		}
+		let mut ctx = InputContext::new(Console::get_input_mode()?);
+		ctx.reset();
 		Console::flush_input()?;
-		Ok(InputContext::new(Console::get_input_mode()?, button_status))
+		Ok(ctx)
 	}
 
 	pub(crate) fn convert_events(records: &Vec<INPUT_RECORD>, ctx: &mut InputContext) -> Vec<InputEvent> {
@@ -94,7 +92,7 @@ impl Input {
 					let flags = mer.dwEventFlags;
 					let position = Vector2::new(mer.dwMousePosition.X as u16, mer.dwMousePosition.Y as u16);
 					let modifiers = ControlKeyState::from(mer.dwControlKeyState as u16);
-					
+
 					if flags == MOUSE_MOVED {
 						let mut mmev = MouseMoveEvent::new();
 						mmev.modifiers = modifiers;
@@ -151,7 +149,9 @@ impl Input {
 							}
 						} else {
 							ret.push(InputEvent::KeyDown(kev));
-							held_keys.push(key_code);
+							if key_code != KeyCode::NoMapping {
+								held_keys.push(key_code);
+							}
 						}
 					} else {
 						if held_keys.contains(&key_code) {

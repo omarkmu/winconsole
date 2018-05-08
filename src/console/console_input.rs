@@ -5,7 +5,7 @@ impl Console {
 	pub(crate) fn get_key_state(key: u32) -> bool {
 		let num: i16;
 		unsafe { num = winuser::GetAsyncKeyState(key as i32) }
-		num != 0
+		num & (1 << 15) != 0
 	}
 	pub(crate) fn num_input_events() -> IoResult<u32> {
 		let mut num: DWORD = 0;
