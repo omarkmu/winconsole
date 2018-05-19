@@ -17,7 +17,7 @@ rgb = "0.8"
 
 [dependencies.winapi]
 version = "0.3"
-features = ["consoleapi", "handleapi", "minwindef", "processenv", "utilapiset", "winbase", "wincon", "winnt", "winuser"]
+features = ["consoleapi", "minwindef", "processenv", "utilapiset", "winbase", "wincon", "winnt", "winuser"]
 
 [package.metadata.docs.rs]
 all-features = true

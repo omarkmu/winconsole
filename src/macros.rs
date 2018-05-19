@@ -163,11 +163,8 @@ macro_rules! flags {
 macro_rules! handle_boxed {
 	($x:expr) => {
 		{
-			use winapi::um::handleapi::INVALID_HANDLE_VALUE;
 			let handle = processenv::GetStdHandle($x);
-			if handle == INVALID_HANDLE_VALUE {
-				return os_err_boxed!();
-			}
+			if handle as isize == -1 { return os_err_boxed!(); }
 			handle
 		}
 	};
@@ -175,11 +172,8 @@ macro_rules! handle_boxed {
 macro_rules! handle {
 	($x:expr) => {
 		{
-			use winapi::um::handleapi::INVALID_HANDLE_VALUE;
 			let handle = processenv::GetStdHandle($x);
-			if handle == INVALID_HANDLE_VALUE {
-				return os_err!();
-			}
+			if handle as isize == -1 { return os_err!(); }
 			handle
 		}
 	};
