@@ -7,7 +7,6 @@ mod console_state;
 mod input_settings;
 mod output_settings;
 
-
 pub use self::argument_error::ArgumentError;
 pub use self::console_color::ConsoleColor;
 pub use self::console_font::ConsoleFont;

@@ -350,8 +350,8 @@ pub enum KeyCode {
 
 impl KeyCode {
 	/**
-	Returns the integral value of the KeyCode.
-	*/
+	 Returns the integral value of the KeyCode.
+	 */
 	pub fn get_value(&self) -> u32 {
 		*self as u32
 	}

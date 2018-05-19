@@ -11,8 +11,8 @@ pub struct MouseMoveEvent {
 
 impl MouseMoveEvent {
 	/**
-	Returns an empty MouseMoveEvent.
-	*/
+	 Returns an empty MouseMoveEvent.
+	 */
 	pub fn new() -> MouseMoveEvent {
 		MouseMoveEvent {
 			modifiers: ControlKeyState::new(),

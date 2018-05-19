@@ -1,8 +1,6 @@
 use super::*;
 
-/**
- Represents an input event which occurred as a result of a mouse scroll wheel.
-*/
+/// Represents an input event which occurred as a result of a mouse scroll wheel.
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct MouseWheelEvent {
 	/// The direction and value of the scroll.
@@ -17,8 +15,8 @@ pub struct MouseWheelEvent {
 
 impl MouseWheelEvent {
 	/**
-	Returns an empty MouseWheelEvent.
-	*/
+	 Returns an empty MouseWheelEvent.
+	 */
 	pub fn new() -> MouseWheelEvent {
 		MouseWheelEvent {
 			delta: 0,

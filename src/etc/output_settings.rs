@@ -1,10 +1,10 @@
 flags! {
 	/**
-	Settings related to console output.  
+	 Settings related to console output.  
 	
-	# See
-	[GetConsoleMode](https://docs.microsoft.com/en-us/windows/console/getconsolemode).
-	*/
+	 # See
+	 [GetConsoleMode](https://docs.microsoft.com/en-us/windows/console/getconsolemode).
+	 */
 	OutputSettings<u32> {
 		/// Should output be processed for escape sequences?
 		ProcessedOutput = 0x1,

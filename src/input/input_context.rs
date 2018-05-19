@@ -15,23 +15,23 @@ pub struct InputContext {
 
 impl InputContext {
 	/**
-	Returns all of the input events which are currently in the queue.
+	 Returns all of the input events which are currently in the queue.
 	
-	# Examples
-	```
-	# extern crate winconsole;
-	# use winconsole::input::Input;
-	# fn main() {
-	let mut ctx = Input::start().unwrap();
-	loop {
-		let events = ctx.get().unwrap();
-		for event in events {
-			println!("{}", event);
-		}
-	}
-	# }
-	```
-	*/
+	 # Examples
+	 ```
+	 # extern crate winconsole;
+	 # use winconsole::input::Input;
+	 # fn main() {
+	 let mut ctx = Input::start().unwrap();
+	 loop {
+	 	let events = ctx.get().unwrap();
+	 	for event in events {
+	 		println!("{}", event);
+	 	}
+	 }
+	 # }
+	 ```
+	 */
 	pub fn get(&mut self) -> IoResult<Vec<InputEvent>> {
 		self.collect(false)?;
 		let events = self.queue.clone();
@@ -39,25 +39,25 @@ impl InputContext {
 		Ok(events)
 	}
 	/**
-	Reads data from the input queue without discarding it.
+	 Reads data from the input queue without discarding it.
 	
-	# Arguments
-	* `max_length` - The maximum amount of input events to return.
+	 # Arguments
+	 * `max_length` - The maximum amount of input events to return.
 	
-	# Examples
-	```
-	# extern crate winconsole;
-	# use winconsole::input::Input;
-	# fn main() {
-	let ctx = Input::start().unwrap();
-	let peeked = ctx.peek(5).unwrap();
-	println!("Peeked: {}", peeked.len());
-	for event in peeked.iter() {
-		println!("{}", event);
-	}
-	# }
-	```
-	*/
+	 # Examples
+	 ```
+	 # extern crate winconsole;
+	 # use winconsole::input::Input;
+	 # fn main() {
+	 let ctx = Input::start().unwrap();
+	 let peeked = ctx.peek(5).unwrap();
+	 println!("Peeked: {}", peeked.len());
+	 for event in peeked.iter() {
+	 	println!("{}", event);
+	 }
+	 # }
+	 ```
+	 */
 	pub fn peek(&mut self, max_length: usize) -> IoResult<Vec<InputEvent>> {
 		let mut len = max_length;
 		let mut ret = Vec::new();
@@ -83,23 +83,23 @@ impl InputContext {
 		Ok(ret)
 	}
 	/**
-	Returns a single input event, or InputEvent::None if none are available.
+	 Returns a single input event, or InputEvent::None if none are available.
 	
-	# Examples
-	```
-	# extern crate winconsole;
-	# use winconsole::input::{Input, InputContext, InputEvent};
-	# fn main() {
-	let mut ctx = Input::start().unwrap();
-	loop {
-		let event = ctx.poll().unwrap();
-		if event != InputEvent::None {
-			println!("{}", event);
-		}
-	}
-	# }
-	```
-	*/
+	 # Examples
+	 ```
+	 # extern crate winconsole;
+	 # use winconsole::input::{Input, InputContext, InputEvent};
+	 # fn main() {
+	 let mut ctx = Input::start().unwrap();
+	 loop {
+	 	let event = ctx.poll().unwrap();
+	 	if event != InputEvent::None {
+	 		println!("{}", event);
+	 	}
+	 }
+	 # }
+	 ```
+	 */
 	pub fn poll(&mut self) -> IoResult<InputEvent> {
 		if self.queue.len() == 0 {
 			self.collect(false)?;
@@ -108,22 +108,22 @@ impl InputContext {
 		Ok(self.queue.remove(0))
 	}
 	/**
-	Resets the internal state of the context, clearing data about which keys and buttons are
-	currently held along with the event queue.
+	 Resets the internal state of the context, clearing data about which keys and buttons are
+	 currently held along with the event queue.
 	
-	# Examples
-	```
-	# extern crate winconsole;
-	# use winconsole::input::Input;
-	# fn main() {
-	let mut ctx = Input::start().unwrap();
-	ctx.wait().unwrap();
-	ctx.reset();
-	let event = ctx.wait().unwrap();
-	println!("{}", event);
-	# }
-	```
-	*/
+	 # Examples
+	 ```
+	 # extern crate winconsole;
+	 # use winconsole::input::Input;
+	 # fn main() {
+	 let mut ctx = Input::start().unwrap();
+	 ctx.wait().unwrap();
+	 ctx.reset();
+	 let event = ctx.wait().unwrap();
+	 println!("{}", event);
+	 # }
+	 ```
+	 */
 	pub fn reset(&mut self) {
 		self.held_keys.clear();
 		self.queue.clear();
@@ -132,42 +132,42 @@ impl InputContext {
 		}
 	}
 	/**
-	Adds an input event to the input queue.
+	 Adds an input event to the input queue.
 	
-	# Arguments
-	* `event` - The InputEvent to add.
+	 # Arguments
+	 * `event` - The InputEvent to add.
 	
-	# Examples
-	```
-	# extern crate winconsole;
-	# use winconsole::input::{Input, InputEvent, FocusEvent};
-	# fn main() {
-	let mut ctx = Input::start().unwrap();
-	let focus_event = FocusEvent::new();
-	ctx.simulate(InputEvent::FocusLost(focus_event));
+	 # Examples
+	 ```
+	 # extern crate winconsole;
+	 # use winconsole::input::{Input, InputEvent, FocusEvent};
+	 # fn main() {
+	 let mut ctx = Input::start().unwrap();
+	 let focus_event = FocusEvent::new();
+	 ctx.simulate(InputEvent::FocusLost(focus_event));
 	
-	let event = ctx.wait().unwrap();
-	println!("{}", event);
-	# }
-	```
-	*/
+	 let event = ctx.wait().unwrap();
+	 println!("{}", event);
+	 # }
+	 ```
+	 */
 	pub fn simulate(&mut self, event: InputEvent) {
 		self.queue.push(event);
 	}
 	/**
-	Waits until an input event is available, and returns it.
+	 Waits until an input event is available, and returns it.
 	
-	# Examples
-	```
-	# extern crate winconsole;
-	# use winconsole::input::Input;
-	# fn main() {
-	let mut ctx = Input::start().unwrap();
-	let event = ctx.wait().unwrap();
-	println!("{}", event);
-	# }
-	```
-	*/
+	 # Examples
+	 ```
+	 # extern crate winconsole;
+	 # use winconsole::input::Input;
+	 # fn main() {
+	 let mut ctx = Input::start().unwrap();
+	 let event = ctx.wait().unwrap();
+	 println!("{}", event);
+	 # }
+	 ```
+	 */
 	pub fn wait(&mut self) -> IoResult<InputEvent> {
 		self.collect(true)?;
 		if self.queue.len() == 0 { return Ok(InputEvent::None); }

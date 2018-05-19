@@ -17,8 +17,8 @@ pub struct MouseEvent {
 
 impl MouseEvent {
 	/**
-	Returns an empty MouseEvent.
-	*/
+	 Returns an empty MouseEvent.
+	 */
 	pub fn new() -> MouseEvent {
 		MouseEvent {
 			button: 0,

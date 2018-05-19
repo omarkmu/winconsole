@@ -1,26 +1,26 @@
 #![cfg(windows)]
 #![warn(missing_docs)]
 /*!
-This crate provides a wrapper for console-related functions in the Windows API.
+ This crate provides a wrapper for console-related functions in the Windows API.
 
-# Usage
-Add the following to `Cargo.toml`:
-```toml
-[dependencies]
-winconsole = "0.2"
-```
-Then, add the following to your code:
-```rust
-extern crate winconsole;
-```
-In order to use features related to input, the `input` feature is required.  
-Add this to `Cargo.toml`:
-```toml
-[dependencies.winconsole]
-version = "0.2"
-features = ["input"]
-```
-*/
+ # Usage
+ Add the following to `Cargo.toml`:
+ ```toml
+ [dependencies]
+ winconsole = "0.2"
+ ```
+ Then, add the following to your code:
+ ```rust
+ extern crate winconsole;
+ ```
+ In order to use features related to input, the `input` feature is required.  
+ Add this to `Cargo.toml`:
+ ```toml
+ [dependencies.winconsole]
+ version = "0.2"
+ features = ["input"]
+ ```
+ */
 extern crate winapi;
 extern crate cgmath;
 extern crate rgb;

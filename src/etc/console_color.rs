@@ -40,8 +40,8 @@ pub enum ConsoleColor {
 
 impl ConsoleColor {
 	/**
-	Returns the integral value of the ConsoleColor.
-	*/
+	 Returns the integral value of the ConsoleColor.
+	 */
 	pub fn get_value(&self) -> u8 {
 		*self as u8
 	}

@@ -35,8 +35,8 @@ pub struct ConsoleState {
 
 impl ConsoleState {
 	/**
-	Returns an empty ConsoleState object.
-	*/
+	 Returns an empty ConsoleState object.
+	 */
 	pub fn new() -> ConsoleState {
 		ConsoleState {
 			background_color: ConsoleColor::Black,

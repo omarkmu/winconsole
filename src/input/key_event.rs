@@ -21,8 +21,8 @@ pub struct KeyEvent {
 
 impl KeyEvent {
 	/**
-	Returns an empty KeyEvent.
-	*/
+	 Returns an empty KeyEvent.
+	 */
 	pub fn new() -> KeyEvent {
 		KeyEvent {
 			character: '\0',

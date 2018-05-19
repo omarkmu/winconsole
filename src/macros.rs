@@ -59,7 +59,7 @@ macro_rules! buf_to_vec {
  	cprint!(ConsoleColor::Red, " Goodbye, world!");
  }
  ```
-*/
+ */
 #[macro_export]
 macro_rules! cprint {
     ($color:expr, $($arg:tt)*) => {
@@ -74,7 +74,7 @@ macro_rules! cprint {
 	}
 }
 /**
- Prints a colored message to the console, with a newline.
+ Prints a colored message to the console with a newline.
  This has a side effect of flushing the console output.
  
  # Examples
@@ -90,7 +90,7 @@ macro_rules! cprint {
  	cprintln!(ConsoleColor::Blue, "How are you?");
  }
  ```
-*/
+ */
 #[macro_export]
 macro_rules! cprintln {
     ($color: expr, $fmt:expr) => (cprint!($color, concat!($fmt, "\n")));
