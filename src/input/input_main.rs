@@ -294,6 +294,7 @@ impl Input {
 			},
 			InputEvent::MouseMove(mmev) => {
 				record.EventType = MOUSE_EVENT;
+
 				let control_key_state: u16 = mmev.modifiers.into();
 				unsafe {
 					*ev.MouseEvent_mut() = MOUSE_EVENT_RECORD {
@@ -303,25 +304,29 @@ impl Input {
 						},
 						dwButtonState: 0,
 						dwControlKeyState: control_key_state as u32,
-						dwEventFlags: 0
+						dwEventFlags: 1
 					};
 				}
 			},
 			InputEvent::MouseWheel(mwev) => {
+				use std::num::Wrapping;
+				record.EventType = MOUSE_EVENT;
+
 				let control_key_state: u16 = mwev.modifiers.into();
 				let flags = if mwev.horizontal {
 					MOUSE_HWHEELED
 				} else {
 					MOUSE_WHEELED
 				};
-
+				let state = (Wrapping(mwev.delta as u32) * Wrapping(65536u32)).0;
+				
 				unsafe {
 					*ev.MouseEvent_mut() = MOUSE_EVENT_RECORD {
 						dwMousePosition: COORD {
 							X: mwev.position.x as i16,
 							Y: mwev.position.y as i16
 						},
-						dwButtonState: mwev.delta as u32 * 65536u32,
+						dwButtonState: state,
 						dwControlKeyState: control_key_state as u32,
 						dwEventFlags: flags
 					};
@@ -340,6 +345,7 @@ impl Input {
 			},
 			InputEvent::None => ()
 		};
+
 		record.Event = ev;
 		record
 	}
