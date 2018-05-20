@@ -23,6 +23,7 @@
  */
 extern crate winapi;
 extern crate cgmath;
+#[macro_use] extern crate lazy_static;
 extern crate rgb;
 
 #[macro_use] mod macros;

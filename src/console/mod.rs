@@ -6,7 +6,7 @@ use std::{io, mem, ptr};
 
 use winapi::ctypes::c_void as VOID;
 use winapi::shared::minwindef::{DWORD, MAX_PATH, UINT, WORD};
-use winapi::um::{consoleapi, processenv, utilapiset, wincon};
+use winapi::um::{consoleapi, processenv, utilapiset, wincon, winnls};
 use winapi::um::winbase::{
 	STD_OUTPUT_HANDLE as STDOUT,
 	STD_INPUT_HANDLE as STDIN
@@ -21,6 +21,7 @@ use winapi::um::wincon::{
 	CONSOLE_SCREEN_BUFFER_INFOEX,
 	CONSOLE_SELECTION_INFO
 };
+use winapi::um::winnls::CPINFOEXA;
 use winapi::um::winnt::{CHAR, WCHAR};
 
 type IoResult<T> = io::Result<T>;

@@ -1,5 +1,10 @@
 use super::*;
 use std::io::Write;
+use std::sync::Mutex;
+
+lazy_static! {
+	static ref PAGES: Mutex<Vec<CodePage>> = Mutex::new(vec![]);
+}
 
 /// Console handler which acts as an interface with the Windows console API.
 pub struct Console {}
@@ -260,6 +265,37 @@ impl Console {
 		Ok(Vector2::new(coords.X as u16, coords.Y as u16))
 	}
 	/**
+	 Returns a CodePageInfo object which contains information about the CodePage.
+
+	 # Arguments
+	 * `page` - The CodePage to retrieve information about.
+
+	 # Examples
+	 ```
+	 # extern crate winconsole;
+	 # use winconsole::console::{Console, CodePage};
+	 # fn main() {
+	 let info = Console::get_code_page_info(CodePage::utf_8).unwrap();
+	 println!("{}", info.name);
+	 # }
+	 ```
+	 */
+	pub fn get_code_page_info(page: CodePage) -> IoResult<CodePageInfo> {
+		let mut info: CPINFOEXA = unsafe { mem::zeroed() };
+		let identifier: u16 = page.into();
+		os_err!(unsafe { winnls::GetCPInfoExA(identifier as u32, 0, &mut info) });
+
+		let mut cpi = CodePageInfo::new();
+		cpi.max_char_size = info.MaxCharSize as u8;
+		cpi.default = buf_to_str!(info.DefaultChar, 2);
+		cpi.lead_byte = info.LeadByte;
+		cpi.unicode_default = info.UnicodeDefaultChar;
+		cpi.code_page = CodePage::from(info.CodePage as u16);
+		cpi.name = buf_to_str!(info.CodePageName, MAX_PATH);
+
+		Ok(cpi)
+	}
+	/**
 	 Returns the RGB color value of a ConsoleColor.
 	
 	 # Examples
@@ -401,6 +437,22 @@ impl Console {
 		Ok(history)
 	}
 	/**
+	 Returns the input code page used by the console.
+
+	 # Examples
+	 ```
+	 # extern crate winconsole;
+	 # use winconsole::console::Console;
+	 # fn main() {
+	 let page = Console::get_input_code_page();
+	 println!("{}", page);
+	 # }
+	 ```
+	 */
+	pub fn get_input_code_page() -> CodePage {
+		CodePage::from(unsafe { consoleapi::GetConsoleCP() } as u16)
+	}
+	/**
 	 Returns settings related to console input.
 	
 	 # Examples
@@ -416,6 +468,24 @@ impl Console {
 	pub fn get_input_mode() -> IoResult<InputSettings> {
 		let mode = Console::get_mode(STDIN)?;
 		Ok(InputSettings::from(mode))
+	}
+	/**
+	 Returns a list of installed code pages.
+
+	 # Examples
+	 ```
+	 # extern crate winconsole;
+	 # use winconsole::console::Console;
+	 # fn main() {
+	 let pages = Console::get_installed_code_pages().unwrap();
+	 for page in pages {
+	 	println!("{}", page);
+	 }
+	 # }
+	 ```
+	 */
+	pub fn get_installed_code_pages() -> IoResult<Vec<CodePage>> {
+		Console::get_code_pages(1)
 	}
 	/**
 	 Returns the original title of the console window.
@@ -439,6 +509,22 @@ impl Console {
 		};
 		os_err!(length, true);
 		Ok(buf_to_str!(buffer, length))
+	}
+	/**
+	 Returns the input code page used by the console.
+
+	 # Examples
+	 ```
+	 # extern crate winconsole;
+	 # use winconsole::console::Console;
+	 # fn main() {
+	 let page = Console::get_output_code_page();
+	 println!("{}", page);
+	 # }
+	 ```
+	 */
+	pub fn get_output_code_page() -> CodePage {
+		CodePage::from(unsafe { consoleapi::GetConsoleOutputCP() } as u16)
 	}
 	/**
 	 Returns settings related to console output.
@@ -537,6 +623,24 @@ impl Console {
 		Ok(state)
 	}
 	/**
+	 Returns a list of supported code pages.
+
+	 # Examples
+	 ```
+	 # extern crate winconsole;
+	 # use winconsole::console::Console;
+	 # fn main() {
+	 let pages = Console::get_supported_code_pages().unwrap();
+	 for page in pages {
+	 	println!("{}", page);
+	 }
+	 # }
+	 ```
+	 */
+	pub fn get_supported_code_pages() -> IoResult<Vec<CodePage>> {
+		Console::get_code_pages(2)
+	}
+	/**
 	 Returns the title of the console window.
 	
 	 # Examples
@@ -593,6 +697,27 @@ impl Console {
 	pub fn is_cursor_visible() -> IoResult<bool> {
 		let info = Console::get_cursor_info()?;
 		Ok(info.bVisible == 1)
+	}
+	/**
+	 Returns a boolean representing whether or not the supplied value is a valid code page.
+	 A code page is considered valid if it is installed on the system.
+
+	 # Arguments
+	 * `identifier` - The code page identifier to check.
+
+	 # Examples
+	 ```
+	 # extern crate winconsole;
+	 # use winconsole::console::Console;
+	 # fn main() {
+	 let valid = Console::is_valid_code_page(0);
+	 assert_eq!(valid, false);
+	 # }
+	 ```
+	 */
+	pub fn is_valid_code_page(identifier: u16) -> bool {
+		let valid = unsafe { winnls::IsValidCodePage(identifier as u32) };
+		valid != 0
 	}
 	/**
 	 Maps a ConsoleColor to an RGB8 value.
@@ -972,6 +1097,26 @@ impl Console {
 		Ok(())
 	}
 	/**
+	 Sets the input code page to be used by the console.
+
+	 # Arguments
+	 * `page` - The code page to use.
+
+	 # Examples
+	 ```
+	 # extern crate winconsole;
+	 # use winconsole::console::{Console, CodePage};
+	 # fn main() {
+	 Console::set_input_code_page(CodePage::utf_8).unwrap();
+	 # }
+	 ```
+	 */
+	pub fn set_input_code_page(page: CodePage) -> IoResult<()> {
+		let page: u16 = page.into();
+		os_err!(unsafe { wincon::SetConsoleCP(page as u32) });
+		Ok(())
+	}
+	/**
 	 Sets settings related to console input.
 	 Returns an error if the settings are invalid.
 	
@@ -995,6 +1140,26 @@ impl Console {
 		}
 		let mode: u32 = settings.into();
 		Console::set_mode(STDIN, mode)?;
+		Ok(())
+	}
+	/**
+	 Sets the output code page to be used by the console.
+
+	 # Arguments
+	 * `page` - The code page to use.
+
+	 # Examples
+	 ```
+	 # extern crate winconsole;
+	 # use winconsole::console::{Console, CodePage};
+	 # fn main() {
+	 Console::set_output_code_page(CodePage::IBM437).unwrap();
+	 # }
+	 ```
+	 */
+	pub fn set_output_code_page(page: CodePage) -> IoResult<()> {
+		let page: u16 = page.into();
+		os_err!(unsafe { wincon::SetConsoleOutputCP(page as u32) });
 		Ok(())
 	}
 	/**
@@ -1201,6 +1366,38 @@ impl Console {
 			wincon::FillConsoleOutputCharacterA(handle, character, length, coords, &mut num)
 		});
 		Ok(num)
+	}
+	fn get_code_pages(flags: u32) -> IoResult<Vec<CodePage>> {
+		unsafe extern "system" fn enum_pages(ptr: *mut i8) -> i32 {
+			let mut identifier = String::new();
+			let mut offset = 0;
+			loop {
+				let chr = *ptr.offset(offset) as u8 as char;
+				if chr == '\0' { break; }
+				identifier.push(chr);
+				offset += 1;
+			}
+			match identifier.parse::<u16>() {
+				Ok(id) => {
+					let cp = CodePage::from(id);
+					if cp != CodePage::Invalid {
+						PAGES.lock().unwrap().push(cp);
+					}
+				},
+				Err(_) => ()
+			}
+
+			return 1;
+		}
+
+		os_err!(unsafe {
+			winnls::EnumSystemCodePagesA(Some(enum_pages), flags)
+		});
+
+		let mut pages = PAGES.lock().unwrap();
+		let ret = pages.clone();
+		pages.clear();
+		Ok(ret)
 	}
 	fn get_cursor_info() -> IoResult<CONSOLE_CURSOR_INFO> {
 		let mut info = unsafe { mem::zeroed() };
