@@ -484,7 +484,7 @@ impl Console {
 	 # }
 	 ```
 	 */
-	pub fn get_installed_code_pages() -> IoResult<Vec<CodePage>> {
+	pub fn get_installed_code_pages() -> BoxedResult<Vec<CodePage>> {
 		Console::get_code_pages(1)
 	}
 	/**
@@ -637,7 +637,7 @@ impl Console {
 	 # }
 	 ```
 	 */
-	pub fn get_supported_code_pages() -> IoResult<Vec<CodePage>> {
+	pub fn get_supported_code_pages() -> BoxedResult<Vec<CodePage>> {
 		Console::get_code_pages(2)
 	}
 	/**
@@ -1367,7 +1367,7 @@ impl Console {
 		});
 		Ok(num)
 	}
-	fn get_code_pages(flags: u32) -> IoResult<Vec<CodePage>> {
+	fn get_code_pages(flags: u32) -> BoxedResult<Vec<CodePage>> {
 		unsafe extern "system" fn enum_pages(ptr: *mut i8) -> i32 {
 			let mut identifier = String::new();
 			let mut offset = 0;
@@ -1390,11 +1390,11 @@ impl Console {
 			return 1;
 		}
 
-		os_err!(unsafe {
+		os_err_boxed!(unsafe {
 			winnls::EnumSystemCodePagesA(Some(enum_pages), flags)
 		});
 
-		let mut pages = PAGES.lock().unwrap();
+		let mut pages = PAGES.lock()?;
 		let ret = pages.clone();
 		pages.clear();
 		Ok(ret)
