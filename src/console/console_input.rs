@@ -24,7 +24,14 @@ impl Console {
 		});
 		Ok(num)
 	}
+	pub(crate) fn peek_input(length: usize) -> IoResult<Vec<INPUT_RECORD>> {
+		Console::read_or_peek(length, true)
+	}
     pub(crate) fn read_input(length: usize) -> IoResult<Vec<INPUT_RECORD>> {
+		Console::read_or_peek(length, false)
+    }
+
+	fn read_or_peek(length: usize, peek: bool) -> IoResult<Vec<INPUT_RECORD>> {
 		let mut num: DWORD = 0;
 		let mut buffer: Box<[INPUT_RECORD]>;
         os_err!(unsafe {
@@ -34,8 +41,13 @@ impl Console {
 			let length = length as DWORD;
 			let buffer_p = &mut buffer[0] as *mut INPUT_RECORD;
             let num_p = &mut num as *mut DWORD;
-			consoleapi::ReadConsoleInputA(handle, buffer_p, length, num_p)
+
+			if peek {
+				consoleapi::PeekConsoleInputA(handle, buffer_p, length, num_p)
+			} else {
+				consoleapi::ReadConsoleInputA(handle, buffer_p, length, num_p)
+			}
         });
         Ok(buf_to_vec!(buffer, num))
-    }
+	}
 }

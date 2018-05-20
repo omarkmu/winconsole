@@ -27,6 +27,24 @@ pub enum InputEvent {
 	Resize(ResizeEvent)
 }
 
+impl InputEvent {
+	pub(crate) fn get_type(&self) -> u16 {
+		match *self {
+			InputEvent::None => 0x1,
+			InputEvent::Focused(_) => 0x2,
+			InputEvent::FocusLost(_) => 0x4,
+			InputEvent::KeyHeld(_) => 0x8,
+			InputEvent::KeyDown(_) => 0x10,
+			InputEvent::KeyUp(_) => 0x20,
+			InputEvent::MouseDown(_) => 0x40,
+			InputEvent::MouseMove(_) => 0x80,
+			InputEvent::MouseUp(_) => 0x100,
+			InputEvent::MouseWheel(_) => 0x200,
+			InputEvent::Resize(_) => 0x400
+		}
+	}
+}
+
 impl Display for InputEvent {
 	fn fmt(&self, f: &mut Formatter) -> fmt::Result {
 		let res = match *self {

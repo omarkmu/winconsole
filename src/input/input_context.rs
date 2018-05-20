@@ -9,11 +9,29 @@ pub struct InputContext {
 
 	pub(crate) button_status: [bool; 5],
 	pub(crate) held_keys: Vec<KeyCode>,
+
+	filter: InputFilter,
 	original_mode: InputSettings,
 	queue: Vec<InputEvent>
 }
 
 impl InputContext {
+	/**
+	 Clears the context's input event queue.
+
+	 # Examples
+	 ```
+	 # extern crate winconsole;
+	 # use winconsole::input::Input;
+	 # fn main() {
+	 let mut ctx = Input::start().unwrap();
+	 ctx.flush();
+	 # }
+	 ```
+	 */
+	pub fn flush(&mut self) {
+		self.queue.clear();
+	}
 	/**
 	 Returns all of the input events which are currently in the queue.
 	
@@ -33,10 +51,27 @@ impl InputContext {
 	 ```
 	 */
 	pub fn get(&mut self) -> IoResult<Vec<InputEvent>> {
-		self.collect(false)?;
+		self.collect(false, false)?;
 		let events = self.queue.clone();
 		self.queue.clear();
 		Ok(events)
+	}
+	/**
+	 Returns the current input filter.
+
+	 # Examples
+	 ```
+	 # extern crate winconsole;
+	 # use winconsole::input::Input;
+	 # fn main() {
+	 let mut ctx = Input::start().unwrap();
+	 let filter = ctx.get_filter();
+	 println!("MouseDown events filtered? {}", filter.MouseDown);
+	 # }
+	 ```
+	 */
+	pub fn get_filter(&mut self) -> InputFilter {
+		self.filter
 	}
 	/**
 	 Reads data from the input queue without discarding it.
@@ -59,12 +94,13 @@ impl InputContext {
 	 ```
 	 */
 	pub fn peek(&mut self, max_length: usize) -> IoResult<Vec<InputEvent>> {
-		let mut len = max_length;
 		let mut ret = Vec::new();
 
-		if len > self.queue.len() {
+		let events = {
+			let mut len = max_length;
+			let mut ret = Vec::new();
+			let filter: u16 = self.filter.into();
 			loop {
-				self.collect(false)?;
 				if len == 0 {
 					break;
 				} else if len < 1000 {
@@ -72,13 +108,21 @@ impl InputContext {
 				} else {
 					len -= 1000;
 				}
+				let evs = self.collect(false, true)?;
+				for ev in evs {
+					if filter & ev.get_type() == 0 {
+						ret.push(ev);
+					}
+				}
 			}
-		}
+			ret
+		};
+
 		let mut read = 0;
-		for event in self.queue.iter() {
+		for event in events {
 			read += 1;
 			if read > max_length { break; }
-			ret.push(event.clone());
+			ret.push(event);
 		}
 		Ok(ret)
 	}
@@ -102,7 +146,7 @@ impl InputContext {
 	 */
 	pub fn poll(&mut self) -> IoResult<InputEvent> {
 		if self.queue.len() == 0 {
-			self.collect(false)?;
+			self.collect(false, false)?;
 			if self.queue.len() == 0 { return Ok(InputEvent::None); }
 		}
 		Ok(self.queue.remove(0))
@@ -132,6 +176,37 @@ impl InputContext {
 		}
 	}
 	/**
+	 Sets InputEvent types which should not be returned from methods.
+
+	 # Arguments
+	 * `filter` - The InputFilter to apply.
+	
+	 # Examples
+	 ```
+	 # extern crate winconsole;
+	 # use winconsole::input::{Input, InputFilter};
+	 # fn main() {
+	 let mut ctx = Input::start().unwrap();
+	 let mut filter = InputFilter::new();
+	 filter.MouseDown = true;
+	 ctx.set_filter(filter);
+	 # }
+	 ```
+	 */
+	pub fn set_filter(&mut self, filter: InputFilter) {
+		self.filter = filter;
+
+		let filter: u16 = filter.into();
+		let mut queue = Vec::new();
+		for event in self.queue.iter() {
+			if filter & event.get_type() == 0 {
+				queue.push(*event);
+			}
+		}
+
+		self.queue = queue;
+	}
+	/**
 	 Adds an input event to the input queue.
 	
 	 # Arguments
@@ -152,7 +227,7 @@ impl InputContext {
 	 ```
 	 */
 	pub fn simulate(&mut self, event: InputEvent) {
-		self.queue.push(event);
+		self.push(event);
 	}
 	/**
 	 Waits until an input event is available, and returns it.
@@ -169,7 +244,7 @@ impl InputContext {
 	 ```
 	 */
 	pub fn wait(&mut self) -> IoResult<InputEvent> {
-		self.collect(true)?;
+		self.collect(true, false)?;
 		if self.queue.len() == 0 { return Ok(InputEvent::None); }
 		Ok(self.queue.remove(0))
 	}
@@ -181,21 +256,33 @@ impl InputContext {
 			repeat_enabled: true,
 			restore_on_drop: true,
 			held_keys: Vec::new(),
-			queue: Vec::new()
+			queue: Vec::new(),
+			filter: InputFilter::new()
 		}
 	}
+	
+	fn collect(&mut self, wait: bool, peek: bool) -> IoResult<Vec<InputEvent>> {
+		if !wait && Console::num_input_events()? == 0 { return Ok(Vec::new()); }
 
-	fn collect(&mut self, wait: bool) -> IoResult<()> {
-		if !wait {
-			if Console::num_input_events()? == 0 { return Ok(()); }
-		}
+		let records = if peek {
+			Console::peek_input(1000)?
+		} else {
+			Console::read_input(1000)?
+		};
 
-		let records = Console::read_input(1000)?;
 		let events = Input::convert_events(&records, self);
+		if peek { return Ok(events); }
+
 		for event in events {
+			self.push(event);
+		}
+		Ok(Vec::new())
+	}
+	fn push(&mut self, event: InputEvent) {
+		let filter: u16 = self.filter.into();
+		if filter & event.get_type() == 0 {
 			self.queue.push(event);
 		}
-		Ok(())
 	}
 }
 

@@ -5,6 +5,21 @@ pub struct Input {}
 
 impl Input {
 	/**
+	 Flushes the console input buffer.
+
+	 # Examples
+	 ```
+	 # extern crate winconsole;
+	 # use winconsole::input::Input;
+	 # fn main() {
+	 Input::flush().unwrap();
+	 # }
+	 ```
+	 */
+	pub fn flush() -> IoResult<()> {
+		Console::flush_input()
+	}
+	/**
 	 Returns the number of input events which are available in the console
 	 input buffer.
 	
@@ -54,7 +69,9 @@ impl Input {
 	 ```
 	 */
 	pub fn is_key_down(key_code: KeyCode) -> bool {
-		if key_code == KeyCode::None { return false; }
+		if key_code == KeyCode::None || key_code == KeyCode::NoMapping {
+			return false;
+		}
 		Console::get_key_state(key_code as u8 as u32)
 	}
 	/**
@@ -149,7 +166,7 @@ impl Input {
 							}
 						} else {
 							ret.push(InputEvent::KeyDown(kev));
-							if key_code != KeyCode::NoMapping {
+							if key_code != KeyCode::None && key_code != KeyCode::NoMapping {
 								held_keys.push(key_code);
 							}
 						}
