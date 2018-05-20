@@ -96,6 +96,83 @@ macro_rules! cprintln {
     ($color: expr, $fmt:expr) => (cprint!($color, concat!($fmt, "\n")));
     ($color: expr, $fmt:expr, $($arg:tt)*) => (cprint!($color, concat!($fmt, "\n"), $($arg)*));
 }
+#[allow(unused_macros)]
+macro_rules! enumeration_internal {
+	($(#[$attrs:meta])*
+	$name:ident<$repr_type:ty, $type:ty> ($sname:expr) {
+		@$default:expr,
+        $($(#[$flag_attrs:meta])* $member:ident = $value:expr,)+
+    }) => (
+		use std::fmt;
+		use std::fmt::{Display, Formatter};
+		$(#[$attrs])*
+		#[derive(Clone, Copy, Debug, PartialEq)]
+		pub enum $name {
+			$(
+				$(#[$flag_attrs])*
+				$member = $value,
+			)+
+		}
+		impl $name {
+			#[doc = "Returns the integral value of the"]
+			#[doc = $sname]
+			#[doc = "."]
+			pub fn get_value(&self) -> $repr_type {
+				*self as $repr_type
+			}
+		}
+		impl From<$type> for $name {
+			fn from(value: $type) -> $name {
+				match value {
+					$(
+						$value => $name::$member,
+					)+
+					_ => $name::from($default)
+				}
+			}
+		}
+		impl Into<$type> for $name {
+			fn into(self) -> $type {
+				self as $type
+			}
+		}
+		impl Display for $name {
+			fn fmt(&self, f: &mut Formatter) -> fmt::Result {
+				let name = match *self {
+					$(
+						$name::$member => stringify!($member),
+					)+
+				};
+				write!(f, "{}::{}", $sname, name)
+			}
+		}
+	);
+}
+#[allow(unused_macros)]
+macro_rules! enumeration {
+	($(#[$attrs:meta])*
+	$name:ident<$repr_type:ty, $type:ty> {
+		__DEFAULT__ = $default:expr,
+        $($(#[$flag_attrs:meta])* $member:ident = $value:expr,)+
+    }) => (enumeration_internal! {
+		$(#[$attrs])*
+		$name<$repr_type, $type> (stringify!($name)) {
+			@$default,
+			$($(#[$flag_attrs])* $member = $value,)+
+		}
+	});
+	($(#[$attrs:meta])*
+	$name:ident<$type:ty> {
+		__DEFAULT__ = $default:expr,
+        $($(#[$flag_attrs:meta])* $member:ident = $value:expr,)+
+    }) => (enumeration_internal! {
+		$(#[$attrs])*
+		$name<$type, $type> (stringify!($name)) {
+			@$default,
+			$($(#[$flag_attrs])* $member = $value,)+
+		}
+	})
+}
 macro_rules! flags_internal {
 	($(#[$attrs:meta])*
 	$name:ident<$type:ty> ($sname:expr) {
