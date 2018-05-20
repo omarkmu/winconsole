@@ -29,3 +29,13 @@ impl MouseEvent {
 		}
 	}
 }
+
+impl Into<InputEvent> for MouseEvent {
+	fn into(self) -> InputEvent {
+		if self.pressed {
+			InputEvent::MouseDown(self)
+		} else {
+			InputEvent::MouseUp(self)
+		}
+	}
+}

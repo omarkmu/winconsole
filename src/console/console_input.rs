@@ -30,6 +30,18 @@ impl Console {
     pub(crate) fn read_input(length: usize) -> IoResult<Vec<INPUT_RECORD>> {
 		Console::read_or_peek(length, false)
     }
+	pub(crate) fn write_input(buffer: Vec<INPUT_RECORD>) -> IoResult<()> {
+		os_err!(unsafe {
+			let handle = handle!(STDIN);
+			let length = buffer.len() as DWORD;
+			let buffer = buffer.into_boxed_slice();
+
+			let written_p = &mut 0u32 as *mut DWORD;
+			let buffer_p = &buffer[0] as *const INPUT_RECORD;
+			wincon::WriteConsoleInputA(handle, buffer_p, length, written_p)
+		});
+		Ok(())
+	}
 
 	fn read_or_peek(length: usize, peek: bool) -> IoResult<Vec<INPUT_RECORD>> {
 		let mut num: DWORD = 0;

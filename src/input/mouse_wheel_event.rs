@@ -26,3 +26,9 @@ impl MouseWheelEvent {
 		}
 	}
 }
+
+impl Into<InputEvent> for MouseWheelEvent {
+	fn into(self) -> InputEvent {
+		InputEvent::MouseWheel(self)
+	}
+}

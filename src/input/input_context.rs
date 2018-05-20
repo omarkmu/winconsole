@@ -218,19 +218,20 @@ impl InputContext {
 	 # use winconsole::input::{Input, InputEvent, FocusEvent};
 	 # fn main() {
 	 let mut ctx = Input::start().unwrap();
-	 let focus_event = FocusEvent::new();
-	 ctx.simulate(InputEvent::FocusLost(focus_event));
+	 let mut focus_event = FocusEvent::new();
+	 focus_event.focused = true;
+	 ctx.simulate(focus_event);
 	
 	 let event = ctx.wait().unwrap();
 	 println!("{}", event);
 	 # }
 	 ```
 	 */
-	pub fn simulate(&mut self, event: InputEvent) {
-		self.push(event);
+	pub fn simulate<T: Into<InputEvent>>(&mut self, event: T) {
+		self.push(event.into());
 	}
 	/**
-	 Waits until an input event is available, and returns it.
+	 Waits until an input event is available and returns it.
 	
 	 # Examples
 	 ```
@@ -244,8 +245,11 @@ impl InputContext {
 	 ```
 	 */
 	pub fn wait(&mut self) -> IoResult<InputEvent> {
-		self.collect(true, false)?;
-		if self.queue.len() == 0 { return Ok(InputEvent::None); }
+		if self.queue.len() == 0 {
+			self.collect(true, false)?;
+			if self.queue.len() == 0 { return Ok(InputEvent::None); }
+		}
+		
 		Ok(self.queue.remove(0))
 	}
 
@@ -279,6 +283,7 @@ impl InputContext {
 		Ok(Vec::new())
 	}
 	fn push(&mut self, event: InputEvent) {
+		if event == InputEvent::None { return; }
 		let filter: u16 = self.filter.into();
 		if filter & event.get_type() == 0 {
 			self.queue.push(event);

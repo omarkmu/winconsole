@@ -20,3 +20,9 @@ impl MouseMoveEvent {
 		}
 	}
 }
+
+impl Into<InputEvent> for MouseMoveEvent {
+	fn into(self) -> InputEvent {
+		InputEvent::MouseMove(self)
+	}
+}

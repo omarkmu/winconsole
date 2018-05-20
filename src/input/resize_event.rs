@@ -17,3 +17,9 @@ impl ResizeEvent {
 		}
 	}
 }
+
+impl Into<InputEvent> for ResizeEvent {
+	fn into(self) -> InputEvent {
+		InputEvent::Resize(self)
+	}
+}

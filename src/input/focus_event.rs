@@ -1,3 +1,5 @@
+use super::InputEvent;
+
 /// Represents an input event which occurred as a result of window focus changing.
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct FocusEvent {
@@ -12,6 +14,16 @@ impl FocusEvent {
 	pub fn new() -> FocusEvent {
 		FocusEvent {
 			focused: false
+		}
+	}
+}
+
+impl Into<InputEvent> for FocusEvent {
+	fn into(self) -> InputEvent {
+		if self.focused {
+			InputEvent::Focused(self)
+		} else {
+			InputEvent::FocusLost(self)
 		}
 	}
 }

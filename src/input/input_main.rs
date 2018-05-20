@@ -94,6 +94,42 @@ impl Input {
 		Console::flush_input()?;
 		Ok(ctx)
 	}
+	/**
+	 Adds an input event directly to the input buffer.
+
+	 # Arguments
+	 * `event` - The InputEvent to add.
+	 * `button_status` - The current status of mouse buttons 1 through 5. If None,
+	 the current button states are used.
+	
+	 # Examples
+	 ```
+	 # extern crate winconsole;
+	 # use winconsole::input::{Input, InputEvent, FocusEvent};
+	 # fn main() {
+	 let mut event = FocusEvent::new();
+	 event.focused = true;
+	 Input::write(event, None).unwrap();
+	 # }
+	 ```
+	 */
+	pub fn write<T: Into<InputEvent>, U: Into<Option<[bool; 5]>>>(event: T, button_status: U) -> IoResult<()> {
+		let event = event.into();
+		if event == InputEvent::None { return Ok(()); }
+		
+		let button_status = match button_status.into() {
+			None => {
+				let mut status = [false; 5];
+				for i in 0..5 {
+					status[i] = Console::get_key_state(BUTTON_VIRTUAL[i] as u32);
+				}
+				status
+			},
+			Some(status) => status
+		};
+		
+		Console::write_input(vec![Input::convert_to_record(event, button_status)])
+	}
 
 	pub(crate) fn convert_events(records: &Vec<INPUT_RECORD>, ctx: &mut InputContext) -> Vec<InputEvent> {
 		let mut ret = Vec::new();
@@ -200,5 +236,111 @@ impl Input {
 			}
 		}
 		ret
+	}
+
+	fn convert_to_record(event: InputEvent, button_status: [bool; 5]) -> INPUT_RECORD {
+		let mut record: INPUT_RECORD = unsafe { mem::zeroed() };
+		let mut ev = record.Event;
+		match event {
+			InputEvent::Focused(fev) | InputEvent::FocusLost(fev) => {
+				record.EventType = FOCUS_EVENT;
+				unsafe {
+					*ev.FocusEvent_mut() = FOCUS_EVENT_RECORD {
+						bSetFocus: bool_to_num!(fev.focused)
+					};
+				}
+			},
+			InputEvent::KeyHeld(kev) | InputEvent::KeyDown(kev) | InputEvent::KeyUp(kev) => {
+				record.EventType = KEY_EVENT;
+				let key_code: u8 = kev.key_code.into();
+				let control_key_state: u16 = kev.modifiers.into();
+				unsafe {
+					let mut u_char: KEY_EVENT_RECORD_uChar = mem::zeroed();
+					*u_char.AsciiChar_mut() = kev.character as i8;
+
+					*ev.KeyEvent_mut() = KEY_EVENT_RECORD {
+						bKeyDown: bool_to_num!(kev.pressed),
+						wRepeatCount: kev.repeat_count,
+						wVirtualKeyCode: key_code as u16,
+						wVirtualScanCode: kev.scan_code,
+						uChar: u_char,
+						dwControlKeyState: control_key_state as u32
+					};
+				}
+			},
+			InputEvent::MouseDown(mev) | InputEvent::MouseUp(mev) => {
+				record.EventType = MOUSE_EVENT;
+				
+				let control_key_state: u16 = mev.modifiers.into();
+				let mut state = 0;
+				for i in 0..5 {
+					state |= bool_to_num!(button_status[i]) << i;
+				}
+				if mev.button > 0 {
+					state |= bool_to_num!(mev.pressed) << (mev.button - 1);
+				}
+				
+				unsafe {
+					*ev.MouseEvent_mut() = MOUSE_EVENT_RECORD {
+						dwMousePosition: COORD {
+							X: mev.position.x as i16,
+							Y: mev.position.y as i16
+						},
+						dwButtonState: state,
+						dwControlKeyState: control_key_state as u32,
+						dwEventFlags: 0
+					};
+				}
+			},
+			InputEvent::MouseMove(mmev) => {
+				record.EventType = MOUSE_EVENT;
+				let control_key_state: u16 = mmev.modifiers.into();
+				unsafe {
+					*ev.MouseEvent_mut() = MOUSE_EVENT_RECORD {
+						dwMousePosition: COORD {
+							X: mmev.position.x as i16,
+							Y: mmev.position.y as i16
+						},
+						dwButtonState: 0,
+						dwControlKeyState: control_key_state as u32,
+						dwEventFlags: 0
+					};
+				}
+			},
+			InputEvent::MouseWheel(mwev) => {
+				let control_key_state: u16 = mwev.modifiers.into();
+				let flags = if mwev.horizontal {
+					MOUSE_HWHEELED
+				} else {
+					MOUSE_WHEELED
+				};
+
+				unsafe {
+					*ev.MouseEvent_mut() = MOUSE_EVENT_RECORD {
+						dwMousePosition: COORD {
+							X: mwev.position.x as i16,
+							Y: mwev.position.y as i16
+						},
+						dwButtonState: mwev.delta as u32 * 65536u32,
+						dwControlKeyState: control_key_state as u32,
+						dwEventFlags: flags
+					};
+				}
+			},
+			InputEvent::Resize(rev) => {
+				record.EventType = WINDOW_BUFFER_SIZE_EVENT;
+				unsafe {
+					*ev.WindowBufferSizeEvent_mut() = WINDOW_BUFFER_SIZE_RECORD {
+						dwSize: COORD {
+							X: rev.size.x as i16,
+							Y: rev.size.y as i16
+						}
+					};
+				}
+			},
+			InputEvent::None => ()
+		};
+		record.Event = ev;
+		record
 	}
 }

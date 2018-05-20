@@ -1,15 +1,21 @@
 use super::console::*;
 use cgmath::Vector2;
-use std::{io, fmt, fmt::{Display, Formatter}};
+use std::{io, fmt, fmt::{Display, Formatter}, mem};
 use winapi::um::wincon::{
+	COORD,
 	FOCUS_EVENT,
+	FOCUS_EVENT_RECORD,
 	INPUT_RECORD,
 	KEY_EVENT,
+	KEY_EVENT_RECORD,
+	KEY_EVENT_RECORD_uChar,
 	MOUSE_EVENT,
+	MOUSE_EVENT_RECORD,
 	MOUSE_MOVED,
 	MOUSE_WHEELED,
 	MOUSE_HWHEELED,
-	WINDOW_BUFFER_SIZE_EVENT
+	WINDOW_BUFFER_SIZE_EVENT,
+	WINDOW_BUFFER_SIZE_RECORD,
 };
 
 mod control_key_state;

@@ -34,3 +34,13 @@ impl KeyEvent {
 		}
 	}
 }
+
+impl Into<InputEvent> for KeyEvent {
+	fn into(self) -> InputEvent {
+		if self.pressed {
+			InputEvent::KeyDown(self)
+		} else {
+			InputEvent::KeyUp(self)
+		}
+	}
+}
