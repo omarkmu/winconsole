@@ -413,6 +413,37 @@ impl Console {
 		Ok(OutputSettings::from(mode))
 	}
 	/**
+	 Returns a SelectionInfo object containing information about console selection.
+
+	 # Examples
+	 ```
+	 # extern crate winconsole;
+	 # use winconsole::console::Console;
+	 # fn main() {
+	 let selection = Console::get_selection_info().unwrap();
+	 println!("{:?}", selection);
+	 # }
+	 ```
+	 */
+	pub fn get_selection_info() -> IoResult<SelectionInfo> {
+		let mut info: CONSOLE_SELECTION_INFO = unsafe { mem::zeroed() };
+		os_err!(unsafe { wincon::GetConsoleSelectionInfo(&mut info) });
+		
+		let anchor = info.dwSelectionAnchor;
+		let rect = info.srSelection;
+		let flags = info.dwFlags;
+
+		let mut selection = SelectionInfo::new();
+		selection.anchor = Vector2::new(anchor.X as u16, anchor.Y as u16);
+		selection.bottom_right = Vector2::new(rect.Right as u16, rect.Bottom as u16);
+		selection.empty = flags & 0x2 == 0;
+		selection.mouse_down = flags & 0x8 != 0;
+		selection.selecting = flags & 0x1 != 0;
+		selection.top_left = Vector2::new(rect.Left as u16, rect.Top as u16);
+		
+		Ok(selection)
+	}
+	/**
 	 Returns a ConsoleState object containing information about the current state of the console.
 	
 	 # Arguments
