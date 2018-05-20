@@ -49,6 +49,26 @@ impl Console {
 		Console::set_cursor_position(0, 0)
 	}
 	/**
+	 Clears the console history.
+	 
+	 # Examples
+	 ```
+	 # extern crate winconsole;
+	 # use winconsole::console::Console;
+	 # fn main() {
+	 Console::clear_history().unwrap();
+	 # }
+	 ```
+	 */
+	pub fn clear_history() -> IoResult<()> {
+		let old = Console::get_history_info()?;
+		let mut empty = old.clone();
+		empty.size = 0;
+		Console::set_history_info(empty)?;
+		Console::set_history_info(old)?;
+		Ok(())
+	}
+	/**
 	 Fills the console window with a specified character starting 
 	 at a specified location, and returns the number of cells which were filled.  
 	 Note that this only changes the character; the colors of each cell will remain the same.
@@ -354,6 +374,31 @@ impl Console {
 	pub fn get_foreground_color() -> IoResult<ConsoleColor> {
 		let attrs = Console::get_text_attributes()?;
 		Ok(ConsoleColor::from(attrs & 0xF))
+	}
+	/**
+	 Returns a HistoryInfo object containing information about console history settings.
+
+	 # Examples
+	 ```
+	 # extern crate winconsole;
+	 # use winconsole::console::Console;
+	 # fn main() {
+	 let history_settings = Console::get_history_info().unwrap();
+	 println!("{:?}", history_settings);
+	 # }
+	 ```
+	 */
+	pub fn get_history_info() -> IoResult<HistoryInfo> {
+		let mut info: CONSOLE_HISTORY_INFO = unsafe { mem::zeroed() };
+		info.cbSize = mem::size_of::<CONSOLE_HISTORY_INFO>() as DWORD;
+		os_err!(unsafe { wincon::GetConsoleHistoryInfo(&mut info) });
+
+		let mut history = HistoryInfo::new();
+		history.size = info.HistoryBufferSize;
+		history.number_of_buffers = info.NumberOfHistoryBuffers;
+		history.duplicates_allowed = info.dwFlags & 0x1 == 0;
+
+		Ok(history)
 	}
 	/**
 	 Returns settings related to console input.
@@ -898,6 +943,33 @@ impl Console {
 		let current = Console::get_text_attributes()?;
 
 		Console::set_text_attributes((current & 0xF0) | color)
+	}
+	/**
+	 Sets information about console history settings.
+	 
+	 # Arguments
+	 * `history` - The HistoryInfo to assign.
+	
+	 # Examples
+	 ```
+	 # extern crate winconsole;
+	 # use winconsole::console::Console;
+	 # fn main() {
+	 let mut history_settings = Console::get_history_info().unwrap();
+	 history_settings.duplicates_allowed = false;
+	 Console::set_history_info(history_settings).unwrap();
+	 # }
+	 ```
+	 */
+	pub fn set_history_info(history: HistoryInfo) -> IoResult<()> {
+		let mut info: CONSOLE_HISTORY_INFO = unsafe { mem::zeroed() };
+		info.cbSize = mem::size_of::<CONSOLE_HISTORY_INFO>() as DWORD;
+		info.HistoryBufferSize = history.size;
+		info.NumberOfHistoryBuffers = history.number_of_buffers;
+		info.dwFlags = bool_to_num!(!history.duplicates_allowed);
+
+		os_err!(unsafe { wincon::SetConsoleHistoryInfo(&mut info) });
+		Ok(())
 	}
 	/**
 	 Sets settings related to console input.
