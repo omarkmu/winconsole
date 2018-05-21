@@ -343,7 +343,7 @@ impl Input {
 					};
 				}
 			},
-			InputEvent::None => ()
+			InputEvent::None => unreachable!()
 		};
 
 		record.Event = ev;
