@@ -5,6 +5,7 @@ use std::sync::Mutex;
 lazy_static! {
 	static ref PAGES: Mutex<Vec<CodePage>> = Mutex::new(vec![]);
 }
+type HandlerRoutine = unsafe extern "system" fn(_: u32) -> i32;
 
 /// Console handler which acts as an interface with the Windows console API.
 pub struct Console {}
@@ -187,6 +188,34 @@ impl Console {
 	 */
 	pub fn flush_output() -> IoResult<()> {
 		io::stdout().flush()
+	}
+	/**
+	 Sends a ctrl signal to a process group which shares the console.
+
+	 # Arguments
+	 `break_event`- Should a CTRL + BREAK signal be generated? Otherwise, a CTRL + C signal will be generated.
+	 A CTRL + C signal cannot be generated for a process group.
+	 `process_group_id` - The ID of the process group to generate the event on. If None, generate the event on
+	 processes which share the console.
+
+	 # Examples
+	 Generates a CTRL event.
+	 ```
+	 # extern crate winconsole;
+	 # use winconsole::console::Console;
+	 # fn main() {
+	 Console::generate_ctrl_event(false, None).unwrap();
+	 # }
+	 ```
+	 */
+	pub fn generate_ctrl_event<T: Into<Option<u32>>>(break_event: bool, process_group_id: T) -> IoResult<()> {
+		let id: u32 = match process_group_id.into() {
+			None => 0,
+			Some(id) => id
+		};
+		let event = bool_to_num!(break_event) as u32;
+		os_err!(unsafe { wincon::GenerateConsoleCtrlEvent(event, id) });
+		Ok(())
 	}
 	/**
 	 Reads a single character from the input buffer.
@@ -939,6 +968,37 @@ impl Console {
 		info.srWindow.Bottom += 1;
     	info.srWindow.Right += 1;
 		Console::set_screen_buffer_info_ex(&mut info)
+	}
+	/**
+	 Adds or removes a handler routine from the console.
+
+	 # Arguments
+	 * `routine` - The callback function. If this is None, a value of `true` for `add`
+	 will ignore CTRL + C input, and a value of `false` will restore normal processing.
+	 * `add` - Should the routine be added or removed?
+
+	 # Examples
+	 ```
+	 # extern crate winconsole;
+	 # use winconsole::console::Console;
+	 # fn main() {
+	 unsafe extern "system" fn handler(event_type: u32) -> i32 {
+		 if event_type == 0 {
+			 println!("CTRL + C pressed.");
+			 return 1; // TRUE
+		 }
+		 return 0; // FALSE
+	 }
+	 Console::set_ctrl_handler(Some(handler), true).unwrap();
+	 # }
+	 ```
+
+	 # See
+	 [HandlerRoutine](https://docs.microsoft.com/en-us/windows/console/handlerroutine).
+	 */
+	pub fn set_ctrl_handler(handler: Option<HandlerRoutine>, add: bool) -> IoResult<()> {
+		os_err!(unsafe{ consoleapi::SetConsoleCtrlHandler(handler, bool_to_num!(add)) });
+		Ok(())
 	}
 	/**
 	 Sets the position of the console cursor.
