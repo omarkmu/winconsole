@@ -9,11 +9,12 @@ macro_rules! buf {
 		}
 	};
 }
-#[allow(unused_macros)]
+#[cfg(feature = "input")]
 macro_rules! buf_mem {
 	($size:expr) => {
 		{
-			let vec = vec![std::mem::zeroed(); $size];
+			use std::mem;
+			let vec = vec![mem::zeroed(); $size];
 			vec.into_boxed_slice()
 		}
 	};
@@ -31,7 +32,7 @@ macro_rules! buf_to_str {
 		}
 	}
 }
-#[allow(unused_macros)]
+#[cfg(feature = "input")]
 macro_rules! buf_to_vec {
 	($buf:expr, $len:expr) => {
 		{
@@ -96,7 +97,6 @@ macro_rules! cprintln {
     ($color: expr, $fmt:expr) => (cprint!($color, concat!($fmt, "\n")));
     ($color: expr, $fmt:expr, $($arg:tt)*) => (cprint!($color, concat!($fmt, "\n"), $($arg)*));
 }
-#[allow(unused_macros)]
 macro_rules! enumeration_internal {
 	($(#[$attrs:meta])*
 	$name:ident<$repr_type:ty, $type:ty> ($sname:expr) {
@@ -148,7 +148,6 @@ macro_rules! enumeration_internal {
 		}
 	);
 }
-#[allow(unused_macros)]
 macro_rules! enumeration {
 	($(#[$attrs:meta])*
 	$name:ident<$repr_type:ty, $type:ty> {
