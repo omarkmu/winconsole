@@ -5,7 +5,6 @@ use std::sync::Mutex;
 lazy_static! {
 	static ref PAGES: Mutex<Vec<CodePage>> = Mutex::new(vec![]);
 }
-type HandlerRoutine = unsafe extern "system" fn(_: u32) -> i32;
 
 /// Console handler which acts as an interface with the Windows console API.
 pub struct Console {}

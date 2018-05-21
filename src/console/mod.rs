@@ -24,8 +24,9 @@ use winapi::um::wincon::{
 use winapi::um::winnls::CPINFOEXA;
 use winapi::um::winnt::{CHAR, WCHAR};
 
-type IoResult<T> = io::Result<T>;
 type BoxedResult<T> = Result<T, Box<std::error::Error>>;
+type HandlerRoutine = unsafe extern "system" fn(_: u32) -> i32;
+type IoResult<T> = io::Result<T>;
 
 mod console_main;
 pub use self::console_main::Console;
