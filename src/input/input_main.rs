@@ -1,7 +1,7 @@
 use super::*;
 
 /// Input handler which acts as an interface with Windows console input-related methods.
-pub struct Input {}
+pub struct Input;
 
 impl Input {
 	/**

@@ -7,7 +7,7 @@ lazy_static! {
 }
 
 /// Console handler which acts as an interface with the Windows console API.
-pub struct Console {}
+pub struct Console;
 
 impl Console {
 	/**
