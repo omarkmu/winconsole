@@ -101,7 +101,7 @@ macro_rules! enumeration_internal {
 	($(#[$attrs:meta])*
 	$name:ident<$repr_type:ty, $type:ty> ($sname:expr) {
 		@$default:expr,
-        $($(#[$flag_attrs:meta])* $member:ident = $value:expr,)+
+        $($(#[$item_attrs:meta])* $member:ident = $value:expr,)+
     }) => (
 		use std::fmt;
 		use std::fmt::{Display, Formatter};
@@ -109,7 +109,7 @@ macro_rules! enumeration_internal {
 		#[derive(Clone, Copy, Debug, PartialEq)]
 		pub enum $name {
 			$(
-				$(#[$flag_attrs])*
+				$(#[$item_attrs])*
 				$member = $value,
 			)+
 		}
@@ -152,23 +152,23 @@ macro_rules! enumeration {
 	($(#[$attrs:meta])*
 	$name:ident<$repr_type:ty, $type:ty> {
 		__DEFAULT__ = $default:expr,
-        $($(#[$flag_attrs:meta])* $member:ident = $value:expr,)+
+        $($(#[$item_attrs:meta])* $member:ident = $value:expr,)+
     }) => (enumeration_internal! {
 		$(#[$attrs])*
 		$name<$repr_type, $type> (stringify!($name)) {
 			@$default,
-			$($(#[$flag_attrs])* $member = $value,)+
+			$($(#[$item_attrs])* $member = $value,)+
 		}
 	});
 	($(#[$attrs:meta])*
 	$name:ident<$type:ty> {
 		__DEFAULT__ = $default:expr,
-        $($(#[$flag_attrs:meta])* $member:ident = $value:expr,)+
+        $($(#[$item_attrs:meta])* $member:ident = $value:expr,)+
     }) => (enumeration_internal! {
 		$(#[$attrs])*
 		$name<$type, $type> (stringify!($name)) {
 			@$default,
-			$($(#[$flag_attrs])* $member = $value,)+
+			$($(#[$item_attrs])* $member = $value,)+
 		}
 	})
 }

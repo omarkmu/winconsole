@@ -288,7 +288,7 @@ enumeration! {
 		EUC_TCN = 51950,
 		/// HZ-GB2312 Simplified Chinese; Chinese Simplified (HZ).
 		hz_gb_2312 = 52936,
-		/// *8Windows XP and later:** GB18030 Simplified Chinese (4 byte); Chinese Simplified (GB18030).
+		/// **Windows XP and later:** GB18030 Simplified Chinese (4 byte); Chinese Simplified (GB18030).
 		GB18030 = 54936,
 		/// ISCII Devanagari.
 		x_iscii_de = 57002,
