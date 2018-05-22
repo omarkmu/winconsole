@@ -20,15 +20,13 @@ macro_rules! buf_mem {
 	};
 }
 macro_rules! buf_to_str {
-	($buf:expr, $len:expr) => {
+	($buf:expr) => {
 		{
-			let mut result = String::new();
-			for i in 0usize..($len as usize) {
-				let value = $buf[i];
-				if value == 0 { break; }
-				result.push(value as u8 as char);
-			}
-			result
+			let vec: Vec<u8> = $buf.to_vec()
+				.iter()
+				.map(|c| *c as u8)
+				.collect();
+			String::from_utf8(vec).unwrap() // TODO: Handle error, don't unwrap.
 		}
 	}
 }
@@ -292,43 +290,32 @@ macro_rules! os_err_boxed {
 		}
 	}
 }
-macro_rules! str_to_buf {
-	($s:expr) => {
+macro_rules! str_to_buf_internal {
+	($s:expr, $type:ty) => {
 		{
-			let vec: Vec<CHAR> = String::from($s)
-				.chars()
-				.map(|c| c as CHAR)
+			let vec: Vec<$type> = String::from($s)
+				.as_bytes()
+				.iter()
+				.map(|c| *c as $type)
 				.collect();
 			vec.into_boxed_slice()
 		}
 	};
-	($s:expr, $size:expr) => {
+	($s:expr, $size:expr, $type:ty) => {
 		{
-			let mut buffer: [CHAR; $size] = [0; $size];
-			for (i, c) in $s.chars().enumerate() {
-				buffer[i as usize] = c as CHAR;
+			let mut buffer: [$type; $size] = [0; $size];
+			for (chr, val) in $s.as_bytes().iter().zip(buffer.iter_mut()) {
+				*val = *chr as $type;
 			}
 			buffer
 		}
 	}
 }
+macro_rules! str_to_buf {
+	($s:expr) => (str_to_buf_internal!($s, CHAR));
+	($s:expr, $size:expr) => (str_to_buf_internal!($s, $size, CHAR));
+}
 macro_rules! str_to_buf_w {
-	($s:expr) => {
-		{
-			let vec: Vec<WCHAR> = String::from($s)
-				.chars()
-				.map(|c| c as WCHAR)
-				.collect();
-			vec.into_boxed_slice()
-		}
-	};
-	($s:expr, $size:expr) => {
-		{
-			let mut buffer: [WCHAR; $size] = [0; $size];
-			for (i, c) in $s.chars().enumerate() {
-				buffer[i as usize] = c as WCHAR;
-			}
-			buffer
-		}
-	}
+	($s:expr) => (str_to_buf_internal!($s, WCHAR));
+	($s:expr, $size:expr) => (str_to_buf_internal!($s, $size, WCHAR));
 }

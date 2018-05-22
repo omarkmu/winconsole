@@ -315,11 +315,11 @@ impl Console {
 
 		let mut cpi = CodePageInfo::new();
 		cpi.max_char_size = info.MaxCharSize as u8;
-		cpi.default = buf_to_str!(info.DefaultChar, 2);
+		cpi.default = buf_to_str!(info.DefaultChar);
 		cpi.lead_byte = info.LeadByte;
 		cpi.unicode_default = info.UnicodeDefaultChar;
 		cpi.code_page = CodePage::from(info.CodePage as u16);
-		cpi.name = buf_to_str!(info.CodePageName, MAX_PATH);
+		cpi.name = buf_to_str!(info.CodePageName);
 
 		Ok(cpi)
 	}
@@ -417,7 +417,7 @@ impl Console {
 		Ok(ConsoleFont {
 			family: info.FontFamily,
 			index: info.nFont,
-			name: buf_to_str!(info.FaceName, 32),
+			name: buf_to_str!(info.FaceName),
 			size: Vector2::new(size.X as u16, size.Y as u16),
 			weight: info.FontWeight
 		})
@@ -536,7 +536,7 @@ impl Console {
 			wincon::GetConsoleOriginalTitleA(buffer_p, MAX_PATH as u32)
 		};
 		os_err!(length, true);
-		Ok(buf_to_str!(buffer, length))
+		Ok(buf_to_str!(buffer))
 	}
 	/**
 	 Returns the input code page used by the console.
@@ -689,7 +689,7 @@ impl Console {
 			wincon::GetConsoleTitleA(buffer_p, MAX_PATH as u32)
 		};
 		os_err!(length, true);
-		Ok(buf_to_str!(buffer, length))
+		Ok(buf_to_str!(buffer))
 	}
 	/**
 	 Returns the size of the window relative to the screen buffer.
@@ -823,7 +823,7 @@ impl Console {
 			let buffer_p = &mut (*buffer)[0] as *mut CHAR;
 			wincon::ReadConsoleOutputCharacterA(handle, buffer_p, max_length, coords, &mut num)
 		});
-		Ok(buf_to_str!(buffer, num))
+		Ok(buf_to_str!(buffer))
 	}
 	/**
 	 Reads colors from the console output starting at a specified location, and returns a vector of tuples.

@@ -34,6 +34,9 @@ impl Console {
 		os_err!(unsafe {
 			let handle = handle!(STDIN);
 			let length = buffer.len() as DWORD;
+			if length == 0 {
+				return Ok(());
+			}
 			let buffer = buffer.into_boxed_slice();
 
 			let written_p = &mut 0u32 as *mut DWORD;
@@ -44,6 +47,10 @@ impl Console {
 	}
 
 	fn read_or_peek(length: usize, peek: bool) -> IoResult<Vec<INPUT_RECORD>> {
+		if length == 0 {
+			return Vec::new();
+		}
+
 		let mut num: DWORD = 0;
 		let mut buffer: Box<[INPUT_RECORD]>;
         os_err!(unsafe {
