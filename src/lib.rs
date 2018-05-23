@@ -31,6 +31,8 @@ extern crate rgb;
 /// Contains console-related structs and enums.
 pub mod console;
 mod etc;
+/// Contains various error types.
+pub mod errors;
 /// Contains input-related structs and enums.
 #[cfg(feature = "input")]
 pub mod input;

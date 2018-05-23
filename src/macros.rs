@@ -9,16 +9,6 @@ macro_rules! buf {
 		}
 	};
 }
-#[cfg(feature = "input")]
-macro_rules! buf_mem {
-	($size:expr) => {
-		{
-			use std::mem;
-			let vec = vec![mem::zeroed(); $size];
-			vec.into_boxed_slice()
-		}
-	};
-}
 macro_rules! buf_to_str {
 	($buf:expr) => {
 		{

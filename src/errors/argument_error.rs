@@ -1,6 +1,3 @@
-use super::*;
-use std::error::Error;
-
 /// Describes an error related to an argument.
 #[derive(Clone, Debug, PartialEq)]
 pub struct ArgumentError {
@@ -26,14 +23,5 @@ impl ArgumentError {
 	}
 }
 
-impl Error for ArgumentError {
-	fn description(&self) -> &str {
-		"invalid argument"
-	}
-}
-
-impl Display for ArgumentError {
-	fn fmt(&self, f: &mut Formatter) -> fmt::Result {
-		write!(f, "argument {} is invalid: {}", &self.argument, &self.message)
-	}
-}
+impl_err!(ArgumentError, "invalid argument",
+	"argument {} is invalid: {}", argument, message);

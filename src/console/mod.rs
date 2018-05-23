@@ -24,6 +24,8 @@ use winapi::um::wincon::{
 use winapi::um::winnls::CPINFOEXA;
 use winapi::um::winnt::{CHAR, WCHAR};
 
+use super::errors::*;
+
 type BoxedResult<T> = Result<T, Box<std::error::Error>>;
 type HandlerRoutine = unsafe extern "system" fn(_: u32) -> i32;
 type IoResult<T> = io::Result<T>;

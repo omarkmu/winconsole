@@ -1,6 +1,3 @@
-use std::{fmt, fmt::{Display, Formatter}};
-
-mod argument_error;
 mod code_page;
 mod code_page_info;
 mod console_color;
@@ -11,7 +8,6 @@ mod input_settings;
 mod output_settings;
 mod selection_info;
 
-pub use self::argument_error::ArgumentError;
 pub use self::code_page::CodePage;
 pub use self::code_page_info::CodePageInfo;
 pub use self::console_color::ConsoleColor;

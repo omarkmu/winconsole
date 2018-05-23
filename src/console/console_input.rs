@@ -55,7 +55,10 @@ impl Console {
 		let mut buffer: Box<[INPUT_RECORD]>;
         os_err!(unsafe {
             let handle = handle!(STDIN);
-            buffer = buf_mem!(length);
+            buffer = {
+				let vec = vec![mem::zeroed(); length];
+				vec.into_boxed_slice()
+			};
 
 			let length = length as DWORD;
 			let buffer_p = &mut buffer[0] as *mut INPUT_RECORD;
