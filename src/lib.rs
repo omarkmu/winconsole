@@ -10,6 +10,7 @@
  winconsole = "0.2"
  ```
  Then, add the following to your code:
+
  ```rust
  extern crate winconsole;
  ```

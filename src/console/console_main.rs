@@ -19,6 +19,7 @@ impl Console {
 	
 	 # Examples
 	 Plays a note of A4 frequency for 1 seconds.
+
 	 ```
 	 # extern crate winconsole;
 	 # use winconsole::console::Console;
@@ -87,6 +88,7 @@ impl Console {
 	
 	 # Examples
 	 Fills the entire console with 'Z'.
+
 	 ```
 	 # extern crate winconsole;
 	 # use winconsole::console::Console;
@@ -95,6 +97,7 @@ impl Console {
 	 # }
 	 ```
 	 Fills the first ten cells with 'G'.
+
 	 ```
 	 # extern crate winconsole;
 	 # use winconsole::console::Console;
@@ -131,11 +134,12 @@ impl Console {
 	
 	 # Examples
 	 Fills the entire console with a blue foreground and red background.
+
 	 ```
 	 # extern crate winconsole;
 	 # use winconsole::console::{Console, ConsoleColor};
 	 # fn main() {
-	 Console::fill_color(&(ConsoleColor::Blue, ConsoleColor::Red), 0, 0, None)
+	 Console::fill_colors(&(ConsoleColor::Blue, ConsoleColor::Red), 0, 0, None).unwrap();
 	 # }
 	 ```
 	 */
@@ -200,6 +204,7 @@ impl Console {
 
 	 # Examples
 	 Generates a CTRL event.
+
 	 ```
 	 # extern crate winconsole;
 	 # use winconsole::console::Console;
@@ -227,6 +232,7 @@ impl Console {
 	
 	 # Examples
 	 Gets a character and prints it to the console.
+
 	 ```
 	 # extern crate winconsole;
 	 # use winconsole::console::Console;
@@ -614,6 +620,7 @@ impl Console {
 	 # Examples
 	 Retrieves the state of the console, copying the output up to the location of the
 	 console cursor.
+
 	 ```
 	 # extern crate winconsole;
 	 # use winconsole::console::Console;
@@ -757,8 +764,10 @@ impl Console {
 	
 	 # Examples
 	 Maps `ConsoleColor::Black` to white.
+
 	 ```
 	 # extern crate winconsole;
+	 # extern crate rgb;
 	 # use winconsole::console::{Console, ConsoleColor};
 	 # fn main() {
 	 use rgb::RGB8;
@@ -786,6 +795,7 @@ impl Console {
 	
 	 # Examples
 	 Reads the entire console output buffer.
+
 	 ```
 	 # extern crate winconsole;
 	 # use winconsole::console::Console;
@@ -838,6 +848,7 @@ impl Console {
 	
 	 # Examples
 	 Prints the colors in the first cell.
+
 	 ```
 	 # extern crate winconsole;
 	 # use winconsole::console::Console;
@@ -1010,6 +1021,7 @@ impl Console {
 	
 	 # Examples
 	 Sets the cursor position to the start position of the console.
+
 	 ```
 	 # extern crate winconsole;
 	 # use winconsole::console::Console;
@@ -1067,6 +1079,7 @@ impl Console {
 	
 	 # Examples
 	 Hides the console cursor.
+
 	 ```
 	 # extern crate winconsole;
 	 # use winconsole::console::Console;
@@ -1089,6 +1102,7 @@ impl Console {
 	
 	 # Examples
 	 Changes the console font to Consolas.
+
 	 ```
 	 # extern crate winconsole;
 	 # use winconsole::console::Console;
@@ -1322,6 +1336,7 @@ impl Console {
 	
 	 # Examples
 	 Writes `"Hello, world!"` on the 10th row starting at the 10th column.
+
 	 ```
 	 # extern crate winconsole;
 	 # use winconsole::console::Console;
@@ -1366,9 +1381,10 @@ impl Console {
 	
 	 # Examples
 	 Writes colors to the console starting at <0, 0>.
+
 	 ```
 	 # extern crate winconsole;
-	 # use winconsole::console::Console;
+	 # use winconsole::console::{Console, ConsoleColor};
 	 # fn main() {
 	 let colors = vec![
 		(ConsoleColor::Red, ConsoleColor::Blue),

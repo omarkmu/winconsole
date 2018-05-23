@@ -84,7 +84,7 @@ impl InputContext {
 	 # extern crate winconsole;
 	 # use winconsole::input::Input;
 	 # fn main() {
-	 let ctx = Input::start().unwrap();
+	 let mut ctx = Input::start().unwrap();
 	 let peeked = ctx.peek(5).unwrap();
 	 println!("Peeked: {}", peeked.len());
 	 for event in peeked.iter() {
