@@ -1,6 +1,6 @@
 use cgmath::Vector2;
 use rgb::RGB8;
-use super::{ConsoleColor, ConsoleFont, InputSettings, OutputSettings};
+use super::{CodePage, ConsoleColor, ConsoleFont, InputSettings, OutputSettings};
 
 /// Represents the state of the console.
 #[derive(Clone, Debug, PartialEq)]
@@ -21,10 +21,14 @@ pub struct ConsoleState {
 	pub font: ConsoleFont,
 	/// The foreground color of the console.
 	pub foreground_color: ConsoleColor,
+	/// The console input code page.
+	pub input_code_page: CodePage,
 	/// The console input mode.
 	pub input_mode: InputSettings,
 	/// The console's output contents.
 	pub output: String,
+	/// The console output code page.
+	pub output_code_page: CodePage,
 	/// The colors of the console's output contents.
 	pub output_colors: Vec<(ConsoleColor, ConsoleColor)>,
 	/// The console output mode.
@@ -48,7 +52,9 @@ impl ConsoleState {
 			font: ConsoleFont::new(),
 			foreground_color: ConsoleColor::Black,
 			input_mode: InputSettings::new(),
+			input_code_page: CodePage::None,
 			output: String::new(),
+			output_code_page: CodePage::None,
 			output_colors: Vec::new(),
 			output_mode: OutputSettings::new(),
 			title: String::new()

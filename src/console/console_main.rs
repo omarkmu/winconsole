@@ -643,7 +643,9 @@ impl Console {
 		state.cursor_visible = Console::is_cursor_visible()?;
 		state.font = Console::get_font()?;
 		state.foreground_color = Console::get_foreground_color()?;
+		state.input_code_page = Console::get_input_code_page();
 		state.input_mode = Console::get_input_mode()?;
+		state.output_code_page = Console::get_output_code_page();
 		state.output_mode = Console::get_output_mode()?;
 		state.title = Console::get_title()?;
 
@@ -1186,6 +1188,9 @@ impl Console {
 	 ```
 	 */
 	pub fn set_input_code_page(page: CodePage) -> WinResult<()> {
+		if page == CodePage::None || page == CodePage::Invalid {
+			return Ok(()); // TODO: Maybe throw argument error instead?
+		}
 		let page: u16 = page.into();
 		os_err!(unsafe { wincon::SetConsoleCP(page as u32) });
 		Ok(())
@@ -1232,6 +1237,9 @@ impl Console {
 	 ```
 	 */
 	pub fn set_output_code_page(page: CodePage) -> WinResult<()> {
+		if page == CodePage::None || page == CodePage::Invalid {
+			return Ok(());
+		}
 		let page: u16 = page.into();
 		os_err!(unsafe { wincon::SetConsoleOutputCP(page as u32) });
 		Ok(())
@@ -1263,8 +1271,8 @@ impl Console {
 	
 	 # Arguments
 	 * `state` - A ConsoleState containing state information.
-	 * `clear` - Should the console be cleared?
-	 * `write_output` - Should the stored output be written?
+	 * `clear` - Should the console be cleared before writing to the output?
+	 * `write_output` - Should the stored text be written to the output?
 	
 	 # Examples
 	 ```
@@ -1284,6 +1292,8 @@ impl Console {
 		Console::set_color_mapping(&state.color_mapping)?;
 		Console::set_cursor_size(state.cursor_size)?;
 		Console::set_foreground_color(state.foreground_color)?;
+		Console::set_input_code_page(state.input_code_page)?;
+		Console::set_output_code_page(state.output_code_page)?;
 		Console::set_input_mode(state.input_mode)?;
 		Console::set_output_mode(state.output_mode)?;
 		Console::set_font(&state.font)?;
