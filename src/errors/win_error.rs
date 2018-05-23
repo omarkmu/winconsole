@@ -1,5 +1,6 @@
 use super::*;
 use std::io::Error as IoError;
+use std::string::FromUtf8Error;
 
 macro_rules! win_errs {
 	($($(#[$item_attrs:meta])* $name:ident : $err_name:ident),*) => (
@@ -56,6 +57,9 @@ macro_rules! win_errs {
 win_errs! {
 	/// An argument error.
 	Argument: ArgumentError,
+	/// An error which occurred while converting to a string from a
+	/// UTF-8 byte vector.
+	FromUtf8: FromUtf8Error,
 	/// An invalid handle error.
 	InvalidHandle: InvalidHandleError,
 	/// An IO or OS error.

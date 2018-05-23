@@ -17,7 +17,7 @@ macro_rules! buf_to_str {
 				if *c == 0 { break; }
 				vec.push(*c as u8)
 			}
-			String::from_utf8(vec).unwrap() // TODO: Handle error, don't unwrap.
+			String::from_utf8(vec)?
 		}
 	}
 }
