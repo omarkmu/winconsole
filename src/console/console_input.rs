@@ -7,7 +7,7 @@ impl Console {
 		unsafe { num = winuser::GetAsyncKeyState(key as i32) }
 		num & (1 << 15) != 0
 	}
-	pub(crate) fn num_input_events() -> IoResult<u32> {
+	pub(crate) fn num_input_events() -> WinResult<u32> {
 		let mut num: DWORD = 0;
 		os_err!(unsafe {
 			let handle = handle!(STDIN);
@@ -16,7 +16,7 @@ impl Console {
 		});
 		Ok(num)
 	}
-	pub(crate) fn num_mouse_buttons() -> IoResult<u32> {
+	pub(crate) fn num_mouse_buttons() -> WinResult<u32> {
 		let mut num: DWORD = 0;
 		os_err!(unsafe {
 			let num_p = &mut num as *mut DWORD;
@@ -24,13 +24,13 @@ impl Console {
 		});
 		Ok(num)
 	}
-	pub(crate) fn peek_input(length: usize) -> IoResult<Vec<INPUT_RECORD>> {
+	pub(crate) fn peek_input(length: usize) -> WinResult<Vec<INPUT_RECORD>> {
 		Console::read_or_peek(length, true)
 	}
-    pub(crate) fn read_input(length: usize) -> IoResult<Vec<INPUT_RECORD>> {
+    pub(crate) fn read_input(length: usize) -> WinResult<Vec<INPUT_RECORD>> {
 		Console::read_or_peek(length, false)
     }
-	pub(crate) fn write_input(buffer: Vec<INPUT_RECORD>) -> IoResult<()> {
+	pub(crate) fn write_input(buffer: Vec<INPUT_RECORD>) -> WinResult<()> {
 		os_err!(unsafe {
 			let handle = handle!(STDIN);
 			let length = buffer.len() as DWORD;
@@ -46,9 +46,9 @@ impl Console {
 		Ok(())
 	}
 
-	fn read_or_peek(length: usize, peek: bool) -> IoResult<Vec<INPUT_RECORD>> {
+	fn read_or_peek(length: usize, peek: bool) -> WinResult<Vec<INPUT_RECORD>> {
 		if length == 0 {
-			return Vec::new();
+			return Ok(Vec::new());
 		}
 
 		let mut num: DWORD = 0;

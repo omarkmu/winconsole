@@ -12,10 +12,11 @@ macro_rules! buf {
 macro_rules! buf_to_str {
 	($buf:expr) => {
 		{
-			let vec: Vec<u8> = $buf.to_vec()
-				.iter()
-				.map(|c| *c as u8)
-				.collect();
+			let mut vec: Vec<u8> = vec![];
+			for c in $buf.to_vec().iter() {
+				if *c == 0 { break; }
+				vec.push(*c as u8)
+			}
 			String::from_utf8(vec).unwrap() // TODO: Handle error, don't unwrap.
 		}
 	}
@@ -224,20 +225,11 @@ macro_rules! flags {
 		}
 	});
 }
-macro_rules! handle_boxed {
-	($x:expr) => {
-		{
-			let handle = processenv::GetStdHandle($x);
-			if handle as isize == -1 { return os_err_boxed!(); }
-			handle
-		}
-	};
-}
 macro_rules! handle {
 	($x:expr) => {
 		{
 			let handle = processenv::GetStdHandle($x);
-			if handle as isize == -1 { return os_err!(); }
+			if handle as isize == -1 { throw_err!($crate::errors::InvalidHandleError::new()); }
 			handle
 		}
 	};
@@ -255,28 +247,32 @@ macro_rules! make_rgb {
 	}
 }
 macro_rules! os_err {
-	() => (Err(io::Error::last_os_error()));
+	() => (
+		{
+			use std::io;
+			use $crate::errors::*;
+			let last_err = io::Error::last_os_error();
+			let err = match last_err.raw_os_error().unwrap() {
+				6 => WinError::from(InvalidHandleError::new()),
+				_ => WinError::from(last_err)
+			};
+			Err(err)
+		}
+	);
 	($i:expr) => {
-		if 0 == $i {
+		if $i == 0 {
 			return os_err!();
 		}
 	};
 	($i:expr, $x:expr) => {
 		if $x {
+			use std::io;
 			let err = io::Error::last_os_error();
 			if err.raw_os_error().unwrap() != 0 {
 				os_err!($i);
 			}
 		} else {
 			os_err!($i);
-		}
-	}
-}
-macro_rules! os_err_boxed {
-	() => (Err(Box::new(io::Error::last_os_error())));
-	($i:expr) => {
-		if 0 == $i {
-			return os_err_boxed!();
 		}
 	}
 }
@@ -308,4 +304,9 @@ macro_rules! str_to_buf {
 macro_rules! str_to_buf_w {
 	($s:expr) => (str_to_buf_internal!($s, WCHAR));
 	($s:expr, $size:expr) => (str_to_buf_internal!($s, $size, WCHAR));
+}
+macro_rules! throw_err {
+	($err:expr) => {
+		Err($crate::errors::WinError::from($err))?;
+	}
 }

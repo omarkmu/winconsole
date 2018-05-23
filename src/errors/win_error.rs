@@ -1,4 +1,5 @@
 use super::*;
+use std::io::Error as IoError;
 
 macro_rules! win_errs {
 	($($(#[$item_attrs:meta])* $name:ident : $err_name:ident),*) => (
@@ -8,7 +9,7 @@ macro_rules! win_errs {
 		};
 
 		/// Contains wrapped error types.
-		#[derive(Clone, Debug, PartialEq)]
+		#[derive(Debug)]
 		pub enum WinError {
 			$(
 				$(#[$item_attrs])*
@@ -58,5 +59,5 @@ win_errs! {
 	/// An invalid handle error.
 	InvalidHandle: InvalidHandleError,
 	/// An IO or OS error.
-	Io: std::io::Error
+	Io: IoError
 }

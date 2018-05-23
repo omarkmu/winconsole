@@ -50,7 +50,7 @@ impl InputContext {
 	 # }
 	 ```
 	 */
-	pub fn get(&mut self) -> IoResult<Vec<InputEvent>> {
+	pub fn get(&mut self) -> WinResult<Vec<InputEvent>> {
 		self.collect(false, false)?;
 		let events = self.queue.clone();
 		self.queue.clear();
@@ -93,7 +93,7 @@ impl InputContext {
 	 # }
 	 ```
 	 */
-	pub fn peek(&mut self, max_length: usize) -> IoResult<Vec<InputEvent>> {
+	pub fn peek(&mut self, max_length: usize) -> WinResult<Vec<InputEvent>> {
 		let mut ret = Vec::new();
 
 		let events = {
@@ -144,7 +144,7 @@ impl InputContext {
 	 # }
 	 ```
 	 */
-	pub fn poll(&mut self) -> IoResult<InputEvent> {
+	pub fn poll(&mut self) -> WinResult<InputEvent> {
 		if self.queue.len() == 0 {
 			self.collect(false, false)?;
 			if self.queue.len() == 0 { return Ok(InputEvent::None); }
@@ -244,7 +244,7 @@ impl InputContext {
 	 # }
 	 ```
 	 */
-	pub fn wait(&mut self) -> IoResult<InputEvent> {
+	pub fn wait(&mut self) -> WinResult<InputEvent> {
 		if self.queue.len() == 0 {
 			self.collect(true, false)?;
 			if self.queue.len() == 0 { return Ok(InputEvent::None); }
@@ -265,7 +265,7 @@ impl InputContext {
 		}
 	}
 	
-	fn collect(&mut self, wait: bool, peek: bool) -> IoResult<Vec<InputEvent>> {
+	fn collect(&mut self, wait: bool, peek: bool) -> WinResult<Vec<InputEvent>> {
 		if !wait && Console::num_input_events()? == 0 { return Ok(Vec::new()); }
 
 		let records = if peek {

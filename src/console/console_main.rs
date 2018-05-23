@@ -27,7 +27,7 @@ impl Console {
 	 # }
 	 ```
 	 */
-	pub fn beep(frequency: u32, duration: u32) -> IoResult<()> {
+	pub fn beep(frequency: u32, duration: u32) -> WinResult<()> {
 		os_err!(unsafe { utilapiset::Beep(frequency, duration) });
 		Ok(())
 	}
@@ -46,7 +46,7 @@ impl Console {
 	 # }
 	 ```
 	 */
-	pub fn clear() -> BoxedResult<()> {
+	pub fn clear() -> WinResult<()> {
 		let size = Console::get_buffer_size()?;
 		let length = size.x as DWORD * size.y as DWORD;
 		Console::fill_char(32, length, COORD { X: 0, Y: 0 })?;
@@ -65,7 +65,7 @@ impl Console {
 	 # }
 	 ```
 	 */
-	pub fn clear_history() -> IoResult<()> {
+	pub fn clear_history() -> WinResult<()> {
 		let old = Console::get_history_info()?;
 		let mut empty = old.clone();
 		empty.size = 0;
@@ -103,7 +103,7 @@ impl Console {
 	 # }
 	 ```
 	 */
-	pub fn fill_character<T: Into<Option<u32>>>(chr: char, column: u16, row: u16, max_length: T) -> IoResult<u32> {
+	pub fn fill_character<T: Into<Option<u32>>>(chr: char, column: u16, row: u16, max_length: T) -> WinResult<u32> {
 		let coords = COORD { X: column as i16, Y: row as i16 };
 		let length = match max_length.into() {
 			Some(len) => len,
@@ -139,7 +139,7 @@ impl Console {
 	 # }
 	 ```
 	 */
-	pub fn fill_colors<T: Into<Option<u32>>>(colors: &(ConsoleColor, ConsoleColor), column: u16, row: u16, max_length: T) -> IoResult<u32> {
+	pub fn fill_colors<T: Into<Option<u32>>>(colors: &(ConsoleColor, ConsoleColor), column: u16, row: u16, max_length: T) -> WinResult<u32> {
 		let coords = COORD { X: column as i16, Y: row as i16 };
 		let length = match max_length.into() {
 			Some(len) => len,
@@ -166,7 +166,7 @@ impl Console {
 	 # }
 	 ```
 	 */
-	pub fn flush_input() -> IoResult<()> {
+	pub fn flush_input() -> WinResult<()> {
 		os_err!(unsafe {
 			let handle = handle!(STDIN);
 			wincon::FlushConsoleInputBuffer(handle)
@@ -185,8 +185,9 @@ impl Console {
 	 # }
 	 ```
 	 */
-	pub fn flush_output() -> IoResult<()> {
-		io::stdout().flush()
+	pub fn flush_output() -> WinResult<()> {
+		io::stdout().flush()?;
+		Ok(())
 	}
 	/**
 	 Sends a ctrl signal to a process group which shares the console.
@@ -207,7 +208,7 @@ impl Console {
 	 # }
 	 ```
 	 */
-	pub fn generate_ctrl_event<T: Into<Option<u32>>>(break_event: bool, process_group_id: T) -> IoResult<()> {
+	pub fn generate_ctrl_event<T: Into<Option<u32>>>(break_event: bool, process_group_id: T) -> WinResult<()> {
 		let id: u32 = match process_group_id.into() {
 			None => 0,
 			Some(id) => id
@@ -234,7 +235,7 @@ impl Console {
 	 # }
 	 ```
 	 */
-	pub fn getch(suppress: bool) -> BoxedResult<char> {
+	pub fn getch(suppress: bool) -> WinResult<char> {
 		let old_mode = Console::get_input_mode()?;
 		let mut mode = old_mode.clone();
 		mode.EchoInput = false;
@@ -242,9 +243,9 @@ impl Console {
 		Console::set_input_mode(mode)?;
 
 		let mut res: CHAR = 0;
-		os_err_boxed!(unsafe {
+		os_err!(unsafe {
 			let mut num: DWORD = 0;
-			let handle = handle_boxed!(STDIN);
+			let handle = handle!(STDIN);
 			let buffer_p = &mut res as *mut CHAR as *mut VOID;
 			let control_p: *mut CONSOLE_READCONSOLE_CONTROL = ptr::null_mut();
 			consoleapi::ReadConsoleA(handle, buffer_p, 1, &mut num, control_p)
@@ -271,7 +272,7 @@ impl Console {
 	 # }
 	 ```
 	 */
-	pub fn get_background_color() -> IoResult<ConsoleColor> {
+	pub fn get_background_color() -> WinResult<ConsoleColor> {
 		let attrs = Console::get_text_attributes()?;
 		Ok(ConsoleColor::from((attrs & 0xF0) >> 4))
 	}
@@ -288,7 +289,7 @@ impl Console {
 	 # }
 	 ```
 	 */
-	pub fn get_buffer_size() -> IoResult<Vector2<u16>> {
+	pub fn get_buffer_size() -> WinResult<Vector2<u16>> {
 		let coords = Console::get_screen_buffer_info()?.dwSize;
 		Ok(Vector2::new(coords.X as u16, coords.Y as u16))
 	}
@@ -308,7 +309,7 @@ impl Console {
 	 # }
 	 ```
 	 */
-	pub fn get_code_page_info(page: CodePage) -> IoResult<CodePageInfo> {
+	pub fn get_code_page_info(page: CodePage) -> WinResult<CodePageInfo> {
 		let mut info: CPINFOEXA = unsafe { mem::zeroed() };
 		let identifier: u16 = page.into();
 		os_err!(unsafe { winnls::GetCPInfoExA(identifier as u32, 0, &mut info) });
@@ -336,7 +337,7 @@ impl Console {
 	 # }
 	 ```
 	 */
-	pub fn get_color(color: ConsoleColor) -> IoResult<RGB8> {
+	pub fn get_color(color: ConsoleColor) -> WinResult<RGB8> {
 		let mapping = Console::get_color_mapping()?;
 		Ok(mapping[color.get_value() as usize])
 	}
@@ -355,7 +356,7 @@ impl Console {
 	 # }
 	 ```
 	 */
-	pub fn get_color_mapping() -> IoResult<[RGB8; 16]> {
+	pub fn get_color_mapping() -> WinResult<[RGB8; 16]> {
 		let colors = Console::get_screen_buffer_info_ex()?.ColorTable;
 		let mut ret = [RGB8{r: 0, g: 0, b: 0}; 16];
 		for i in 0..16 {
@@ -376,7 +377,7 @@ impl Console {
 	 # }
 	 ```
 	 */
-	pub fn get_cursor_position() -> IoResult<Vector2<u16>> {
+	pub fn get_cursor_position() -> WinResult<Vector2<u16>> {
 		let pos = Console::get_screen_buffer_info()?.dwCursorPosition;
 		Ok(Vector2::new(pos.X as u16, pos.Y as u16))
 	}
@@ -394,7 +395,7 @@ impl Console {
 	 # }
 	 ```
 	 */
-	pub fn get_cursor_size() -> IoResult<u8> {
+	pub fn get_cursor_size() -> WinResult<u8> {
 		let info = Console::get_cursor_info()?;
 		Ok(info.dwSize as u8)
 	}
@@ -411,7 +412,7 @@ impl Console {
 	 # }
 	 ```
 	 */
-	pub fn get_font() -> IoResult<ConsoleFont> {
+	pub fn get_font() -> WinResult<ConsoleFont> {
 		let info = Console::get_font_info_ex(false)?;
 		let size = info.dwFontSize;
 		Ok(ConsoleFont {
@@ -435,7 +436,7 @@ impl Console {
 	 # }
 	 ```
 	 */
-	pub fn get_foreground_color() -> IoResult<ConsoleColor> {
+	pub fn get_foreground_color() -> WinResult<ConsoleColor> {
 		let attrs = Console::get_text_attributes()?;
 		Ok(ConsoleColor::from(attrs & 0xF))
 	}
@@ -452,7 +453,7 @@ impl Console {
 	 # }
 	 ```
 	 */
-	pub fn get_history_info() -> IoResult<HistoryInfo> {
+	pub fn get_history_info() -> WinResult<HistoryInfo> {
 		let mut info: CONSOLE_HISTORY_INFO = unsafe { mem::zeroed() };
 		info.cbSize = mem::size_of::<CONSOLE_HISTORY_INFO>() as DWORD;
 		os_err!(unsafe { wincon::GetConsoleHistoryInfo(&mut info) });
@@ -493,7 +494,7 @@ impl Console {
 	 # }
 	 ```
 	 */
-	pub fn get_input_mode() -> IoResult<InputSettings> {
+	pub fn get_input_mode() -> WinResult<InputSettings> {
 		let mode = Console::get_mode(STDIN)?;
 		Ok(InputSettings::from(mode))
 	}
@@ -512,7 +513,7 @@ impl Console {
 	 # }
 	 ```
 	 */
-	pub fn get_installed_code_pages() -> BoxedResult<Vec<CodePage>> {
+	pub fn get_installed_code_pages() -> WinResult<Vec<CodePage>> {
 		Console::get_code_pages(1)
 	}
 	/**
@@ -528,7 +529,7 @@ impl Console {
 	 # }
 	 ```
 	 */
-	pub fn get_original_title() -> IoResult<String> {
+	pub fn get_original_title() -> WinResult<String> {
 		let mut buffer: [CHAR; MAX_PATH] = [0; MAX_PATH];
 
 		let length = unsafe {
@@ -567,7 +568,7 @@ impl Console {
 	 # }
 	 ```
 	 */
-	pub fn get_output_mode() -> IoResult<OutputSettings> {
+	pub fn get_output_mode() -> WinResult<OutputSettings> {
 		let mode = Console::get_mode(STDOUT)?;
 		Ok(OutputSettings::from(mode))
 	}
@@ -584,7 +585,7 @@ impl Console {
 	 # }
 	 ```
 	 */
-	pub fn get_selection_info() -> IoResult<SelectionInfo> {
+	pub fn get_selection_info() -> WinResult<SelectionInfo> {
 		let mut info: CONSOLE_SELECTION_INFO = unsafe { mem::zeroed() };
 		os_err!(unsafe { wincon::GetConsoleSelectionInfo(&mut info) });
 		
@@ -622,7 +623,7 @@ impl Console {
 	 # }
 	 ```
 	 */
-	pub fn get_state(copy_output: bool, copy_all: bool) -> BoxedResult<ConsoleState> {
+	pub fn get_state(copy_output: bool, copy_all: bool) -> WinResult<ConsoleState> {
 		let mut state = ConsoleState::new();
 		let buffer_size = Console::get_buffer_size()?;
 		let cursor_position = Console::get_cursor_position()?;
@@ -665,7 +666,7 @@ impl Console {
 	 # }
 	 ```
 	 */
-	pub fn get_supported_code_pages() -> BoxedResult<Vec<CodePage>> {
+	pub fn get_supported_code_pages() -> WinResult<Vec<CodePage>> {
 		Console::get_code_pages(2)
 	}
 	/**
@@ -681,7 +682,7 @@ impl Console {
 	 # }
 	 ```
 	 */
-	pub fn get_title() -> IoResult<String> {
+	pub fn get_title() -> WinResult<String> {
 		let mut buffer: [CHAR; MAX_PATH] = [0; MAX_PATH];
 
 		let length = unsafe {
@@ -705,7 +706,7 @@ impl Console {
 	 # }
 	 ```
 	 */
-	pub fn get_window_size() -> IoResult<Vector2<u16>> {
+	pub fn get_window_size() -> WinResult<Vector2<u16>> {
 		let rect = Console::get_screen_buffer_info()?.srWindow;
 		Ok(Vector2::new((rect.Right - rect.Left + 1) as u16, (rect.Bottom - rect.Top + 1) as u16))
 	}
@@ -722,7 +723,7 @@ impl Console {
 	 # }
 	 ```
 	 */
-	pub fn is_cursor_visible() -> IoResult<bool> {
+	pub fn is_cursor_visible() -> WinResult<bool> {
 		let info = Console::get_cursor_info()?;
 		Ok(info.bVisible == 1)
 	}
@@ -765,7 +766,7 @@ impl Console {
 	 # }
 	 ```
 	 */
-	pub fn map_color(color: ConsoleColor, rgb: RGB8) -> IoResult<()> {
+	pub fn map_color(color: ConsoleColor, rgb: RGB8) -> WinResult<()> {
 		let mut info = Console::get_screen_buffer_info_ex()?;
 		info.ColorTable[color.get_value() as usize] = make_colorref!(rgb);
 		info.srWindow.Bottom += 1;
@@ -794,12 +795,12 @@ impl Console {
 	 # }
 	 ```
 	 */
-	pub fn read_output<T: Into<Option<u32>>>(column: u16, row: u16, max_length: T) -> BoxedResult<String> {
+	pub fn read_output<T: Into<Option<u32>>>(column: u16, row: u16, max_length: T) -> WinResult<String> {
 		let buffer_size = Console::get_buffer_size()?;
 		if column >= buffer_size.x {
-			return Err(Box::new(ArgumentError::new("column", "column must be within the buffer")));
+			throw_err!(ArgumentError::new("column", "column must be within the buffer"));
 		} else if row >= buffer_size.y {
-			return Err(Box::new(ArgumentError::new("row", "row must be within the buffer")));
+			throw_err!(ArgumentError::new("row", "row must be within the buffer"));
 		}
 		let max_length = match max_length.into() {
 			Some(len) => len,
@@ -818,8 +819,8 @@ impl Console {
 		let mut buffer: Box<[CHAR]> = buf!(max_length as usize);
 		let coords = COORD { X: column as i16, Y: row as i16 };
 
-		os_err_boxed!(unsafe {
-			let handle = handle_boxed!(STDOUT);
+		os_err!(unsafe {
+			let handle = handle!(STDOUT);
 			let buffer_p = &mut (*buffer)[0] as *mut CHAR;
 			wincon::ReadConsoleOutputCharacterA(handle, buffer_p, max_length, coords, &mut num)
 		});
@@ -846,12 +847,12 @@ impl Console {
 	 # }
 	 ```
 	 */
-	pub fn read_output_colors<T: Into<Option<u32>>>(column: u16, row: u16, max_length: T) -> BoxedResult<Vec<(ConsoleColor, ConsoleColor)>> {
+	pub fn read_output_colors<T: Into<Option<u32>>>(column: u16, row: u16, max_length: T) -> WinResult<Vec<(ConsoleColor, ConsoleColor)>> {
 		let buffer_size = Console::get_buffer_size()?;
 		if column >= buffer_size.x {
-			return Err(Box::new(ArgumentError::new("column", "column must be within the buffer")));
+			throw_err!(ArgumentError::new("column", "column must be within the buffer"));
 		} else if row >= buffer_size.y {
-			return Err(Box::new(ArgumentError::new("row", "row must be within the buffer")));
+			throw_err!(ArgumentError::new("row", "row must be within the buffer"));
 		}
 		let max_length = match max_length.into() {
 			Some(len) => len,
@@ -869,8 +870,8 @@ impl Console {
 		let mut buffer: Box<[WORD]> = buf!(max_length as usize);
 		let coords = COORD { X: column as i16, Y: row as i16 };
 
-		os_err_boxed!(unsafe {
-			let handle = handle_boxed!(STDOUT);
+		os_err!(unsafe {
+			let handle = handle!(STDOUT);
 			let buffer_p = &mut (*buffer)[0] as *mut WORD;
 			wincon::ReadConsoleOutputAttribute(handle, buffer_p, max_length, coords, &mut num)
 		});
@@ -896,7 +897,7 @@ impl Console {
 	 # }
 	 ```
 	 */
-	pub fn set_background_color(color: ConsoleColor) -> IoResult<()> {
+	pub fn set_background_color(color: ConsoleColor) -> WinResult<()> {
 		let color = color as WORD;
 		let current = Console::get_text_attributes()?;
 
@@ -919,18 +920,18 @@ impl Console {
 	 # }
 	 ```
 	 */
-	pub fn set_buffer_size(width: u16, height: u16) -> BoxedResult<()> {
+	pub fn set_buffer_size(width: u16, height: u16) -> WinResult<()> {
 		let window_size = Console::get_window_size()?;
 
 		if width < window_size.x {
-			return Err(Box::new(ArgumentError::new("width", "width must be more than window width")));
+			throw_err!(ArgumentError::new("width", "width must be more than window width"));
 		} else if height < window_size.y {
-			return Err(Box::new(ArgumentError::new("height", "height must be more than window height")));
+			throw_err!(ArgumentError::new("height", "height must be more than window height"));
 		}
 		let coords = COORD { X: width as i16, Y: height as i16};
 
-		os_err_boxed!(unsafe {
-			let handle = handle_boxed!(STDOUT);
+		os_err!(unsafe {
+			let handle = handle!(STDOUT);
 			wincon::SetConsoleScreenBufferSize(handle, coords)
 		});
 		Ok(())
@@ -955,7 +956,7 @@ impl Console {
 	 # }
 	 ```
 	 */
-	pub fn set_color_mapping(mapping: &[RGB8; 16]) -> IoResult<()> {
+	pub fn set_color_mapping(mapping: &[RGB8; 16]) -> WinResult<()> {
 		let mut info = Console::get_screen_buffer_info_ex()?;
 		let mut colors = info.ColorTable;
 		for i in 0..16 {
@@ -995,7 +996,7 @@ impl Console {
 	 # See
 	 [HandlerRoutine](https://docs.microsoft.com/en-us/windows/console/handlerroutine).
 	 */
-	pub fn set_ctrl_handler(handler: Option<HandlerRoutine>, add: bool) -> IoResult<()> {
+	pub fn set_ctrl_handler(handler: Option<HandlerRoutine>, add: bool) -> WinResult<()> {
 		os_err!(unsafe{ consoleapi::SetConsoleCtrlHandler(handler, bool_to_num!(add)) });
 		Ok(())
 	}
@@ -1017,18 +1018,18 @@ impl Console {
 	 # }
 	 ```
 	 */
-	pub fn set_cursor_position(column: u16, row: u16) -> BoxedResult<()> {
+	pub fn set_cursor_position(column: u16, row: u16) -> WinResult<()> {
 		let buffer_size = Console::get_buffer_size()?;
 
 		if column >= buffer_size.x {
-			return Err(Box::new(ArgumentError::new("column", "column must be within the buffer bounds")));
+			throw_err!(ArgumentError::new("column", "column must be within the buffer bounds"));
 		} else if row >= buffer_size.y {
-			return Err(Box::new(ArgumentError::new("row", "row must be within the buffer bounds")));
+			throw_err!(ArgumentError::new("row", "row must be within the buffer bounds"));
 		}
 
 		let coords = COORD {X: column as i16, Y: row as i16};
-		os_err_boxed!(unsafe {
-			let handle = handle_boxed!(STDOUT);
+		os_err!(unsafe {
+			let handle = handle!(STDOUT);
 			wincon::SetConsoleCursorPosition(handle, coords)
 		});
 		Ok(())
@@ -1048,9 +1049,9 @@ impl Console {
 	 # }
 	 ```
 	 */
-	pub fn set_cursor_size(size: u8) -> BoxedResult<()> {
+	pub fn set_cursor_size(size: u8) -> WinResult<()> {
 		if size > 100 {
-			return Err(Box::new(ArgumentError::new("size", "size must be in [0, 100] (inclusive)")));
+			throw_err!(ArgumentError::new("size", "size must be in [0, 100] (inclusive)"));
 		}
 
 		let mut info = Console::get_cursor_info()?;
@@ -1074,7 +1075,7 @@ impl Console {
 	 # }
 	 ```
 	 */
-	pub fn set_cursor_visible(visible: bool) -> IoResult<()> {
+	pub fn set_cursor_visible(visible: bool) -> WinResult<()> {
 		let mut info = Console::get_cursor_info()?;
 		info.bVisible = bool_to_num!(visible);
 		Console::set_cursor_info(&info)?;
@@ -1098,7 +1099,7 @@ impl Console {
 	 # }
 	 ```
 	 */
-	pub fn set_font(font: &ConsoleFont) -> IoResult<()> {
+	pub fn set_font(font: &ConsoleFont) -> WinResult<()> {
 		let mut info: CONSOLE_FONT_INFOEX = unsafe { mem::zeroed() };
 		info.nFont = font.index as DWORD;
 		info.dwFontSize = COORD { X: font.size.x as i16, Y: font.size.y as i16 };
@@ -1122,7 +1123,7 @@ impl Console {
 	 # }
 	 ```
 	 */
-	pub fn set_foreground_color(color: ConsoleColor) -> IoResult<()> {
+	pub fn set_foreground_color(color: ConsoleColor) -> WinResult<()> {
 		let color = color as WORD;
 		let current = Console::get_text_attributes()?;
 
@@ -1145,7 +1146,7 @@ impl Console {
 	 # }
 	 ```
 	 */
-	pub fn set_history_info(history: HistoryInfo) -> IoResult<()> {
+	pub fn set_history_info(history: HistoryInfo) -> WinResult<()> {
 		let mut info: CONSOLE_HISTORY_INFO = unsafe { mem::zeroed() };
 		info.cbSize = mem::size_of::<CONSOLE_HISTORY_INFO>() as DWORD;
 		info.HistoryBufferSize = history.size;
@@ -1170,7 +1171,7 @@ impl Console {
 	 # }
 	 ```
 	 */
-	pub fn set_input_code_page(page: CodePage) -> IoResult<()> {
+	pub fn set_input_code_page(page: CodePage) -> WinResult<()> {
 		let page: u16 = page.into();
 		os_err!(unsafe { wincon::SetConsoleCP(page as u32) });
 		Ok(())
@@ -1193,9 +1194,9 @@ impl Console {
 	 # }
 	 ```
 	 */
-	pub fn set_input_mode(settings: InputSettings) -> BoxedResult<()> {
+	pub fn set_input_mode(settings: InputSettings) -> WinResult<()> {
 		if settings.EchoInput && !settings.LineInput {
-			return Err(Box::new(ArgumentError::new("settings", "disabling LineInput requires EchoInput to be disabled")));
+			throw_err!(ArgumentError::new("settings", "disabling LineInput requires EchoInput to be disabled"));
 		}
 		let mode: u32 = settings.into();
 		Console::set_mode(STDIN, mode)?;
@@ -1216,7 +1217,7 @@ impl Console {
 	 # }
 	 ```
 	 */
-	pub fn set_output_code_page(page: CodePage) -> IoResult<()> {
+	pub fn set_output_code_page(page: CodePage) -> WinResult<()> {
 		let page: u16 = page.into();
 		os_err!(unsafe { wincon::SetConsoleOutputCP(page as u32) });
 		Ok(())
@@ -1239,7 +1240,7 @@ impl Console {
 	 # }
 	 ```
 	 */
-	pub fn set_output_mode(settings: OutputSettings) -> IoResult<()> {
+	pub fn set_output_mode(settings: OutputSettings) -> WinResult<()> {
 		let mode: u32 = settings.into();
 		Console::set_mode(STDOUT, mode)
 	}
@@ -1264,7 +1265,7 @@ impl Console {
 	 # }
 	 ```
 	 */
-	pub fn set_state(state: &ConsoleState, clear: bool, write_output: bool) -> BoxedResult<()> {
+	pub fn set_state(state: &ConsoleState, clear: bool, write_output: bool) -> WinResult<()> {
 		Console::set_background_color(state.background_color)?;
 		Console::set_color_mapping(&state.color_mapping)?;
 		Console::set_cursor_size(state.cursor_size)?;
@@ -1298,7 +1299,7 @@ impl Console {
 	 # }
 	 ```
 	 */
-	pub fn set_title(title: &str) -> IoResult<()> {
+	pub fn set_title(title: &str) -> WinResult<()> {
 		let mut buffer = str_to_buf!(title, MAX_PATH);
 		os_err!(unsafe {
 			let buffer_p = &mut buffer[0] as *mut CHAR;
@@ -1329,13 +1330,13 @@ impl Console {
 	 # }
 	 ```
 	 */
-	pub fn write_output(string: &str, column: u16, row: u16) -> BoxedResult<u32> {
+	pub fn write_output(string: &str, column: u16, row: u16) -> WinResult<u32> {
 		let buffer_size = Console::get_buffer_size()?;
 
 		if column >= buffer_size.x {
-			return Err(Box::new(ArgumentError::new("column", "column must be within the buffer")));
+			throw_err!(ArgumentError::new("column", "column must be within the buffer"));
 		} else if row >= buffer_size.y {
-			return Err(Box::new(ArgumentError::new("row", "row must be within the buffer")));
+			throw_err!(ArgumentError::new("row", "row must be within the buffer"));
 		}
 
 		let mut num: DWORD = 0;
@@ -1344,8 +1345,8 @@ impl Console {
 		let length = chars.len() as DWORD;
 		if length == 0 { return Ok(0); }
 
-		os_err_boxed!(unsafe {
-			let handle = handle_boxed!(STDOUT);
+		os_err!(unsafe {
+			let handle = handle!(STDOUT);
 			let chars_p = &(*chars)[0] as *const CHAR;
 			wincon::WriteConsoleOutputCharacterA(handle, chars_p, length, coords, &mut num)
 		});
@@ -1379,13 +1380,13 @@ impl Console {
 	 # }
 	 ```
 	 */
-	pub fn write_output_colors(colors: &Vec<(ConsoleColor, ConsoleColor)>, column: u16, row: u16) -> BoxedResult<u32> {
+	pub fn write_output_colors(colors: &Vec<(ConsoleColor, ConsoleColor)>, column: u16, row: u16) -> WinResult<u32> {
 		let buffer_size = Console::get_buffer_size()?;
 
 		if column >= buffer_size.x {
-			return Err(Box::new(ArgumentError::new("column", "column must be within the buffer")));
+			throw_err!(ArgumentError::new("column", "column must be within the buffer"));
 		} else if row >= buffer_size.y {
-			return Err(Box::new(ArgumentError::new("row", "row must be within the buffer")));
+			throw_err!(ArgumentError::new("row", "row must be within the buffer"));
 		}
 
 		let mut num: DWORD = 0;
@@ -1401,8 +1402,8 @@ impl Console {
 			res.into_boxed_slice()
 		};
 
-		os_err_boxed!(unsafe {
-			let handle = handle_boxed!(STDOUT);
+		os_err!(unsafe {
+			let handle = handle!(STDOUT);
 			let attrs_p = &(*attrs)[0] as *const WORD;
 			wincon::WriteConsoleOutputAttribute(handle, attrs_p, length, coords, &mut num)
 		});
@@ -1410,7 +1411,7 @@ impl Console {
 		Ok(num)
 	}
 
-	fn fill_attributes(attributes: WORD, length: DWORD, coords: COORD) -> IoResult<DWORD> {
+	fn fill_attributes(attributes: WORD, length: DWORD, coords: COORD) -> WinResult<DWORD> {
 		let mut num: DWORD = 0;
 		os_err!(unsafe {
 			let handle = handle!(STDOUT);
@@ -1418,7 +1419,7 @@ impl Console {
 		});
 		Ok(num)
 	}
-	fn fill_char(character: CHAR, length: DWORD, coords: COORD) -> IoResult<DWORD> {
+	fn fill_char(character: CHAR, length: DWORD, coords: COORD) -> WinResult<DWORD> {
 		let mut num: DWORD = 0;
 		os_err!(unsafe {
 			let handle = handle!(STDOUT);
@@ -1426,7 +1427,7 @@ impl Console {
 		});
 		Ok(num)
 	}
-	fn get_code_pages(flags: u32) -> BoxedResult<Vec<CodePage>> {
+	fn get_code_pages(flags: u32) -> WinResult<Vec<CodePage>> {
 		unsafe extern "system" fn enum_pages(ptr: *mut i8) -> i32 {
 			let mut identifier = String::new();
 			let mut offset = 0;
@@ -1440,7 +1441,10 @@ impl Console {
 				Ok(id) => {
 					let cp = CodePage::from(id);
 					if cp != CodePage::Invalid {
-						PAGES.lock().unwrap().push(cp);
+						match PAGES.lock() {
+							Ok(mut pages) => pages.push(cp),
+							Err(_) => return 0
+						}
 					}
 				},
 				Err(_) => ()
@@ -1449,16 +1453,25 @@ impl Console {
 			return 1;
 		}
 
-		os_err_boxed!(unsafe {
+		os_err!(unsafe {
 			winnls::EnumSystemCodePagesA(Some(enum_pages), flags)
 		});
 
-		let mut pages = PAGES.lock()?;
-		let ret = pages.clone();
-		pages.clear();
-		Ok(ret)
+		match PAGES.lock() {
+			Ok(mut pages) => {
+				let ret = pages.clone();
+				pages.clear();
+				return Ok(ret);
+			},
+			Err(err) => {
+				let mut pages = err.into_inner();
+				let ret = pages.clone();
+				pages.clear();
+				return Ok(ret);
+			}
+		}
 	}
-	fn get_cursor_info() -> IoResult<CONSOLE_CURSOR_INFO> {
+	fn get_cursor_info() -> WinResult<CONSOLE_CURSOR_INFO> {
 		let mut info = unsafe { mem::zeroed() };
 		os_err!(unsafe {
 			let handle = handle!(STDOUT);
@@ -1466,7 +1479,7 @@ impl Console {
 		});
 		Ok(info)
 	}
-	fn get_font_info_ex(maximum: bool) -> IoResult<CONSOLE_FONT_INFOEX> {
+	fn get_font_info_ex(maximum: bool) -> WinResult<CONSOLE_FONT_INFOEX> {
 		let mut info: CONSOLE_FONT_INFOEX = unsafe { mem::zeroed() };
 		os_err!(unsafe {
 			let handle = handle!(STDOUT);
@@ -1475,7 +1488,7 @@ impl Console {
 		});
 		Ok(info)
 	}
-	fn get_mode(handle_id: DWORD) -> IoResult<DWORD> {
+	fn get_mode(handle_id: DWORD) -> WinResult<DWORD> {
 		let mut num: DWORD = 0;
 		os_err!(unsafe {
 			let handle = handle!(handle_id);
@@ -1483,7 +1496,7 @@ impl Console {
 		});
 		Ok(num)
 	}
-	fn get_screen_buffer_info() -> IoResult<CONSOLE_SCREEN_BUFFER_INFO> {
+	fn get_screen_buffer_info() -> WinResult<CONSOLE_SCREEN_BUFFER_INFO> {
 		let mut csbi = unsafe { mem::zeroed() };
 		os_err!(unsafe {
 			let handle = handle!(STDOUT);
@@ -1491,7 +1504,7 @@ impl Console {
 		});
 		Ok(csbi)
 	}
-	fn get_screen_buffer_info_ex() -> IoResult<CONSOLE_SCREEN_BUFFER_INFOEX> {
+	fn get_screen_buffer_info_ex() -> WinResult<CONSOLE_SCREEN_BUFFER_INFOEX> {
 		let mut csbi: CONSOLE_SCREEN_BUFFER_INFOEX = unsafe { mem::zeroed() };
 		os_err!(unsafe {
 			let handle = handle!(STDOUT);
@@ -1500,11 +1513,11 @@ impl Console {
 		});
 		Ok(csbi)
 	}
-	fn get_text_attributes() -> IoResult<WORD> {
+	fn get_text_attributes() -> WinResult<WORD> {
 		let csbi = Console::get_screen_buffer_info()?;
 		Ok(csbi.wAttributes)
 	}
-	fn set_cursor_info(value: &CONSOLE_CURSOR_INFO) -> IoResult<()> {
+	fn set_cursor_info(value: &CONSOLE_CURSOR_INFO) -> WinResult<()> {
 		os_err!(unsafe {
 			let handle = handle!(STDOUT);
 			let value_p = value as *const CONSOLE_CURSOR_INFO;
@@ -1512,7 +1525,7 @@ impl Console {
 		});
 		Ok(())
 	}
-	fn set_font_info_ex(value: &mut CONSOLE_FONT_INFOEX, maximum: bool) -> IoResult<()> {
+	fn set_font_info_ex(value: &mut CONSOLE_FONT_INFOEX, maximum: bool) -> WinResult<()> {
 		os_err!(unsafe {
 			let handle = handle!(STDOUT);
 			value.cbSize = mem::size_of::<CONSOLE_FONT_INFOEX>() as DWORD;
@@ -1521,14 +1534,14 @@ impl Console {
 		});
 		Ok(())
 	}
-	fn set_mode(handle_id: DWORD, value: DWORD) -> IoResult<()> {
+	fn set_mode(handle_id: DWORD, value: DWORD) -> WinResult<()> {
 		os_err!(unsafe {
 			let handle = handle!(handle_id);
 			consoleapi::SetConsoleMode(handle, value)
 		});
 		Ok(())
 	}
-	fn set_screen_buffer_info_ex(value: &mut CONSOLE_SCREEN_BUFFER_INFOEX) -> IoResult<()> {
+	fn set_screen_buffer_info_ex(value: &mut CONSOLE_SCREEN_BUFFER_INFOEX) -> WinResult<()> {
 		os_err!(unsafe {
 			let handle = handle!(STDOUT);
 			let value_p = value as *mut CONSOLE_SCREEN_BUFFER_INFOEX;
@@ -1536,7 +1549,7 @@ impl Console {
 		});
 		Ok(())
 	}
-	fn set_text_attributes(value: WORD) -> IoResult<()> {
+	fn set_text_attributes(value: WORD) -> WinResult<()> {
 		os_err!(unsafe {
 			let handle = handle!(STDOUT);
 			wincon::SetConsoleTextAttribute(handle, value)

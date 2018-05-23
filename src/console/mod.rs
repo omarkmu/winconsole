@@ -1,7 +1,6 @@
 use cgmath::Vector2;
 use rgb::RGB8;
 
-use std;
 use std::{io, mem, ptr};
 
 use winapi::ctypes::c_void as VOID;
@@ -26,9 +25,7 @@ use winapi::um::winnt::{CHAR, WCHAR};
 
 use super::errors::*;
 
-type BoxedResult<T> = Result<T, Box<std::error::Error>>;
 type HandlerRoutine = unsafe extern "system" fn(_: u32) -> i32;
-type IoResult<T> = io::Result<T>;
 
 mod console_main;
 pub use self::console_main::Console;

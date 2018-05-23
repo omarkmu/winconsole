@@ -1,6 +1,10 @@
 use super::console::*;
+use super::errors::*;
+
 use cgmath::Vector2;
-use std::{io, fmt, fmt::{Display, Formatter}, mem};
+
+use std::{fmt, fmt::{Display, Formatter}, mem};
+
 use winapi::um::wincon::{
 	COORD,
 	FOCUS_EVENT,
@@ -43,7 +47,5 @@ pub use self::mouse_event::MouseEvent;
 pub use self::mouse_move_event::MouseMoveEvent;
 pub use self::mouse_wheel_event::MouseWheelEvent;
 pub use self::resize_event::ResizeEvent;
-
-type IoResult<T> = io::Result<T>;
 
 const BUTTON_VIRTUAL: [u8; 5] = [1, 2, 4, 5, 6];

@@ -16,7 +16,7 @@ impl Input {
 	 # }
 	 ```
 	 */
-	pub fn flush() -> IoResult<()> {
+	pub fn flush() -> WinResult<()> {
 		Console::flush_input()
 	}
 	/**
@@ -33,7 +33,7 @@ impl Input {
 	 # }
 	 ```
 	 */
-	pub fn get_num_input_events() -> IoResult<u32> {
+	pub fn get_num_input_events() -> WinResult<u32> {
 		Console::num_input_events()
 	}
 	/**
@@ -49,7 +49,7 @@ impl Input {
 	 # }
 	 ```
 	 */
-	pub fn get_num_mouse_buttons() -> IoResult<u32> {
+	pub fn get_num_mouse_buttons() -> WinResult<u32> {
 		Console::num_mouse_buttons()
 	}
 	/**
@@ -88,7 +88,7 @@ impl Input {
 	 # }
 	 ```
 	 */
-	pub fn start() -> IoResult<InputContext> {
+	pub fn start() -> WinResult<InputContext> {
 		let mut ctx = InputContext::new(Console::get_input_mode()?);
 		ctx.reset();
 		Console::flush_input()?;
@@ -113,7 +113,7 @@ impl Input {
 	 # }
 	 ```
 	 */
-	pub fn write<T: Into<InputEvent>, U: Into<Option<[bool; 5]>>>(event: T, button_status: U) -> IoResult<()> {
+	pub fn write<T: Into<InputEvent>, U: Into<Option<[bool; 5]>>>(event: T, button_status: U) -> WinResult<()> {
 		let event = event.into();
 		if event == InputEvent::None { return Ok(()); }
 		

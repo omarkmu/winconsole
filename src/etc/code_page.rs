@@ -1,8 +1,6 @@
 use super::CodePageInfo;
 use super::super::console::Console;
-use std;
-
-type IoResult<T> = std::io::Result<T>;
+use super::super::errors::WinResult;
 
 enumeration! {
 	/// Represents a console code page.
@@ -331,7 +329,7 @@ impl CodePage {
 	 println!("{}", info.name);
 	 # }
 	 */
-	pub fn get_info(&self) -> IoResult<CodePageInfo> {
+	pub fn get_info(&self) -> WinResult<CodePageInfo> {
 		Console::get_code_page_info(*self)
 	}
 }
