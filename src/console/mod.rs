@@ -11,6 +11,8 @@ use winapi::um::winbase::{
 	STD_INPUT_HANDLE as STDIN
 };
 use winapi::um::wincon::{
+	CHAR_INFO,
+	CHAR_INFO_Char,
 	COORD,
 	CONSOLE_CURSOR_INFO,
 	CONSOLE_HISTORY_INFO,
@@ -18,7 +20,8 @@ use winapi::um::wincon::{
 	CONSOLE_READCONSOLE_CONTROL,
 	CONSOLE_SCREEN_BUFFER_INFO,
 	CONSOLE_SCREEN_BUFFER_INFOEX,
-	CONSOLE_SELECTION_INFO
+	CONSOLE_SELECTION_INFO,
+	SMALL_RECT
 };
 use winapi::um::winnls::CPINFOEXA;
 use winapi::um::winnt::{CHAR, WCHAR};

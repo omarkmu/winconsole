@@ -594,19 +594,21 @@ impl Console {
 	pub fn get_selection_info() -> WinResult<SelectionInfo> {
 		let mut info: CONSOLE_SELECTION_INFO = unsafe { mem::zeroed() };
 		os_err!(unsafe { wincon::GetConsoleSelectionInfo(&mut info) });
-		
+
 		let anchor = info.dwSelectionAnchor;
 		let rect = info.srSelection;
 		let flags = info.dwFlags;
+		let rect = Rect::new(rect.Top as u16, rect.Left as u16, rect.Bottom as u16, rect.Top as u16);
 
 		let mut selection = SelectionInfo::new();
 		selection.anchor = Vector2::new(anchor.X as u16, anchor.Y as u16);
-		selection.bottom_right = Vector2::new(rect.Right as u16, rect.Bottom as u16);
+		selection.bottom_right = rect.bottom_right();
 		selection.empty = flags & 0x2 == 0;
 		selection.mouse_down = flags & 0x8 != 0;
+		selection.rect = rect;
 		selection.selecting = flags & 0x1 != 0;
-		selection.top_left = Vector2::new(rect.Left as u16, rect.Top as u16);
-		
+		selection.top_left = rect.top_left();
+
 		Ok(selection)
 	}
 	/**
@@ -783,6 +785,88 @@ impl Console {
 		info.srWindow.Bottom += 1;
 		info.srWindow.Right += 1;
 		Console::set_screen_buffer_info_ex(&mut info)
+	}
+	/**
+	 Moves data from a rectangle of the console output to another point in the output.
+	 The effects of the move can be limited by specifying a clipping rectangle,
+	 so the contents of the console screen buffer outside the clipping rectangle are unchanged.
+
+	 # Arguments
+	 * `scroll` - The rectangle to be moved.
+	 * `dest` - The upper-left corner of the new location of the contents.
+	 * `clip` - An optional clipping rectangle.
+	 * `fill_char` - A character to fill in spaces which were left empty as a result of the move.
+	 * `fill_fg_color` - The foreground to fill in spaces which were left empty as a result of the move.
+	 * `fill_bg_color` - The background to fill in spaces which were left empty as a result of the move.
+
+	 # Examples
+	 ```
+	 # extern crate winconsole;
+	 # extern crate cgmath;
+	 # use cgmath::Vector2;
+	 # use winconsole::console::{Console, Rect};
+	 # fn main() {
+	 let scroll = Rect::new(0, 0, 10, 10);
+	 let dest = Vector2::new(0, 3);
+	 Console::move_contents(scroll, dest, None, None, None, None).unwrap();
+	 # }
+	 ```
+	 */
+	pub fn move_contents<T: Into<Option<Rect>>, U: Into<Option<char>>, V: Into<Option<ConsoleColor>>>(scroll: Rect, dest: Vector2<i16>,
+		clip: T, fill_char: U, fill_fg_color: V, fill_bg_color: V) -> WinResult<()> {
+		
+		let fill_char = match fill_char.into() {
+			Some(f) => f,
+			None => ' '
+		};
+		let attrs = {
+			let fg_color = match fill_fg_color.into() {
+				Some(f) => f,
+				None => Console::get_foreground_color()?
+			};
+			let bg_color = match fill_bg_color.into() {
+				Some(f) => f,
+				None => Console::get_background_color()?
+			};
+			((bg_color as WORD) << 4) | (fg_color as WORD)
+		};
+		let dest = COORD { X: dest.x, Y: dest.y};
+		let scroll = SMALL_RECT {
+			Top: scroll.top as i16,
+			Bottom: scroll.bottom as i16,
+			Left: scroll.left as i16,
+			Right: scroll.right as i16
+		};
+
+		os_err!(unsafe {
+			let handle = handle!(STDOUT);
+			let scroll_p = &scroll as *const SMALL_RECT;
+			let clip_p = match clip.into() {
+				Some(c) => {
+					let rect = SMALL_RECT {
+						Top: c.top as i16,
+						Bottom: c.bottom as i16,
+						Left: c.left as i16,
+						Right: c.right as i16
+					};
+					&rect as *const SMALL_RECT
+				},
+				None => ptr::null()
+			};
+			let info_p = {
+				let mut char_info: CHAR_INFO = mem::zeroed();
+				let mut chr: CHAR_INFO_Char = mem::zeroed();
+				*chr.AsciiChar_mut() = fill_char as CHAR;
+
+				char_info.Attributes = attrs;
+				char_info.Char = chr;
+				&char_info as *const CHAR_INFO
+			};
+
+			wincon::ScrollConsoleScreenBufferA(handle, scroll_p, clip_p, dest, info_p)
+		});
+
+		Ok(())
 	}
 	/**
 	 Reads a string from the console output starting at a specified location.
