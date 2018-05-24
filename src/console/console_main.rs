@@ -197,9 +197,9 @@ impl Console {
 	 Sends a ctrl signal to a process group which shares the console.
 
 	 # Arguments
-	 `break_event`- Should a CTRL + BREAK signal be generated? Otherwise, a CTRL + C signal will be generated.
+	 * `break_event`- Should a CTRL + BREAK signal be generated? Otherwise, a CTRL + C signal will be generated.
 	 A CTRL + C signal cannot be generated for a process group.
-	 `process_group_id` - The ID of the process group to generate the event on. If None, generate the event on
+	 * `process_group_id` - The ID of the process group to generate the event on. If None, generate the event on
 	 processes which share the console.
 
 	 # Examples
