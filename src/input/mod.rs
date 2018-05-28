@@ -1,3 +1,4 @@
+use super::console;
 use super::console::*;
 use super::errors::*;
 

@@ -29,7 +29,7 @@ extern crate rgb;
 
 #[macro_use] mod macros;
 
-/// Contains console-related structs and enums.
+/// Contains console-related methods, structs, and enums.
 pub mod console;
 /// Contains various error types.
 pub mod errors;

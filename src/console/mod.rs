@@ -35,5 +35,7 @@ mod etc;
 #[cfg(feature = "input")]
 mod console_input;
 
-pub use self::console_main::Console;
+pub use self::console_main::*;
 pub use self::etc::*;
+#[cfg(feature = "input")]
+pub(crate) use self::console_input::*;

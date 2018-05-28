@@ -17,7 +17,7 @@ impl Input {
 	 ```
 	 */
 	pub fn flush() -> WinResult<()> {
-		Console::flush_input()
+		console::flush_input()
 	}
 	/**
 	 Returns the number of input events which are available in the console
@@ -34,7 +34,7 @@ impl Input {
 	 ```
 	 */
 	pub fn get_num_input_events() -> WinResult<u32> {
-		Console::num_input_events()
+		console::num_input_events()
 	}
 	/**
 	 Returns the number of mouse buttons available for the console.
@@ -50,7 +50,7 @@ impl Input {
 	 ```
 	 */
 	pub fn get_num_mouse_buttons() -> WinResult<u32> {
-		Console::num_mouse_buttons()
+		console::num_mouse_buttons()
 	}
 	/**
 	 Returns a boolean representing whether or not the key is currently pressed.
@@ -72,7 +72,7 @@ impl Input {
 		if key_code == KeyCode::None || key_code == KeyCode::NoMapping {
 			return false;
 		}
-		Console::get_key_state(key_code as u8 as u32)
+		console::get_key_state(key_code as u8 as u32)
 	}
 	/**
 	 Creates and returns an InputContext, and initialises input.
@@ -89,9 +89,9 @@ impl Input {
 	 ```
 	 */
 	pub fn start() -> WinResult<InputContext> {
-		let mut ctx = InputContext::new(Console::get_input_mode()?);
+		let mut ctx = InputContext::new(console::get_input_mode()?);
 		ctx.reset();
-		Console::flush_input()?;
+		console::flush_input()?;
 		Ok(ctx)
 	}
 	/**
@@ -121,14 +121,14 @@ impl Input {
 			None => {
 				let mut status = [false; 5];
 				for i in 0..5 {
-					status[i] = Console::get_key_state(BUTTON_VIRTUAL[i] as u32);
+					status[i] = console::get_key_state(BUTTON_VIRTUAL[i] as u32);
 				}
 				status
 			},
 			Some(status) => status
 		};
 		
-		Console::write_input(vec![Input::convert_to_record(event, button_status)])
+		console::write_input(vec![Input::convert_to_record(event, button_status)])
 	}
 
 	pub(crate) fn convert_events(records: &Vec<INPUT_RECORD>, ctx: &mut InputContext) -> Vec<InputEvent> {

@@ -54,12 +54,12 @@ macro_rules! buf_to_vec {
 macro_rules! cprint {
     ($color:expr, $($arg:tt)*) => {
 		{
-			use $crate::console::Console;
-			let old_color = Console::get_foreground_color().unwrap();
-			Console::set_foreground_color($color).unwrap();
+			use $crate::console;
+			let old_color = console::get_foreground_color().unwrap();
+			console::set_foreground_color($color).unwrap();
 			print!($($arg)*);
-			Console::flush_output().unwrap();
-			Console::set_foreground_color(old_color).unwrap();
+			console::flush_output().unwrap();
+			console::set_foreground_color(old_color).unwrap();
 		}
 	}
 }
@@ -70,12 +70,13 @@ macro_rules! cprint {
  # Examples
  ```
  #[macro_use] extern crate winconsole;
- use winconsole::console::{Console, ConsoleColor};
+ use winconsole::console;
+ use winconsole::console::ConsoleColor;
  
  fn main() {
  	let person = "Ada";
  	print!("Hello, ");
- 	Console::flush_output().unwrap();
+ 	console::flush_output().unwrap();
  	cprintln!(ConsoleColor::Magenta, "{}.", person);
  	cprintln!(ConsoleColor::Blue, "How are you?");
  }

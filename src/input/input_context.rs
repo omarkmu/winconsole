@@ -70,7 +70,7 @@ impl InputContext {
 	 # }
 	 ```
 	 */
-	pub fn get_filter(&mut self) -> InputFilter {
+	pub fn get_filter(&self) -> InputFilter {
 		self.filter
 	}
 	/**
@@ -172,7 +172,7 @@ impl InputContext {
 		self.held_keys.clear();
 		self.queue.clear();
 		for i in 0..5 {
-			self.button_status[i] = Console::get_key_state(BUTTON_VIRTUAL[i] as u32);
+			self.button_status[i] = console::get_key_state(BUTTON_VIRTUAL[i] as u32);
 		}
 	}
 	/**
@@ -266,12 +266,12 @@ impl InputContext {
 	}
 	
 	fn collect(&mut self, wait: bool, peek: bool) -> WinResult<Vec<InputEvent>> {
-		if !wait && Console::num_input_events()? == 0 { return Ok(Vec::new()); }
+		if !wait && console::num_input_events()? == 0 { return Ok(Vec::new()); }
 
 		let records = if peek {
-			Console::peek_input(1000)?
+			console::peek_input(1000)?
 		} else {
-			Console::read_input(1000)?
+			console::read_input(1000)?
 		};
 
 		let events = Input::convert_events(&records, self);
@@ -294,7 +294,7 @@ impl InputContext {
 impl Drop for InputContext {
 	fn drop(&mut self) {
 		if self.restore_on_drop {
-			Console::set_input_mode(self.original_mode).unwrap();
+			console::set_input_mode(self.original_mode).unwrap();
 		}
 	}
 }

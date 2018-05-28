@@ -1,5 +1,5 @@
 use super::CodePageInfo;
-use ::console::Console;
+use ::console;
 use ::errors::WinResult;
 
 enumeration! {
@@ -330,6 +330,6 @@ impl CodePage {
 	 # }
 	 */
 	pub fn get_info(&self) -> WinResult<CodePageInfo> {
-		Console::get_code_page_info(*self)
+		console::get_code_page_info(*self)
 	}
 }
