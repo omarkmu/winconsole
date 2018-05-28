@@ -323,7 +323,7 @@ impl CodePage {
 	 # Examples
 	 ```
 	 # extern crate winconsole;
-	 # use winconsole::console::{Console, CodePage};
+	 # use winconsole::console::CodePage;
 	 # fn main() {
 	 let info = CodePage::utf_8.get_info().unwrap();
 	 println!("{}", info.name);
