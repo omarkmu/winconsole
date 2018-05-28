@@ -31,8 +31,9 @@ use super::errors::*;
 type HandlerRoutine = unsafe extern "system" fn(_: u32) -> i32;
 
 mod console_main;
-pub use self::console_main::Console;
-pub use super::etc::*;
-
+mod etc;
 #[cfg(feature = "input")]
 mod console_input;
+
+pub use self::console_main::Console;
+pub use self::etc::*;

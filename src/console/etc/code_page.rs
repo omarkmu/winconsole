@@ -1,6 +1,6 @@
 use super::CodePageInfo;
-use super::super::console::Console;
-use super::super::errors::WinResult;
+use ::console::Console;
+use ::errors::WinResult;
 
 enumeration! {
 	/// Represents a console code page.
