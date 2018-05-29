@@ -7,7 +7,7 @@
  Add the following to `Cargo.toml`:
  ```toml
  [dependencies]
- winconsole = "0.3"
+ winconsole = "0.4"
  ```
  Then, add the following to your code:
 
@@ -18,7 +18,7 @@
  Add this to `Cargo.toml`:
  ```toml
  [dependencies.winconsole]
- version = "0.3"
+ version = "0.4"
  features = ["input"]
  ```
  */
