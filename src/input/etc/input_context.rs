@@ -1,4 +1,5 @@
 use super::*;
+use ::input;
 
 /// Used to obtain input events.
 pub struct InputContext {
@@ -22,9 +23,9 @@ impl InputContext {
 	 # Examples
 	 ```
 	 # extern crate winconsole;
-	 # use winconsole::input::Input;
+	 # use winconsole::input;
 	 # fn main() {
-	 let mut ctx = Input::start().unwrap();
+	 let mut ctx = input::start().unwrap();
 	 ctx.flush();
 	 # }
 	 ```
@@ -38,9 +39,9 @@ impl InputContext {
 	 # Examples
 	 ```
 	 # extern crate winconsole;
-	 # use winconsole::input::Input;
+	 # use winconsole::input;
 	 # fn main() {
-	 let mut ctx = Input::start().unwrap();
+	 let mut ctx = input::start().unwrap();
 	 loop {
 	 	let events = ctx.get().unwrap();
 	 	for event in events {
@@ -62,9 +63,9 @@ impl InputContext {
 	 # Examples
 	 ```
 	 # extern crate winconsole;
-	 # use winconsole::input::Input;
+	 # use winconsole::input;
 	 # fn main() {
-	 let mut ctx = Input::start().unwrap();
+	 let mut ctx = input::start().unwrap();
 	 let filter = ctx.get_filter();
 	 println!("MouseDown events filtered? {}", filter.MouseDown);
 	 # }
@@ -82,9 +83,9 @@ impl InputContext {
 	 # Examples
 	 ```
 	 # extern crate winconsole;
-	 # use winconsole::input::Input;
+	 # use winconsole::input;
 	 # fn main() {
-	 let mut ctx = Input::start().unwrap();
+	 let mut ctx = input::start().unwrap();
 	 let peeked = ctx.peek(5).unwrap();
 	 println!("Peeked: {}", peeked.len());
 	 for event in peeked.iter() {
@@ -132,9 +133,10 @@ impl InputContext {
 	 # Examples
 	 ```
 	 # extern crate winconsole;
-	 # use winconsole::input::{Input, InputContext, InputEvent};
+	 # use winconsole::input;
+	 # use winconsole::input::InputEvent;
 	 # fn main() {
-	 let mut ctx = Input::start().unwrap();
+	 let mut ctx = input::start().unwrap();
 	 loop {
 	 	let event = ctx.poll().unwrap();
 	 	if event != InputEvent::None {
@@ -158,9 +160,9 @@ impl InputContext {
 	 # Examples
 	 ```
 	 # extern crate winconsole;
-	 # use winconsole::input::Input;
+	 # use winconsole::input;
 	 # fn main() {
-	 let mut ctx = Input::start().unwrap();
+	 let mut ctx = input::start().unwrap();
 	 ctx.wait().unwrap();
 	 ctx.reset();
 	 let event = ctx.wait().unwrap();
@@ -184,9 +186,10 @@ impl InputContext {
 	 # Examples
 	 ```
 	 # extern crate winconsole;
-	 # use winconsole::input::{Input, InputFilter};
+	 # use winconsole::input;
+	 # use winconsole::input::InputFilter;
 	 # fn main() {
-	 let mut ctx = Input::start().unwrap();
+	 let mut ctx = input::start().unwrap();
 	 let mut filter = InputFilter::new();
 	 filter.MouseDown = true;
 	 ctx.set_filter(filter);
@@ -215,9 +218,10 @@ impl InputContext {
 	 # Examples
 	 ```
 	 # extern crate winconsole;
-	 # use winconsole::input::{Input, InputEvent, FocusEvent};
+	 # use winconsole::input;
+	 # use winconsole::input::{InputEvent, FocusEvent};
 	 # fn main() {
-	 let mut ctx = Input::start().unwrap();
+	 let mut ctx = input::start().unwrap();
 	 let mut focus_event = FocusEvent::new();
 	 focus_event.focused = true;
 	 ctx.simulate(focus_event);
@@ -236,9 +240,9 @@ impl InputContext {
 	 # Examples
 	 ```
 	 # extern crate winconsole;
-	 # use winconsole::input::Input;
+	 # use winconsole::input;
 	 # fn main() {
-	 let mut ctx = Input::start().unwrap();
+	 let mut ctx = input::start().unwrap();
 	 let event = ctx.wait().unwrap();
 	 println!("{}", event);
 	 # }
@@ -274,7 +278,7 @@ impl InputContext {
 			console::read_input(1000)?
 		};
 
-		let events = Input::convert_events(&records, self);
+		let events = input::convert_events(&records, self);
 		if peek { return Ok(events); }
 
 		for event in events {

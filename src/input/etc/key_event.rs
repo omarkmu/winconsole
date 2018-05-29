@@ -2,7 +2,7 @@ use super::*;
 
 /**
  Represents an input event which occurred on the keyboard.
-*/
+ */
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct KeyEvent {
 	/// The character associated with the pressed key.
