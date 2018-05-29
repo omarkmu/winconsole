@@ -10,19 +10,19 @@
  winconsole = "0.4"
  ```
  Then, add the following to your code:
-
  ```rust
  extern crate winconsole;
  ```
 
  There are two optional features: `input` and `serde`.  
- 	* `input` - Includes input-related functions.
- 	* `serde` - Support for [serde](https://serde.rs/).
+ * `input` - Includes input-related functions.
+ * `serde` - Support for [serde](https://serde.rs/).
+
  Additional features must be added to `Cargo.toml`:
  ```toml
  [dependencies.winconsole]
  version = "0.4"
- features = ["input", "serde"]
+ features = ["input", "serde"] 
  ```
  */
 extern crate winapi;
