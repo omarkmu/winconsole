@@ -35,7 +35,7 @@ impl InputContext {
 	}
 	/**
 	 Returns all of the input events which are currently in the queue.
-	
+
 	 # Examples
 	 ```
 	 # extern crate winconsole;
@@ -76,10 +76,10 @@ impl InputContext {
 	}
 	/**
 	 Reads data from the input queue without discarding it.
-	
+
 	 # Arguments
 	 * `max_length` - The maximum amount of input events to return.
-	
+
 	 # Examples
 	 ```
 	 # extern crate winconsole;
@@ -129,7 +129,7 @@ impl InputContext {
 	}
 	/**
 	 Returns a single input event, or InputEvent::None if none are available.
-	
+
 	 # Examples
 	 ```
 	 # extern crate winconsole;
@@ -156,7 +156,7 @@ impl InputContext {
 	/**
 	 Resets the internal state of the context, clearing data about which keys and buttons are
 	 currently held along with the event queue.
-	
+
 	 # Examples
 	 ```
 	 # extern crate winconsole;
@@ -182,7 +182,7 @@ impl InputContext {
 
 	 # Arguments
 	 * `filter` - The InputFilter to apply.
-	
+
 	 # Examples
 	 ```
 	 # extern crate winconsole;
@@ -211,10 +211,10 @@ impl InputContext {
 	}
 	/**
 	 Adds an input event to the input queue.
-	
+
 	 # Arguments
 	 * `event` - The InputEvent to add.
-	
+
 	 # Examples
 	 ```
 	 # extern crate winconsole;
@@ -225,7 +225,7 @@ impl InputContext {
 	 let mut focus_event = FocusEvent::new();
 	 focus_event.focused = true;
 	 ctx.simulate(focus_event);
-	
+
 	 let event = ctx.wait().unwrap();
 	 println!("{}", event);
 	 # }
@@ -236,7 +236,7 @@ impl InputContext {
 	}
 	/**
 	 Waits until an input event is available and returns it.
-	
+
 	 # Examples
 	 ```
 	 # extern crate winconsole;
@@ -253,7 +253,7 @@ impl InputContext {
 			self.collect(true, false)?;
 			if self.queue.len() == 0 { return Ok(InputEvent::None); }
 		}
-		
+
 		Ok(self.queue.remove(0))
 	}
 
@@ -268,7 +268,7 @@ impl InputContext {
 			filter: InputFilter::new()
 		}
 	}
-	
+
 	fn collect(&mut self, wait: bool, peek: bool) -> WinResult<Vec<InputEvent>> {
 		if !wait && console::num_input_events()? == 0 { return Ok(Vec::new()); }
 

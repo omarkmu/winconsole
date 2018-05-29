@@ -10,7 +10,7 @@ pub struct ArgumentError {
 impl ArgumentError {
 	/**
 	 Creates a new ArgumentError.
-	
+
 	 # Arguments
 	 * `argument` - The name of the offending argument.
 	 * `message` - A message describing the error.

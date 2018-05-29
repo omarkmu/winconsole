@@ -83,7 +83,7 @@ fn title() {
 
     console::set_title("Some New Console Title").unwrap();
     assert_eq!(console::get_title().unwrap(), "Some New Console Title");
-    
+
     console::set_title(&original_title).unwrap();
     assert_eq!(console::get_title().unwrap(), original_title)
 }

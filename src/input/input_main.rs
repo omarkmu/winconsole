@@ -114,7 +114,7 @@ pub fn start() -> WinResult<InputContext> {
 pub fn write<T: Into<InputEvent>, U: Into<Option<[bool; 5]>>>(event: T, button_status: U) -> WinResult<()> {
 	let event = event.into();
 	if event == InputEvent::None { return Ok(()); }
-	
+
 	let button_status = match button_status.into() {
 		None => {
 			let mut status = [false; 5];
@@ -125,7 +125,7 @@ pub fn write<T: Into<InputEvent>, U: Into<Option<[bool; 5]>>>(event: T, button_s
 		},
 		Some(status) => status
 	};
-	
+
 	console::write_input(vec![self::convert_to_record(event, button_status)])
 }
 
@@ -268,7 +268,7 @@ fn convert_to_record(event: InputEvent, button_status: [bool; 5]) -> INPUT_RECOR
 		},
 		InputEvent::MouseDown(mev) | InputEvent::MouseUp(mev) => {
 			record.EventType = MOUSE_EVENT;
-			
+
 			let control_key_state: u16 = mev.modifiers.into();
 			let mut state = 0;
 			for i in 0..5 {
@@ -277,7 +277,7 @@ fn convert_to_record(event: InputEvent, button_status: [bool; 5]) -> INPUT_RECOR
 			if mev.button > 0 {
 				state |= bool_to_num!(mev.pressed) << (mev.button - 1);
 			}
-			
+
 			unsafe {
 				*ev.MouseEvent_mut() = MOUSE_EVENT_RECORD {
 					dwMousePosition: COORD {
@@ -317,7 +317,7 @@ fn convert_to_record(event: InputEvent, button_status: [bool; 5]) -> INPUT_RECOR
 				MOUSE_WHEELED
 			};
 			let state = (Wrapping(mwev.delta as u32) * Wrapping(65536u32)).0;
-			
+
 			unsafe {
 				*ev.MouseEvent_mut() = MOUSE_EVENT_RECORD {
 					dwMousePosition: COORD {

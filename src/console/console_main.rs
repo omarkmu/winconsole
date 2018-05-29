@@ -51,7 +51,7 @@ pub fn clear() -> WinResult<()> {
 }
 /**
  Clears the console history.
- 
+
  # Examples
  ```
  # extern crate winconsole;
@@ -814,7 +814,7 @@ pub fn map_color(color: ConsoleColor, rgb: RGB8) -> WinResult<()> {
  */
 pub fn move_contents<T: Into<Option<Rect>>, U: Into<Option<char>>, V: Into<Option<ConsoleColor>>>(scroll: Rect, dest: Vector2<i16>,
 	clip: T, fill_char: U, fill_fg_color: V, fill_bg_color: V) -> WinResult<()> {
-	
+
 	let fill_char = match fill_char.into() {
 		Some(f) => f,
 		None => ' '
@@ -1233,7 +1233,7 @@ pub fn set_foreground_color(color: ConsoleColor) -> WinResult<()> {
 }
 /**
  Sets information about console history settings.
- 
+
  # Arguments
  * `history` - The HistoryInfo to assign.
 

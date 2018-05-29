@@ -25,7 +25,7 @@ impl Rect {
 			right
 		}
 	}
-	
+
 	/**
 	 Returns a Vector representing the bottom-right corner of the rectangle.
 	 */

@@ -37,12 +37,12 @@ macro_rules! buf_to_vec {
 /**
  Prints a colored message to the console.
  This has a side effect of flushing the console output.
- 
+
  # Examples
  ```
  #[macro_use] extern crate winconsole;
  use winconsole::console::ConsoleColor;
- 
+
  fn main() {
  	let thing = "world";
  	cprint!(ConsoleColor::Blue, "Hello, {}!", thing);
@@ -66,13 +66,13 @@ macro_rules! cprint {
 /**
  Prints a colored message to the console with a newline.
  This has a side effect of flushing the console output.
- 
+
  # Examples
  ```
  #[macro_use] extern crate winconsole;
  use winconsole::console;
  use winconsole::console::ConsoleColor;
- 
+
  fn main() {
  	let person = "Ada";
  	print!("Hello, ");

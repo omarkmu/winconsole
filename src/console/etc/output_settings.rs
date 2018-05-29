@@ -1,7 +1,7 @@
 flags! {
 	/**
 	 Settings related to console output.  
-	
+
 	 # See
 	 [GetConsoleMode](https://docs.microsoft.com/en-us/windows/console/getconsolemode).
 	 */
