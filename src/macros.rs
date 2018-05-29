@@ -97,6 +97,7 @@ macro_rules! enumeration_internal {
 		use std::fmt::{Display, Formatter};
 		$(#[$attrs])*
 		#[derive(Clone, Copy, Debug, PartialEq)]
+		#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 		pub enum $name {
 			$(
 				$(#[$item_attrs])*
@@ -170,6 +171,7 @@ macro_rules! flags_internal {
 		use std::fmt;
         $(#[$attrs])*
 		#[derive(Clone, Copy, Debug, PartialEq)]
+		#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 		#[allow(non_snake_case)]
         pub struct $name {
 			$(

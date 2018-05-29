@@ -2,6 +2,7 @@ use super::*;
 
 /// An input event.
 #[derive(Clone, Copy, Debug, PartialEq)]
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 pub enum InputEvent {
 	/// An empty input event.
 	None,

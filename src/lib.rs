@@ -14,20 +14,27 @@
  ```rust
  extern crate winconsole;
  ```
- In order to use features related to input, the `input` feature is required.  
- Add this to `Cargo.toml`:
+
+ There are two optional features: `input` and `serde`.  
+ 	* `input` - Includes input-related functions.
+ 	* `serde` - Support for [serde](https://serde.rs/).
+ Additional features must be added to `Cargo.toml`:
  ```toml
  [dependencies.winconsole]
  version = "0.4"
- features = ["input"]
+ features = ["input", "serde"]
  ```
  */
 extern crate winapi;
 extern crate cgmath;
-#[macro_use] extern crate lazy_static;
+#[macro_use]
+extern crate lazy_static;
 extern crate rgb;
+#[cfg(feature = "serde")] #[macro_use]
+extern crate serde;
 
-#[macro_use] mod macros;
+#[macro_use]
+mod macros;
 
 /// Contains console-related functions, structs, and enums.
 pub mod console;

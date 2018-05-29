@@ -2,6 +2,7 @@ use super::*;
 
 /// Represents an input event which occurred as a result of a mouse scroll wheel.
 #[derive(Clone, Copy, Debug, PartialEq)]
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 pub struct MouseWheelEvent {
 	/// The direction and value of the scroll.
 	pub delta: i16,

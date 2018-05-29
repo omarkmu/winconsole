@@ -2,6 +2,7 @@ use super::InputEvent;
 
 /// Represents an input event which occurred as a result of window focus changing.
 #[derive(Clone, Copy, Debug, PartialEq)]
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 pub struct FocusEvent {
 	/// Is the window focused?
 	pub focused: bool

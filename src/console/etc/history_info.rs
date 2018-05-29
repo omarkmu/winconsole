@@ -1,5 +1,6 @@
 /// Information about console history.
 #[derive(Clone, Copy, Debug, PartialEq)]
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 pub struct HistoryInfo {
 	/// The number of commands kept in each history buffer.
 	pub size: u32,

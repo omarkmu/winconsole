@@ -1,5 +1,6 @@
 /// Describes an error related to an argument.
 #[derive(Clone, Debug, PartialEq)]
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 pub struct ArgumentError {
 	/// The name of the offending argument.
 	pub argument: String,

@@ -3,6 +3,7 @@ use super::Rect;
 
 /// Information about a console selection.
 #[derive(Clone, Copy, Debug, PartialEq)]
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 pub struct SelectionInfo {
 	/// The console selection anchor.
 	pub anchor: Vector2<u16>,

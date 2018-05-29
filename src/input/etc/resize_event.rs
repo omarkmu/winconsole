@@ -2,6 +2,7 @@ use super::*;
 
 /// Represents an input event which occurred as a result of a buffer resize.
 #[derive(Clone, Copy, Debug, PartialEq)]
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 pub struct ResizeEvent {
 	/// The size of the screen buffer.
 	pub size: Vector2<u16>

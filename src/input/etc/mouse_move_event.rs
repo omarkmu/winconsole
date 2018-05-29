@@ -2,6 +2,7 @@ use super::*;
 
 /// Represents an input event which occurred as a result of mouse movement.
 #[derive(Clone, Copy, Debug, PartialEq)]
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 pub struct MouseMoveEvent {
 	/// A ControlKeyState object describing the state of control keys.
 	pub modifiers: ControlKeyState,

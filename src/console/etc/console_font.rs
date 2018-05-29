@@ -2,6 +2,7 @@ use cgmath::Vector2;
 
 /// Represents a usable console font.
 #[derive(Clone, Debug, PartialEq)]
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 pub struct ConsoleFont {
 	/**
 	 An integer which describes the font family.

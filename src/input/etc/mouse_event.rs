@@ -2,6 +2,7 @@ use super::*;
 
 /// Represents an input event which occurred on a mouse button.
 #[derive(Clone, Copy, Debug, PartialEq)]
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 pub struct MouseEvent {
 	/// The mouse button the event occurred on.
 	pub button: u8,

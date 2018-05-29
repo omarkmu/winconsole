@@ -2,6 +2,7 @@ use super::CodePage;
 
 /// Information about a code page.
 #[derive(Clone, Debug, PartialEq)]
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 pub struct CodePageInfo {
 	/// The maximum length, in bytes, of a character in the code page.
 	pub max_char_size: u8,

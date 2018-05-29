@@ -12,10 +12,14 @@ Then, add the following to your code:
 ```rust
 extern crate winconsole;
 ```
-In order to use features related to input, the `input` feature is required.  
-Add this to `Cargo.toml`:
+
+There are two optional features: `input` and `serde`.  
+* `input` - Includes input-related functions.
+* `serde` - Support for [serde](https://serde.rs/).
+
+Additional features must be added to `Cargo.toml`:
 ```toml
 [dependencies.winconsole]
 version = "0.4"
-features = ["input"]
+features = ["input", "serde"]
 ```
