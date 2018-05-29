@@ -111,7 +111,7 @@ pub fn start() -> WinResult<InputContext> {
  # }
  ```
  */
-pub fn write<T: Into<InputEvent>, U: Into<Option<[bool; 5]>>>(event: T, button_status: U) -> WinResult<()> {
+pub fn write(event: impl Into<InputEvent>, button_status: impl Into<Option<[bool; 5]>>) -> WinResult<()> {
 	let event = event.into();
 	if event == InputEvent::None { return Ok(()); }
 

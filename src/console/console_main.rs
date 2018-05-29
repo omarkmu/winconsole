@@ -101,7 +101,7 @@ pub fn clear_history() -> WinResult<()> {
  # }
  ```
  */
-pub fn fill_character<T: Into<Option<u32>>>(chr: char, column: u16, row: u16, max_length: T) -> WinResult<u32> {
+pub fn fill_character(chr: char, column: u16, row: u16, max_length: impl Into<Option<u32>>) -> WinResult<u32> {
 	let coords = COORD { X: column as i16, Y: row as i16 };
 	let length = match max_length.into() {
 		Some(len) => len,
@@ -139,7 +139,7 @@ pub fn fill_character<T: Into<Option<u32>>>(chr: char, column: u16, row: u16, ma
  # }
  ```
  */
-pub fn fill_colors<T: Into<Option<u32>>>(colors: &(ConsoleColor, ConsoleColor), column: u16, row: u16, max_length: T) -> WinResult<u32> {
+pub fn fill_colors(colors: &(ConsoleColor, ConsoleColor), column: u16, row: u16, max_length: impl Into<Option<u32>>) -> WinResult<u32> {
 	let coords = COORD { X: column as i16, Y: row as i16 };
 	let length = match max_length.into() {
 		Some(len) => len,
@@ -209,7 +209,7 @@ pub fn flush_output() -> WinResult<()> {
  # }
  ```
  */
-pub fn generate_ctrl_event<T: Into<Option<u32>>>(break_event: bool, process_group_id: T) -> WinResult<()> {
+pub fn generate_ctrl_event(break_event: bool, process_group_id: impl Into<Option<u32>>) -> WinResult<()> {
 	let id: u32 = match process_group_id.into() {
 		None => 0,
 		Some(id) => id
@@ -812,8 +812,8 @@ pub fn map_color(color: ConsoleColor, rgb: RGB8) -> WinResult<()> {
  # }
  ```
  */
-pub fn move_contents<T: Into<Option<Rect>>, U: Into<Option<char>>, V: Into<Option<ConsoleColor>>>(scroll: Rect, dest: Vector2<i16>,
-	clip: T, fill_char: U, fill_fg_color: V, fill_bg_color: V) -> WinResult<()> {
+pub fn move_contents(scroll: Rect, dest: Vector2<i16>, clip: impl Into<Option<Rect>>, fill_char: impl Into<Option<char>>,
+	fill_fg_color: impl Into<Option<ConsoleColor>>, fill_bg_color: impl Into<Option<ConsoleColor>>) -> WinResult<()> {
 
 	let fill_char = match fill_char.into() {
 		Some(f) => f,
@@ -891,7 +891,7 @@ pub fn move_contents<T: Into<Option<Rect>>, U: Into<Option<char>>, V: Into<Optio
  # }
  ```
  */
-pub fn read_output<T: Into<Option<u32>>>(column: u16, row: u16, max_length: T) -> WinResult<String> {
+pub fn read_output(column: u16, row: u16, max_length: impl Into<Option<u32>>) -> WinResult<String> {
 	let buffer_size = get_buffer_size()?;
 	if column >= buffer_size.x {
 		throw_err!(ArgumentError::new("column", "column must be within the buffer"));
@@ -944,7 +944,7 @@ pub fn read_output<T: Into<Option<u32>>>(column: u16, row: u16, max_length: T) -
  # }
  ```
  */
-pub fn read_output_colors<T: Into<Option<u32>>>(column: u16, row: u16, max_length: T) -> WinResult<Vec<(ConsoleColor, ConsoleColor)>> {
+pub fn read_output_colors(column: u16, row: u16, max_length: impl Into<Option<u32>>) -> WinResult<Vec<(ConsoleColor, ConsoleColor)>> {
 	let buffer_size = get_buffer_size()?;
 	if column >= buffer_size.x {
 		throw_err!(ArgumentError::new("column", "column must be within the buffer"));

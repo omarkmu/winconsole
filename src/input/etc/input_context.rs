@@ -231,7 +231,7 @@ impl InputContext {
 	 # }
 	 ```
 	 */
-	pub fn simulate<T: Into<InputEvent>>(&mut self, event: T) {
+	pub fn simulate(&mut self, event: impl Into<InputEvent>) {
 		self.push(event.into());
 	}
 	/**
