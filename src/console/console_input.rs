@@ -2,9 +2,21 @@ use super::*;
 use winapi::um::{wincon::INPUT_RECORD, winuser};
 
 pub(crate) fn get_key_state(key: u32) -> bool {
-	let num: i16;
-	unsafe { num = winuser::GetAsyncKeyState(key as i32) }
-	num & (1 << 15) != 0
+	let num = unsafe { winuser::GetAsyncKeyState(key as i32) as u16 };
+	num & 0x8000 != 0
+}
+pub(crate) fn get_key_toggle(key: u32) -> bool {
+	let num = unsafe { winuser::GetKeyState(key as i32) as u16 };
+	num & 0x1 != 0
+}
+pub(crate) fn get_keyboard_state() -> WinResult<[u8; 256]> {
+	let mut arr = [0; 256];
+	os_err!(unsafe {
+		let arr_p = &mut arr[0] as *mut u8;
+		winuser::GetKeyState(0);
+		winuser::GetKeyboardState(arr_p)
+	});
+	Ok(arr)
 }
 pub(crate) fn num_input_events() -> WinResult<u32> {
 	let mut num: DWORD = 0;

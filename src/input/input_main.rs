@@ -49,6 +49,31 @@ pub fn get_num_mouse_buttons() -> WinResult<u32> {
 	console::num_mouse_buttons()
 }
 /**
+ Returns a list of keys that are currently in the pressed state.
+
+ # Examples
+ ```
+ # extern crate winconsole;
+ # use winconsole::input;
+ # fn main() {
+ let pressed = input::get_pressed_keys().unwrap();
+ for key in pressed {
+ 	println!("{} is down", key);
+ }
+ # }
+ ```
+ */
+pub fn get_pressed_keys() -> WinResult<Vec<KeyCode>> {
+	let mut ret = Vec::new();
+	let state = console::get_keyboard_state()?;
+	for (i, n) in state.iter().enumerate() {
+		let key = KeyCode::from(i as u8);
+		if key == KeyCode::None || key == KeyCode::NoMapping { continue; }
+		if n & 0x80 != 0 { ret.push(key); }
+	}
+	Ok(ret)
+}
+/**
  Returns a boolean representing whether or not the key is currently pressed.
 
  # Arguments
@@ -70,6 +95,31 @@ pub fn is_key_down(key_code: KeyCode) -> bool {
 		return false;
 	}
 	console::get_key_state(key_code as u8 as u32)
+}
+/**
+ Returns a boolean representing whether or not a key such as
+ CapsLock or NumLock is toggled. This is insignificant for
+ non-toggle keys.
+
+ # Arguments
+ * `key_code` - The KeyCode to retrieve the status of.
+
+ # Examples
+ ```
+ # extern crate winconsole;
+ # use winconsole::input;
+ # use winconsole::input::KeyCode;
+ # fn main() {
+ let pressed = input::is_key_toggled(KeyCode::Capital);
+ println!("Is CapsLock on? {}", pressed);
+ # }
+ ```
+ */
+pub fn is_key_toggled(key_code: KeyCode) -> bool {
+	if key_code == KeyCode::None || key_code == KeyCode::NoMapping {
+		return false;
+	}
+	console::get_key_toggle(key_code as u8 as u32)
 }
 /**
  Creates and returns an InputContext, and initialises input.
