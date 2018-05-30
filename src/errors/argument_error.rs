@@ -16,10 +16,10 @@ impl ArgumentError {
 	 * `argument` - The name of the offending argument.
 	 * `message` - A message describing the error.
 	 */
-	pub fn new(argument: &str, message: &str) -> ArgumentError {
+	pub fn new(argument: impl Into<String>, message: impl Into<String>) -> ArgumentError {
 		ArgumentError {
-			argument: String::from(argument),
-			message: String::from(message)
+			argument: argument.into(),
+			message: message.into()
 		}
 	}
 }
