@@ -45,7 +45,7 @@ impl ConsoleState {
 		ConsoleState {
 			background_color: ConsoleColor::Black,
 			buffer_size: Vector2::new(0, 0),
-			color_mapping: [RGB8 {r: 0, g: 0, b: 0}; 16],
+			color_mapping: [RGB8 { r: 0, g: 0, b: 0 }; 16],
 			cursor_position: Vector2::new(0, 0),
 			cursor_size: 0,
 			cursor_visible: false,

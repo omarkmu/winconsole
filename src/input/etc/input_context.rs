@@ -12,6 +12,7 @@ pub struct InputContext {
 	pub(crate) held_keys: Vec<KeyCode>,
 
 	filter: InputFilter,
+	filter_value: u16,
 	original_mode: InputSettings,
 	queue: Vec<InputEvent>
 }
@@ -52,7 +53,7 @@ impl InputContext {
 	 ```
 	 */
 	pub fn get(&mut self) -> WinResult<Vec<InputEvent>> {
-		self.collect(false, false)?;
+		self.collect(false, false, 1000)?;
 		let events = self.queue.clone();
 		self.queue.clear();
 		Ok(events)
@@ -94,37 +95,12 @@ impl InputContext {
 	 # }
 	 ```
 	 */
-	pub fn peek(&mut self, max_length: usize) -> WinResult<Vec<InputEvent>> {
-		let mut ret = Vec::new();
-
-		let events = {
-			let mut len = max_length;
-			let mut ret = Vec::new();
-			let filter: u16 = self.filter.into();
-			loop {
-				if len == 0 {
-					break;
-				} else if len < 1000 {
-					len = 0;
-				} else {
-					len -= 1000;
-				}
-				let evs = self.collect(false, true)?;
-				for ev in evs {
-					if filter & ev.get_type() == 0 {
-						ret.push(ev);
-					}
-				}
-			}
-			ret
-		};
-
-		let mut read = 0;
-		for event in events {
-			read += 1;
-			if read > max_length { break; }
-			ret.push(event);
-		}
+	pub fn peek(&mut self, max_length: u32) -> WinResult<Vec<InputEvent>> {
+		let filter = self.filter_value;
+		let ret = self.collect(false, true, max_length)?
+			.into_iter()
+			.filter(|event| filter & event.get_type() == 0)
+			.collect();
 		Ok(ret)
 	}
 	/**
@@ -148,7 +124,7 @@ impl InputContext {
 	 */
 	pub fn poll(&mut self) -> WinResult<InputEvent> {
 		if self.queue.len() == 0 {
-			self.collect(false, false)?;
+			self.collect(false, false, 1000)?;
 			if self.queue.len() == 0 { return Ok(InputEvent::None); }
 		}
 		Ok(self.queue.remove(0))
@@ -207,6 +183,7 @@ impl InputContext {
 			}
 		}
 
+		self.filter_value = filter;
 		self.queue = queue;
 	}
 	/**
@@ -250,7 +227,7 @@ impl InputContext {
 	 */
 	pub fn wait(&mut self) -> WinResult<InputEvent> {
 		if self.queue.len() == 0 {
-			self.collect(true, false)?;
+			self.collect(true, false, 1000)?;
 			if self.queue.len() == 0 { return Ok(InputEvent::None); }
 		}
 
@@ -265,17 +242,18 @@ impl InputContext {
 			restore_on_drop: true,
 			held_keys: Vec::new(),
 			queue: Vec::new(),
-			filter: InputFilter::new()
+			filter: InputFilter::from(1),
+			filter_value: 1
 		}
 	}
 
-	fn collect(&mut self, wait: bool, peek: bool) -> WinResult<Vec<InputEvent>> {
+	fn collect(&mut self, wait: bool, peek: bool, max_length: u32) -> WinResult<Vec<InputEvent>> {
 		if !wait && console::num_input_events()? == 0 { return Ok(Vec::new()); }
 
 		let records = if peek {
-			console::peek_input(1000)?
+			console::peek_input(max_length as usize)?
 		} else {
-			console::read_input(1000)?
+			console::read_input(max_length as usize)?
 		};
 
 		let events = input::convert_events(&records, self);
@@ -287,9 +265,7 @@ impl InputContext {
 		Ok(Vec::new())
 	}
 	fn push(&mut self, event: InputEvent) {
-		if event == InputEvent::None { return; }
-		let filter: u16 = self.filter.into();
-		if filter & event.get_type() == 0 {
+		if self.filter_value & event.get_type() == 0 {
 			self.queue.push(event);
 		}
 	}
@@ -298,7 +274,7 @@ impl InputContext {
 impl Drop for InputContext {
 	fn drop(&mut self) {
 		if self.restore_on_drop {
-			console::set_input_mode(self.original_mode).unwrap();
+			console::set_input_mode(self.original_mode).unwrap_or(())
 		}
 	}
 }

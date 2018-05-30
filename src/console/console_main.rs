@@ -362,7 +362,7 @@ pub fn get_color(color: ConsoleColor) -> WinResult<RGB8> {
  */
 pub fn get_color_mapping() -> WinResult<[RGB8; 16]> {
 	let colors = get_screen_buffer_info_ex()?.ColorTable;
-	let mut ret = [RGB8{r: 0, g: 0, b: 0}; 16];
+	let mut ret = [RGB8 { r: 0, g: 0, b: 0 }; 16];
 	for i in 0..16 {
 		ret[i] = make_rgb!(colors[i]);
 	}
@@ -800,7 +800,7 @@ pub fn is_valid_code_page(identifier: u16) -> bool {
  # use winconsole::console::ConsoleColor;
  # fn main() {
  use rgb::RGB8;
- console::map_color(ConsoleColor::Black, RGB8 {r: 255, g: 255, b: 255}).unwrap();
+ console::map_color(ConsoleColor::Black, RGB8 { r: 255, g: 255, b: 255 }).unwrap();
  # }
  ```
  */
@@ -856,7 +856,7 @@ pub fn move_contents(scroll: Rect, dest: Vector2<i16>, clip: impl Into<Option<Re
 		};
 		((bg_color as WORD) << 4) | (fg_color as WORD)
 	};
-	let dest = COORD { X: dest.x, Y: dest.y};
+	let dest = COORD { X: dest.x, Y: dest.y };
 	let scroll = SMALL_RECT {
 		Top: scroll.top as i16,
 		Bottom: scroll.bottom as i16,
@@ -1099,7 +1099,7 @@ pub fn set_buffer_size(width: u16, height: u16) -> WinResult<()> {
 	} else if height < window_size.y {
 		throw_err!(ArgumentError::new("height", "height must be more than window height"));
 	}
-	let coords = COORD { X: width as i16, Y: height as i16};
+	let coords = COORD { X: width as i16, Y: height as i16 };
 
 	os_err!(unsafe {
 		let handle = handle!(STDOUT);
@@ -1122,7 +1122,7 @@ pub fn set_buffer_size(width: u16, height: u16) -> WinResult<()> {
  # fn main() {
  use rgb::RGB8;
  let mut mapping = console::get_color_mapping().unwrap();
- mapping[0] = RGB8 {r: 255, g: 255, b: 255};
+ mapping[0] = RGB8 { r: 255, g: 255, b: 255 };
  console::set_color_mapping(&mapping).unwrap();
  # }
  ```
@@ -1199,7 +1199,7 @@ pub fn set_cursor_position(column: u16, row: u16) -> WinResult<()> {
 		throw_err!(ArgumentError::new("row", "row must be within the buffer bounds"));
 	}
 
-	let coords = COORD {X: column as i16, Y: row as i16};
+	let coords = COORD { X: column as i16, Y: row as i16 };
 	os_err!(unsafe {
 		let handle = handle!(STDOUT);
 		wincon::SetConsoleCursorPosition(handle, coords)
