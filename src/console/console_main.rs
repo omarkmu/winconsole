@@ -521,6 +521,32 @@ pub fn get_installed_code_pages() -> WinResult<Vec<CodePage>> {
 	get_code_pages(1)
 }
 /**
+ Returns the size of the largest possible console window in character cells,
+ based on the current font and the size of the display.
+
+ # Examples
+ ```
+ # extern crate winconsole;
+ # use winconsole::console;
+ # fn main() {
+ let largest_size = console::get_largest_window_size().unwrap();
+ println!("Largest size: {:?}", largest_size);
+ # }
+ ```
+ */
+pub fn get_largest_window_size() -> WinResult<Vector2<u16>> {
+	let coord = unsafe {
+		let handle = handle!(STDOUT);
+		wincon::GetLargestConsoleWindowSize(handle)
+	};
+
+	if coord.X == 0 && coord.Y == 0 {
+		return os_err!();
+	}
+
+	Ok(Vector2::new(coord.X as u16, coord.Y as u16))
+}
+/**
  Returns the original title of the console window.
 
  # Examples
@@ -544,7 +570,7 @@ pub fn get_original_title() -> WinResult<String> {
 	Ok(buf_to_str!(buffer))
 }
 /**
- Returns the input code page used by the console.
+ Returns the output code page used by the console.
 
  # Examples
  ```
@@ -702,7 +728,7 @@ pub fn get_title() -> WinResult<String> {
 	Ok(buf_to_str!(buffer))
 }
 /**
- Returns the size of the window relative to the screen buffer.
+ Returns the size of the window in character cells.
  These dimensions also serve as minimum values for the size of the buffer.
 
  # Examples
@@ -978,6 +1004,53 @@ pub fn read_output_colors(column: u16, row: u16, max_length: impl Into<Option<u3
 			ConsoleColor::from((attrs & 0xF0) >> 4)))
 		.collect();
 	Ok(vec)
+}
+/**
+ Scrolls the console window by the specified amount relative to its current position, in character cells.
+ If the resultant position is greater than the maximum scroll position, the window is
+ scrolled to the maximum position.
+
+ # Arguments
+ * `amount` - The amount to scroll by.
+ * `vertical` - Should the window scroll vertically, or horizontally?
+ 
+ # Examples
+ Scrolls down 5 rows.
+
+ ```
+ # extern crate winconsole;
+ # use winconsole::console;
+ # fn main() {
+ console::scroll_by(5, true).unwrap();
+ # }
+ ```
+ */
+pub fn scroll_by(amount: i16, vertical: bool) -> WinResult<()> {
+	let position = get_screen_buffer_info()?.srWindow.Top;
+	scroll(position + amount, 1, vertical)
+}
+/**
+ Scrolls the console window to the specified position, in character cells.
+ If the specified position is greater than the maximum scroll position, the window is
+ scrolled to the maximum position.
+
+ # Arguments
+ * `position` - The position to scroll to.
+ * `vertical` - Should the window scroll vertically, or horizontally?
+ 
+ # Examples
+ Scrolls to the top of the window.
+
+ ```
+ # extern crate winconsole;
+ # use winconsole::console;
+ # fn main() {
+ console::scroll_to(0, true).unwrap();
+ # }
+ ```
+ */
+pub fn scroll_to(position: u16, vertical: bool) -> WinResult<()> {
+	scroll(position as i16, 1, vertical)
 }
 /**
  Sets the background color of the console.
@@ -1631,6 +1704,40 @@ fn get_screen_buffer_info_ex() -> WinResult<CONSOLE_SCREEN_BUFFER_INFOEX> {
 fn get_text_attributes() -> WinResult<WORD> {
 	let csbi = get_screen_buffer_info()?;
 	Ok(csbi.wAttributes)
+}
+fn scroll(position: i16, absolute: i32, vertical: bool) -> WinResult<()> {
+	let buffer_size = get_buffer_size()?;
+	let mut rect = get_screen_buffer_info()?.srWindow;
+	let mut position = position;
+	
+	if vertical {
+		let max = buffer_size.y as i16 - rect.Bottom - 1;
+		let diff = rect.Bottom - rect.Top;
+		if position > max {
+			position = max;
+		} else if position < 0 {
+			position = 0;
+		}
+		rect.Top = position;
+		rect.Bottom = position + diff;
+	} else {
+		let max = buffer_size.x as i16 - rect.Right - 1;
+		let diff = rect.Right - rect.Left;
+		if position > max {
+			position = max;
+		} else if position < 0 {
+			position = 0;
+		}
+		rect.Left = position;
+		rect.Right = position + diff;
+	}
+	
+	os_err!(unsafe {
+		let handle = handle!(STDOUT);
+		let rect_p = &rect as *const SMALL_RECT;
+		wincon::SetConsoleWindowInfo(handle, absolute, rect_p)
+	});
+	Ok(())
 }
 fn set_cursor_info(value: &CONSOLE_CURSOR_INFO) -> WinResult<()> {
 	os_err!(unsafe {
