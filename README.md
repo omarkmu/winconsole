@@ -1,12 +1,12 @@
 # winconsole
 This crate provides a wrapper for console-related functions in the Windows API.  
-Check out the documentation [here](https://docs.rs/winconsole/0.4.0/x86_64-pc-windows-msvc/winconsole/).
+Check out the documentation [here](https://docs.rs/winconsole/0.5.0/x86_64-pc-windows-msvc/winconsole/).
 
 ## Usage
 Add the following to `Cargo.toml`:
 ```toml
 [dependencies]
-winconsole = "0.4"
+winconsole = "0.5"
 ```
 Then, add the following to your code:
 ```rust
@@ -20,6 +20,6 @@ There are two optional features: `input` and `serde`.
 Additional features must be added to `Cargo.toml`:
 ```toml
 [dependencies.winconsole]
-version = "0.4"
+version = "0.5"
 features = ["input", "serde"]
 ```
