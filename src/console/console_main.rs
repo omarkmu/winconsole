@@ -13,7 +13,7 @@ lazy_static! { static ref PAGES: Mutex<Vec<CodePage>> = Mutex::new(vec![]); }
  * `duration` - The duration of the sound, in milliseconds.
 
  # Examples
- Plays a note of A4 frequency for 1 seconds.
+ Plays a note of A4 frequency for 1 second.
 
  ```
  # extern crate winconsole;
