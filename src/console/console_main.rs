@@ -603,6 +603,30 @@ pub fn get_output_mode() -> WinResult<OutputSettings> {
 	Ok(OutputSettings::from(mode))
 }
 /**
+ Returns the current scroll position of a window scroll bar.
+
+ # Arguments
+ * `vertical` - Should the position of the vertical bar be returned, or the horizontal bar?
+ 
+ # Examples
+ ```
+ # extern crate winconsole;
+ # use winconsole::console;
+ # fn main() {
+ let vertical_position = console::get_scroll_position(true).unwrap();
+ println!("{}", vertical_position);
+ # }
+ ```
+ */
+pub fn get_scroll_position(vertical: bool) -> WinResult<u16> {
+	let rect = get_screen_buffer_info()?.srWindow;
+	if vertical {
+		Ok(rect.Top as u16)
+	} else {
+		Ok(rect.Left as u16)
+	}
+}
+/**
  Returns a SelectionInfo object containing information about console selection.
 
  # Examples
@@ -1660,7 +1684,7 @@ fn get_code_pages(flags: u32) -> WinResult<Vec<CodePage>> {
 	}
 }
 fn get_cursor_info() -> WinResult<CONSOLE_CURSOR_INFO> {
-	let mut info = unsafe { mem::zeroed() };
+	let mut info: CONSOLE_CURSOR_INFO = unsafe { mem::zeroed() };
 	os_err!(unsafe {
 		let handle = handle!(STDOUT);
 		wincon::GetConsoleCursorInfo(handle, &mut info)
@@ -1685,7 +1709,7 @@ fn get_mode(handle_id: DWORD) -> WinResult<DWORD> {
 	Ok(num)
 }
 fn get_screen_buffer_info() -> WinResult<CONSOLE_SCREEN_BUFFER_INFO> {
-	let mut csbi = unsafe { mem::zeroed() };
+	let mut csbi: CONSOLE_SCREEN_BUFFER_INFO = unsafe { mem::zeroed() };
 	os_err!(unsafe {
 		let handle = handle!(STDOUT);
 		wincon::GetConsoleScreenBufferInfo(handle, &mut csbi)
