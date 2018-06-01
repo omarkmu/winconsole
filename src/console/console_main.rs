@@ -607,7 +607,7 @@ pub fn get_output_mode() -> WinResult<OutputSettings> {
 
  # Arguments
  * `vertical` - Should the position of the vertical bar be returned, or the horizontal bar?
- 
+
  # Examples
  ```
  # extern crate winconsole;
@@ -650,12 +650,10 @@ pub fn get_selection_info() -> WinResult<SelectionInfo> {
 
 	let mut selection = SelectionInfo::new();
 	selection.anchor = Vector2::new(anchor.X as u16, anchor.Y as u16);
-	selection.bottom_right = rect.bottom_right();
 	selection.empty = flags & 0x2 == 0;
 	selection.mouse_down = flags & 0x8 != 0;
 	selection.rect = rect;
 	selection.selecting = flags & 0x1 != 0;
-	selection.top_left = rect.top_left();
 
 	Ok(selection)
 }
@@ -1037,7 +1035,7 @@ pub fn read_output_colors(column: u16, row: u16, max_length: impl Into<Option<u3
  # Arguments
  * `amount` - The amount to scroll by.
  * `vertical` - Should the window scroll vertically, or horizontally?
- 
+
  # Examples
  Scrolls down 5 rows.
 
@@ -1061,7 +1059,7 @@ pub fn scroll_by(amount: i16, vertical: bool) -> WinResult<()> {
  # Arguments
  * `position` - The position to scroll to.
  * `vertical` - Should the window scroll vertically, or horizontally?
- 
+
  # Examples
  Scrolls to the top of the window.
 
@@ -1733,7 +1731,7 @@ fn scroll(position: i16, absolute: i32, vertical: bool) -> WinResult<()> {
 	let buffer_size = get_buffer_size()?;
 	let mut rect = get_screen_buffer_info()?.srWindow;
 	let mut position = position;
-	
+
 	if vertical {
 		let max = buffer_size.y as i16 - rect.Bottom - 1;
 		let diff = rect.Bottom - rect.Top;
@@ -1755,7 +1753,7 @@ fn scroll(position: i16, absolute: i32, vertical: bool) -> WinResult<()> {
 		rect.Left = position;
 		rect.Right = position + diff;
 	}
-	
+
 	os_err!(unsafe {
 		let handle = handle!(STDOUT);
 		let rect_p = &rect as *const SMALL_RECT;

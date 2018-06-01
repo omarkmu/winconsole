@@ -15,6 +15,7 @@
 	input = []
 
 [dependencies]
+	cgmath = "0.16"
 	lazy_static = "1.0"
 	rgb = "0.8"
 	[dependencies.serde]
@@ -34,8 +35,3 @@
 			"winnt",
 			"winuser"
 		]
-
-[target.'cfg(not(feature="serde"))'.dependencies]
-	cgmath = "0.16"
-[target.'cfg(feature="serde")'.dependencies]
-	cgmath = { version = "0.16", features = ["serde"] }
