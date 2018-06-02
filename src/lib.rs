@@ -7,7 +7,7 @@
  Add the following to `Cargo.toml`:
  ```toml
  [dependencies]
- winconsole = "0.5"
+ winconsole = "0.6"
  ```
  Then, add the following to your code:
  ```rust
@@ -21,7 +21,7 @@
  Additional features must be added to `Cargo.toml`:
  ```toml
  [dependencies.winconsole]
- version = "0.5"
+ version = "0.6"
  features = ["input", "serde"] 
  ```
  */
