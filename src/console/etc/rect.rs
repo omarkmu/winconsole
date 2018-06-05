@@ -1,6 +1,6 @@
 use cgmath::Vector2;
 
-/// Defines the coordinates of a the corners of a rectangle.
+/// Defines the coordinates of the corners of a rectangle.
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 pub struct Rect {
