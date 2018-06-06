@@ -1371,7 +1371,7 @@ pub fn set_history_info(history: HistoryInfo) -> WinResult<()> {
  */
 pub fn set_input_code_page(page: CodePage) -> WinResult<()> {
 	if page == CodePage::None || page == CodePage::Invalid {
-		return Ok(()); // TODO: Maybe throw argument error instead?
+		throw_err!(ArgumentError::new("page", "page cannot be CodePage::None or CodePage::Invalid"));
 	}
 	let page: u16 = page.into();
 	os_err!(unsafe { wincon::SetConsoleCP(page as u32) });
@@ -1421,7 +1421,7 @@ pub fn set_input_mode(settings: InputSettings) -> WinResult<()> {
  */
 pub fn set_output_code_page(page: CodePage) -> WinResult<()> {
 	if page == CodePage::None || page == CodePage::Invalid {
-		return Ok(());
+		throw_err!(ArgumentError::new("page", "page cannot be CodePage::None or CodePage::Invalid"));
 	}
 	let page: u16 = page.into();
 	os_err!(unsafe { wincon::SetConsoleOutputCP(page as u32) });
