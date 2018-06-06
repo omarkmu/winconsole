@@ -5,6 +5,7 @@
 	description = "A wrapper for console-related functions in the Windows API."
 	license = "MIT OR Apache-2.0"
 	readme = "README.md"
+	documentation = "https://omarkmu.github.io/docs/winconsole"
 	repository = "https://github.com/omarkmu/winconsole"
 	[package.metadata.docs.rs]
 		features = ["input"]

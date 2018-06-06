@@ -1,6 +1,6 @@
 # winconsole
 This crate provides a wrapper for console-related functions in the Windows API.  
-Check out the documentation [here](https://docs.rs/winconsole/0.6.0/x86_64-pc-windows-msvc/winconsole/).
+Check out the documentation [here](https://omarkmu.github.io/docs/winconsole/).
 
 ## Usage
 Add the following to `Cargo.toml`:
