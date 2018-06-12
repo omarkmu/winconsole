@@ -1,15 +1,28 @@
 #![cfg(test)]
-extern crate winconsole;
 extern crate cgmath;
+extern crate winconsole;
 
-use winconsole::{console, console::*};
 use cgmath::Vector2;
+use winconsole::console::{self, ConsoleColor};
 
 #[test]
 fn beep() {
     console::beep(440, 1000).unwrap();
 }
 
+#[test]
+fn color_mapping() {
+	let old_black = console::get_color(ConsoleColor::Black).unwrap();
+	let mut black = old_black.clone();
+	black.r = 50;
+	black.g = 210;
+	black.b = 15;
+
+	console::map_color(ConsoleColor::Black, black).unwrap();
+	assert_eq!(console::get_color(ConsoleColor::Black).unwrap(), black);
+
+	console::map_color(ConsoleColor::Black, old_black).unwrap();
+}
 #[test]
 fn cursor_position() {
     let position = console::get_cursor_position().unwrap();
