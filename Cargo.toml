@@ -1,6 +1,6 @@
 [package]
 	name = "winconsole"
-	version = "0.6.1"
+	version = "0.7.0"
 	authors = ["Omar M. <omarkmu@gmail.com>"]
 	description = "A wrapper for console-related functions in the Windows API."
 	license = "MIT OR Apache-2.0"

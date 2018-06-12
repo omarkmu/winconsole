@@ -6,7 +6,7 @@ Check out the documentation [here](https://omarkmu.github.io/docs/winconsole/).
 Add the following to `Cargo.toml`:
 ```toml
 [dependencies]
-winconsole = "0.6"
+winconsole = "0.7"
 ```
 Then, add the following to your code:
 ```rust
@@ -23,6 +23,6 @@ There are a few optional features:
 These features must be added to `Cargo.toml`:
 ```toml
 [dependencies.winconsole]
-version = "0.6"
+version = "0.7"
 features = ["input", "serde"]
 ```
