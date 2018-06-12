@@ -95,9 +95,13 @@ macro_rules! enumeration_internal {
     }) => (
 		use std::fmt;
 		use std::fmt::{Display, Formatter};
+		#[cfg(feature = "serde")]
+		use serde::ser::{Serialize, Serializer};
+		#[cfg(feature = "serde")]
+		use serde::de::{self, Deserialize, Deserializer, Visitor};
+
 		$(#[$attrs])*
 		#[derive(Clone, Copy, Debug, PartialEq)]
-		#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 		pub enum $name {
 			$(
 				$(#[$item_attrs])*
@@ -137,6 +141,37 @@ macro_rules! enumeration_internal {
 				write!(f, "{}::{}", $sname, name)
 			}
 		}
+
+		#[cfg(feature = "serde")]
+		impl Serialize for $name {
+            fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+            where S: Serializer {
+				let num: $type = (*self).into();
+                serializer.serialize_u64(num as u64)
+            }
+        }
+		#[cfg(feature = "serde")]
+        impl<'de> Deserialize<'de> for $name {
+            fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+            where D: Deserializer<'de> {
+                struct EnumVisitor;
+
+                impl<'de> Visitor<'de> for EnumVisitor {
+                    type Value = $name;
+
+                    fn expecting(&self, formatter: &mut Formatter) -> fmt::Result {
+                        formatter.write_str("positive integer")
+                    }
+
+                    fn visit_u64<E>(self, value: u64) -> Result<$name, E>
+                    where E: de::Error {
+						Ok($name::from(value as $type))
+                    }
+                }
+
+                deserializer.deserialize_u64(EnumVisitor)
+            }
+        }
 	);
 }
 macro_rules! enumeration {
@@ -169,9 +204,14 @@ macro_rules! flags_internal {
         $($(#[$flag_attrs:meta])* $member:ident = $value:expr,)+
     }) => (
 		use std::fmt;
+		use std::fmt::{Display, Formatter};
+		#[cfg(feature = "serde")]
+		use serde::ser::{Serialize, Serializer};
+		#[cfg(feature = "serde")]
+		use serde::de::{self, Deserialize, Deserializer, Visitor};
+
         $(#[$attrs])*
 		#[derive(Clone, Copy, Debug, PartialEq)]
-		#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 		#[allow(non_snake_case)]
         pub struct $name {
 			$(
@@ -179,6 +219,7 @@ macro_rules! flags_internal {
 				pub $member: bool,
 			)+
 		}
+
 		impl $name {
 			#[doc = "Creates a new"]
 			#[doc = $sname]
@@ -203,8 +244,8 @@ macro_rules! flags_internal {
 				value
 			}
 		}
-		impl fmt::Display for $name {
-			fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+		impl Display for $name {
+			fn fmt(&self, f: &mut Formatter) -> fmt::Result {
 				let mut ret = String::new();
 				$(
 					if self.$member {
@@ -215,6 +256,37 @@ macro_rules! flags_internal {
 				write!(f, "{}({})", $sname, &ret)
 			}
 		}
+
+		#[cfg(feature = "serde")]
+		impl Serialize for $name {
+            fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+            where S: Serializer {
+				let num: $type = (*self).into();
+                serializer.serialize_u64(num as u64)
+            }
+        }
+		#[cfg(feature = "serde")]
+        impl<'de> Deserialize<'de> for $name {
+            fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+            where D: Deserializer<'de> {
+                struct FlagVisitor;
+
+                impl<'de> Visitor<'de> for FlagVisitor {
+                    type Value = $name;
+
+                    fn expecting(&self, formatter: &mut Formatter) -> fmt::Result {
+                        formatter.write_str("positive integer")
+                    }
+
+                    fn visit_u64<E>(self, value: u64) -> Result<$name, E>
+                    where E: de::Error {
+						Ok($name::from(value as $type))
+                    }
+                }
+
+                deserializer.deserialize_u64(FlagVisitor)
+            }
+        }
 	);
 }
 macro_rules! flags {
