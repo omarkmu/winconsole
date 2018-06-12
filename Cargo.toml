@@ -8,12 +8,13 @@
 	documentation = "https://omarkmu.github.io/docs/winconsole"
 	repository = "https://github.com/omarkmu/winconsole"
 	[package.metadata.docs.rs]
-		features = ["input"]
+		features = ["input", "window"]
 		default-target = "x86_64-pc-windows-msvc"
 
 [features]
 	default = []
 	input = []
+	window = []
 
 [dependencies]
 	cgmath = "0.16"
@@ -32,6 +33,7 @@
 			"utilapiset",
 			"winbase",
 			"wincon",
+			"windef",
 			"winnls",
 			"winnt",
 			"winuser"

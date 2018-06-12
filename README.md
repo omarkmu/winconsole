@@ -13,11 +13,14 @@ Then, add the following to your code:
 extern crate winconsole;
 ```
 
-There are two optional features: `input` and `serde`.  
+---
+
+There are a few optional features:
 * `input` - Includes input-related functions.
 * `serde` - Support for [serde](https://serde.rs/).
+* `window` - Includes window-related functions.
 
-Additional features must be added to `Cargo.toml`:
+These features must be added to `Cargo.toml`:
 ```toml
 [dependencies.winconsole]
 version = "0.6"

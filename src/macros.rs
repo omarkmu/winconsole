@@ -313,3 +313,12 @@ macro_rules! throw_err {
 		Err($crate::errors::WinError::from($err))?;
 	}
 }
+#[cfg(feature = "window")]
+macro_rules! window_handle {
+	() => {
+		{
+			let handle = wincon::GetConsoleWindow();
+			handle
+		}
+	};
+}
