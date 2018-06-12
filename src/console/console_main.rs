@@ -135,11 +135,11 @@ pub fn fill_character(chr: char, column: u16, row: u16, max_length: impl Into<Op
  # use winconsole::console;
  # use winconsole::console::ConsoleColor;
  # fn main() {
- console::fill_colors(&(ConsoleColor::Blue, ConsoleColor::Red), 0, 0, None).unwrap();
+ console::fill_colors((ConsoleColor::Blue, ConsoleColor::Red), 0, 0, None).unwrap();
  # }
  ```
  */
-pub fn fill_colors(colors: &(ConsoleColor, ConsoleColor), column: u16, row: u16, max_length: impl Into<Option<u32>>) -> WinResult<u32> {
+pub fn fill_colors(colors: (ConsoleColor, ConsoleColor), column: u16, row: u16, max_length: impl Into<Option<u32>>) -> WinResult<u32> {
 	let coords = COORD { X: column as i16, Y: row as i16 };
 	let length = match max_length.into() {
 		Some(len) => len,
