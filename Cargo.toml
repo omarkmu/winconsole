@@ -1,15 +1,14 @@
 [package]
-	name = "winconsole"
-	version = "0.7.0"
 	authors = ["Omar M. <omarkmu@gmail.com>"]
+	categories = ["api-bindings"]
 	description = "A wrapper for console-related functions in the Windows API."
-	license = "MIT OR Apache-2.0"
-	readme = "README.md"
 	documentation = "https://omarkmu.github.io/docs/winconsole"
+	keywords = ["console", "input", "terminal", "windows"]
+	license = "MIT OR Apache-2.0"
+	name = "winconsole"
+	readme = "README.md"
 	repository = "https://github.com/omarkmu/winconsole"
-	[package.metadata.docs.rs]
-		features = ["input", "window"]
-		default-target = "x86_64-pc-windows-msvc"
+	version = "0.7.0"
 
 [features]
 	default = []
