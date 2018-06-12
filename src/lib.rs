@@ -7,7 +7,7 @@
  Add the following to `Cargo.toml`:
  ```toml
  [dependencies]
- winconsole = "0.7"
+ winconsole = "0.8"
  ```
  Then, add the following to your code:
  ```rust
@@ -24,17 +24,17 @@
  These features must be added to `Cargo.toml`:
  ```toml
  [dependencies.winconsole]
- version = "0.7"
+ version = "0.8"
  features = ["input", "serde"] 
  ```
  */
-extern crate winapi;
 extern crate cgmath;
 #[macro_use]
 extern crate lazy_static;
 extern crate rgb;
 #[cfg(feature = "serde")] #[macro_use]
 extern crate serde;
+extern crate winapi;
 
 #[macro_use]
 mod macros;
