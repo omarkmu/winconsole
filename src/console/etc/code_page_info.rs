@@ -11,7 +11,7 @@ pub struct CodePageInfo {
 	/// An array of lead byte ranges.
 	pub lead_byte: [u8; 12],
 	/// The default unicode character used when translating to the code page.
-	pub unicode_default: u16,
+	pub unicode_default: String,
 	/// The code page associated with the information.
 	pub code_page: CodePage,
 	/// The full name of the code page.
@@ -27,7 +27,7 @@ impl CodePageInfo {
 			max_char_size: 0,
 			default: String::new(),
 			lead_byte: [0; 12],
-			unicode_default: 0,
+			unicode_default: String::new(),
 			code_page: CodePage::None,
 			name: String::new()
 		}

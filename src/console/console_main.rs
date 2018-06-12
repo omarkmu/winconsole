@@ -321,7 +321,7 @@ pub fn get_code_page_info(page: CodePage) -> WinResult<CodePageInfo> {
 	cpi.max_char_size = info.MaxCharSize as u8;
 	cpi.default = buf_to_str!(info.DefaultChar);
 	cpi.lead_byte = info.LeadByte;
-	cpi.unicode_default = info.UnicodeDefaultChar;
+	cpi.unicode_default = String::from_utf16(&[info.UnicodeDefaultChar])?;
 	cpi.code_page = CodePage::from(info.CodePage as u16);
 	cpi.name = buf_to_str!(info.CodePageName);
 
