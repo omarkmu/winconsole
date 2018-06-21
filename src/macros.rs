@@ -49,6 +49,10 @@ macro_rules! buf_to_vec {
  	cprint!(ConsoleColor::Red, " Goodbye, world!");
  }
  ```
+
+ # Panics
+ Panics if foreground color cannot be retrieved/set, flushing console output fails,
+ or if printing fails.
  */
 #[macro_export]
 macro_rules! cprint {
@@ -81,6 +85,10 @@ macro_rules! cprint {
  	cprintln!(ConsoleColor::Blue, "How are you?");
  }
  ```
+
+ # Panics
+ Panics if foreground color cannot be retrieved/set, flushing console output fails,
+ or if printing fails.
  */
 #[macro_export]
 macro_rules! cprintln {
