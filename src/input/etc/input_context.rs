@@ -199,6 +199,7 @@ impl InputContext {
 		let filter: u16 = filter.into();
 		self.filter_value = filter;
 		self.queue = self.queue.iter()
+			.cloned()
 			.filter(|event| filter & event.get_type() == 0)
 			.collect();
 	}
