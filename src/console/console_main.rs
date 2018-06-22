@@ -23,9 +23,8 @@ lazy_static! { static ref PAGES: Mutex<Vec<CodePage>> = Mutex::new(vec![]); }
  # }
  ```
  */
-pub fn beep(frequency: u32, duration: u32) -> WinResult<()> {
-	os_err!(unsafe { utilapiset::Beep(frequency, duration) });
-	Ok(())
+pub fn beep(frequency: u32, duration: u32) {
+	unsafe { utilapiset::Beep(frequency, duration); }
 }
 /**
  Clears the console.

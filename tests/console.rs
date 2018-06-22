@@ -7,7 +7,7 @@ use winconsole::console::{self, ConsoleColor};
 
 #[test]
 fn beep() {
-    console::beep(440, 1000).unwrap();
+    console::beep(440, 1000);
 }
 
 #[test]
