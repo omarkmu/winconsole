@@ -1,6 +1,6 @@
 # winconsole
 This crate provides a wrapper for console-related functions in the Windows API.  
-Check out the documentation [here](https://omarkmu.github.io/docs/winconsole/).
+[![Crate](https://img.shields.io/crates/v/winconsole.svg)](https://crates.io/crates/winconsole) [![Documentation](https://docs.rs/winconsole/badge.svg)](https://omarkmu.github.io/docs/winconsole/) ![License](https://img.shields.io/crates/l/winconsole.svg)
 
 ## Usage
 Add the following to `Cargo.toml`:
@@ -24,5 +24,5 @@ These features must be added to `Cargo.toml`:
 ```toml
 [dependencies.winconsole]
 version = "0.8"
-features = ["input", "serde"]
+features = ["input", "serde", "window"]
 ```
