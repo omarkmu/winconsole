@@ -69,7 +69,7 @@ pub fn clear() -> WinResult<()> {
 
  # Errors
  * [`IoError`]: Returned if an OS error occurs.
- 
+
  [`IoError`]: ../errors/enum.WinError.html#Io.v
  */
 pub fn clear_history() -> WinResult<()> {
@@ -194,7 +194,7 @@ pub fn fill_colors(colors: (ConsoleColor, ConsoleColor), column: u16, row: u16, 
  # Errors
  * [`InvalidHandleError`]: Returned if an invalid handle to the console input is retrieved or used.
  * [`IoError`]: Returned if an OS error occurs.
- 
+
  [`InvalidHandleError`]: ../errors/enum.WinError.html#InvalidHandle.v
  [`IoError`]: ../errors/enum.WinError.html#Io.v
  */
@@ -219,7 +219,7 @@ pub fn flush_input() -> WinResult<()> {
 
  # Errors
  * [`IoError`]: Returned if an IO error occurs.
- 
+
  [`IoError`]: ../errors/enum.WinError.html#Io.v
  */
 pub fn flush_output() -> WinResult<()> {
@@ -248,7 +248,7 @@ pub fn flush_output() -> WinResult<()> {
 
  # Errors
  * [`IoError`]: Returned if an OS error occurs.
- 
+
  [`IoError`]: ../errors/enum.WinError.html#Io.v
  */
 pub fn generate_ctrl_event(break_event: bool, process_group_id: impl Into<Option<u32>>) -> WinResult<()> {
@@ -282,7 +282,7 @@ pub fn generate_ctrl_event(break_event: bool, process_group_id: impl Into<Option
  # Errors
  * [`InvalidHandleError`]: Returned if an invalid handle to the console input/output is retrieved or used.
  * [`IoError`]: Returned if an OS error occurs.
- 
+
  [`InvalidHandleError`]: ../errors/enum.WinError.html#InvalidHandle.v
  [`IoError`]: ../errors/enum.WinError.html#Io.v
  */
@@ -326,7 +326,7 @@ pub fn getch(suppress: bool) -> WinResult<char> {
  # Errors
  * [`InvalidHandleError`]: Returned if an invalid handle to the console output is retrieved or used.
  * [`IoError`]: Returned if an OS error occurs.
- 
+
  [`InvalidHandleError`]: ../errors/enum.WinError.html#InvalidHandle.v
  [`IoError`]: ../errors/enum.WinError.html#Io.v
  */
@@ -350,7 +350,7 @@ pub fn get_background_color() -> WinResult<ConsoleColor> {
  # Errors
  * [`InvalidHandleError`]: Returned if an invalid handle to the console output is retrieved or used.
  * [`IoError`]: Returned if an OS error occurs.
- 
+
  [`InvalidHandleError`]: ../errors/enum.WinError.html#InvalidHandle.v
  [`IoError`]: ../errors/enum.WinError.html#Io.v
  */
