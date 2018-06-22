@@ -176,15 +176,10 @@ impl InputContext {
 		self.filter = filter;
 
 		let filter: u16 = filter.into();
-		let mut queue = Vec::new();
-		for event in self.queue.iter() {
-			if filter & event.get_type() == 0 {
-				queue.push(*event);
-			}
-		}
-
 		self.filter_value = filter;
-		self.queue = queue;
+		self.queue = self.queue.iter()
+			.filter(|event| filter & event.get_type() == 0)
+			.collect();
 	}
 	/**
 	 Adds an input event to the input queue.
