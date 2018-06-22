@@ -95,8 +95,8 @@ macro_rules! cprintln {
     ($color: expr, $fmt:expr) => (cprint!($color, concat!($fmt, "\n")));
     ($color: expr, $fmt:expr, $($arg:tt)*) => (cprint!($color, concat!($fmt, "\n"), $($arg)*));
 }
-macro_rules! enumeration_internal {
-	($(#[$attrs:meta])*
+macro_rules! enumeration {
+	(@inner $(#[$attrs:meta])*
 	$name:ident<$repr_type:ty, $type:ty> ($sname:expr) {
 		@$default:expr,
         $($(#[$item_attrs:meta])* $member:ident = $value:expr,)+
@@ -181,24 +181,26 @@ macro_rules! enumeration_internal {
             }
         }
 	);
-}
-macro_rules! enumeration {
+
 	($(#[$attrs:meta])*
 	$name:ident<$repr_type:ty, $type:ty> {
 		__DEFAULT__ = $default:expr,
         $($(#[$item_attrs:meta])* $member:ident = $value:expr,)+
-    }) => (enumeration_internal! {
+    }) => (enumeration! {
+		@inner
 		$(#[$attrs])*
 		$name<$repr_type, $type> (stringify!($name)) {
 			@$default,
 			$($(#[$item_attrs])* $member = $value,)+
 		}
 	});
+
 	($(#[$attrs:meta])*
 	$name:ident<$type:ty> {
 		__DEFAULT__ = $default:expr,
         $($(#[$item_attrs:meta])* $member:ident = $value:expr,)+
-    }) => (enumeration_internal! {
+    }) => (enumeration! {
+		@inner
 		$(#[$attrs])*
 		$name<$type, $type> (stringify!($name)) {
 			@$default,
@@ -206,8 +208,8 @@ macro_rules! enumeration {
 		}
 	})
 }
-macro_rules! flags_internal {
-	($(#[$attrs:meta])*
+macro_rules! flags {
+	(@inner $(#[$attrs:meta])*
 	$name:ident<$type:ty> ($sname:expr) {
         $($(#[$flag_attrs:meta])* $member:ident = $value:expr,)+
     }) => (
@@ -296,12 +298,12 @@ macro_rules! flags_internal {
             }
         }
 	);
-}
-macro_rules! flags {
+
 	($(#[$attrs:meta])*
 	$name:ident<$type:ty> {
         $($(#[$flag_attrs:meta])* $member:ident = $value:expr,)+
-    }) => (flags_internal! {
+    }) => (flags! {
+		@inner
 		$(#[$attrs])*
 		$name<$type> (stringify!($name)) {
 			$($(#[$flag_attrs])* $member = $value,)+
@@ -359,8 +361,8 @@ macro_rules! os_err {
 		}
 	}
 }
-macro_rules! str_to_buf_internal {
-	($s:expr, $type:ty) => {
+macro_rules! str_to_buf {
+	(@inner $s:expr, $type:ty) => {
 		{
 			let vec: Vec<$type> = String::from($s)
 				.as_bytes()
@@ -370,7 +372,7 @@ macro_rules! str_to_buf_internal {
 			vec.into_boxed_slice()
 		}
 	};
-	($s:expr, $size:expr, $type:ty) => {
+	(@inner $s:expr, $size:expr, $type:ty) => {
 		{
 			let mut buffer: [$type; $size] = [0; $size];
 			for (chr, val) in $s.as_bytes().iter().zip(buffer.iter_mut()) {
@@ -378,15 +380,14 @@ macro_rules! str_to_buf_internal {
 			}
 			buffer
 		}
-	}
-}
-macro_rules! str_to_buf {
-	($s:expr) => (str_to_buf_internal!($s, CHAR));
-	($s:expr, $size:expr) => (str_to_buf_internal!($s, $size, CHAR));
+	};
+
+	($s:expr) => (str_to_buf!(@inner $s, CHAR));
+	($s:expr, $size:expr) => (str_to_buf!(@inner $s, $size, CHAR));
 }
 macro_rules! str_to_buf_w {
-	($s:expr) => (str_to_buf_internal!($s, WCHAR));
-	($s:expr, $size:expr) => (str_to_buf_internal!($s, $size, WCHAR));
+	($s:expr) => (str_to_buf!(@inner $s, WCHAR));
+	($s:expr, $size:expr) => (str_to_buf!(@inner $s, $size, WCHAR));
 }
 macro_rules! throw_err {
 	($err:expr) => {
@@ -395,10 +396,5 @@ macro_rules! throw_err {
 }
 #[cfg(feature = "window")]
 macro_rules! window_handle {
-	() => {
-		{
-			let handle = wincon::GetConsoleWindow();
-			handle
-		}
-	};
+	() => (wincon::GetConsoleWindow());
 }
