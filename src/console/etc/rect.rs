@@ -28,6 +28,25 @@ impl Rect {
 	}
 
 	/**
+	 Returns a Vector representing the bottom-left corner of the rectangle.
+
+	 # Examples
+	 ```
+	 # extern crate winconsole;
+	 # extern crate cgmath;
+	 # use winconsole::console::Rect;
+	 # use cgmath::Vector2;
+	 # fn main() {
+	 let rect = Rect::new(0, 10, 20, 30);
+	 let bottom_left = rect.bottom_left();
+	 assert_eq!(bottom_left, Vector2::new(10, 30))
+	 # }
+	 ```
+	 */
+	pub fn bottom_left(&self) -> Vector2<u16> {
+		Vector2::new(self.left, self.bottom)
+	}
+	/**
 	 Returns a Vector representing the bottom-right corner of the rectangle.
 
 	 # Examples
@@ -64,5 +83,24 @@ impl Rect {
 	 */
 	pub fn top_left(&self) -> Vector2<u16> {
 		Vector2::new(self.left, self.top)
+	}
+	/**
+	 Returns a Vector representing the top-right corner of the rectangle.
+
+	 # Examples
+	 ```
+	 # extern crate winconsole;
+	 # extern crate cgmath;
+	 # use winconsole::console::Rect;
+	 # use cgmath::Vector2;
+	 # fn main() {
+	 let rect = Rect::new(0, 10, 20, 30);
+	 let top_right = rect.top_right();
+	 assert_eq!(top_right, Vector2::new(20, 0));
+	 # }
+	 ```
+	 */
+	pub fn top_right(&self) -> Vector2<u16> {
+		Vector2::new(self.right, self.top)
 	}
 }
