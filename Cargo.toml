@@ -8,7 +8,7 @@
 	name = "winconsole"
 	readme = "README.md"
 	repository = "https://github.com/omarkmu/winconsole"
-	version = "0.8.0"
+	version = "0.9.0"
 
 [features]
 	default = []
