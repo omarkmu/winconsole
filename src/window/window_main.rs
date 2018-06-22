@@ -15,6 +15,11 @@ use super::*;
  window::activate(true).unwrap();
  # }
  ```
+
+ # Errors
+ * [`IoError`]: Returned if an OS error occurs.
+
+ [`IoError`]: ../errors/enum.WinError.html#Io.v
  */
 pub fn activate(display: bool) -> WinResult<()> {
 	os_err!(unsafe { winuser::SetForegroundWindow(window_handle!()) });
@@ -84,6 +89,11 @@ pub fn flash(info: FlashInfo) {
  println!("Cursor position: {:?}", position);
  # }
  ```
+
+ # Errors
+ * [`IoError`]: Returned if an OS error occurs.
+
+ [`IoError`]: ../errors/enum.WinError.html#Io.v
  */
 pub fn get_cursor_position() -> WinResult<Vector2<i32>> {
 	let mut point: POINT;
@@ -107,6 +117,11 @@ pub fn get_cursor_position() -> WinResult<Vector2<i32>> {
  println!("State: {:?}", window::get_display_state().unwrap());
  # }
  ```
+
+ # Errors
+ * [`IoError`]: Returned if an OS error occurs.
+
+ [`IoError`]: ../errors/enum.WinError.html#Io.v
  */
 pub fn get_display_state() -> WinResult<DisplayState> {
 	if !is_visible() {
@@ -127,6 +142,11 @@ pub fn get_display_state() -> WinResult<DisplayState> {
  println!("Window position: {:?}", position);
  # }
  ```
+
+ # Errors
+ * [`IoError`]: Returned if an OS error occurs.
+
+ [`IoError`]: ../errors/enum.WinError.html#Io.v
  */
 pub fn get_position() -> WinResult<Vector2<i32>> {
 	let rect = get_window_rect()?;
@@ -144,6 +164,11 @@ pub fn get_position() -> WinResult<Vector2<i32>> {
  println!("Window size: {:?}", size);
  # }
  ```
+
+ # Errors
+ * [`IoError`]: Returned if an OS error occurs.
+
+ [`IoError`]: ../errors/enum.WinError.html#Io.v
  */
 pub fn get_size() -> WinResult<Vector2<i32>> {
 	let rect = get_window_rect()?;
@@ -190,6 +215,11 @@ pub fn is_active() -> bool {
  println!("Maximized? {}", window::is_maximized().unwrap());
  # }
  ```
+
+ # Errors
+ * [`IoError`]: Returned if an OS error occurs.
+
+ [`IoError`]: ../errors/enum.WinError.html#Io.v
  */
 pub fn is_maximized() -> WinResult<bool> {
 	Ok(get_window_show()? == 3)
@@ -205,6 +235,11 @@ pub fn is_maximized() -> WinResult<bool> {
  println!("Minimized? {}", window::is_minimized().unwrap());
  # }
  ```
+
+ # Errors
+ * [`IoError`]: Returned if an OS error occurs.
+
+ [`IoError`]: ../errors/enum.WinError.html#Io.v
  */
 pub fn is_minimized() -> WinResult<bool> {
 	Ok(get_window_show()? == 2)
@@ -295,6 +330,11 @@ pub fn restore() {
  window::set_cursor_position(position.x + 1, position.y + 1).unwrap();
  # }
  ```
+
+ # Errors
+ * [`IoError`]: Returned if an OS error occurs.
+
+ [`IoError`]: ../errors/enum.WinError.html#Io.v
  */
 pub fn set_cursor_position(x: i32, y: i32) -> WinResult<()> {
 	os_err!(unsafe { winuser::SetCursorPos(x, y) });
@@ -345,6 +385,11 @@ pub fn set_display_state(state: DisplayState) {
  window::set_position(position.x + 1, position.y + 1).unwrap();
  # }
  ```
+
+ # Errors
+ * [`IoError`]: Returned if an OS error occurs.
+
+ [`IoError`]: ../errors/enum.WinError.html#Io.v
  */
 pub fn set_position(x: i32, y: i32) -> WinResult<()> {
 	set_window_info(x, y, 0, 0, None, 1)
@@ -361,6 +406,11 @@ pub fn set_position(x: i32, y: i32) -> WinResult<()> {
  window::set_size(size.x + 1, size.y + 1).unwrap();
  # }
  ```
+
+ # Errors
+ * [`IoError`]: Returned if an OS error occurs.
+
+ [`IoError`]: ../errors/enum.WinError.html#Io.v
  */
 pub fn set_size(width: i32, height: i32) -> WinResult<()> {
 	set_window_info(0, 0, width + 1, height + 1, None, 2)

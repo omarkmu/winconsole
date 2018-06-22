@@ -51,6 +51,13 @@ impl InputContext {
 	 }
 	 # }
 	 ```
+
+	 # Errors
+ 	 * [`InvalidHandleError`]: Returned if an invalid handle to the console input is retrieved or used.
+ 	 * [`IoError`]: Returned if an OS error occurs.
+
+ 	 [`InvalidHandleError`]: ../errors/enum.WinError.html#InvalidHandle.v
+ 	 [`IoError`]: ../errors/enum.WinError.html#Io.v
 	 */
 	pub fn get(&mut self) -> WinResult<Vec<InputEvent>> {
 		self.collect(false, false, 1000)?;
@@ -94,6 +101,13 @@ impl InputContext {
 	 }
 	 # }
 	 ```
+	
+	 # Errors
+ 	 * [`InvalidHandleError`]: Returned if an invalid handle to the console output is retrieved or used.
+ 	 * [`IoError`]: Returned if an OS error occurs.
+
+ 	 [`IoError`]: ../errors/enum.WinError.html#Io.v
+ 	 [`InvalidHandleError`]: ../errors/enum.WinError.html#InvalidHandle.v
 	 */
 	pub fn peek(&mut self, max_length: u32) -> WinResult<Vec<InputEvent>> {
 		let filter = self.filter_value;
@@ -121,6 +135,13 @@ impl InputContext {
 	 }
 	 # }
 	 ```
+	
+	 # Errors
+ 	 * [`InvalidHandleError`]: Returned if an invalid handle to the console output is retrieved or used.
+ 	 * [`IoError`]: Returned if an OS error occurs.
+
+ 	 [`InvalidHandleError`]: ../errors/enum.WinError.html#InvalidHandle.v
+ 	 [`IoError`]: ../errors/enum.WinError.html#Io.v
 	 */
 	pub fn poll(&mut self) -> WinResult<InputEvent> {
 		if self.queue.len() == 0 {
@@ -219,6 +240,13 @@ impl InputContext {
 	 println!("{}", event);
 	 # }
 	 ```
+	
+	 # Errors
+ 	 * [`InvalidHandleError`]: Returned if an invalid handle to the console output is retrieved or used.
+ 	 * [`IoError`]: Returned if an OS error occurs.
+
+ 	 [`InvalidHandleError`]: ../errors/enum.WinError.html#InvalidHandle.v
+ 	 [`IoError`]: ../errors/enum.WinError.html#Io.v
 	 */
 	pub fn wait(&mut self) -> WinResult<InputEvent> {
 		if self.queue.len() == 0 {

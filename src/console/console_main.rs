@@ -40,6 +40,13 @@ pub fn beep(frequency: u32, duration: u32) {
  println!("Hello, world!");
  # }
  ```
+
+ # Errors
+ * [`InvalidHandleError`]: Returned if an invalid handle to the console output is retrieved or used.
+ * [`IoError`]: Returned if an OS error occurs.
+
+ [`InvalidHandleError`]: ../errors/enum.WinError.html#InvalidHandle.v
+ [`IoError`]: ../errors/enum.WinError.html#Io.v
  */
 pub fn clear() -> WinResult<()> {
 	let size = get_buffer_size()?;
@@ -49,7 +56,7 @@ pub fn clear() -> WinResult<()> {
 	set_cursor_position(0, 0)
 }
 /**
- Clears the console history.
+ Clears the console input history.
 
  # Examples
  ```
@@ -59,6 +66,11 @@ pub fn clear() -> WinResult<()> {
  console::clear_history().unwrap();
  # }
  ```
+
+ # Errors
+ * [`IoError`]: Returned if an OS error occurs.
+ 
+ [`IoError`]: ../errors/enum.WinError.html#Io.v
  */
 pub fn clear_history() -> WinResult<()> {
 	let old = get_history_info()?;
@@ -99,6 +111,13 @@ pub fn clear_history() -> WinResult<()> {
  console::fill_character('G', 0, 0, 10).unwrap();
  # }
  ```
+
+ # Errors
+ * [`InvalidHandleError`]: Returned if an invalid handle to the console output is retrieved or used.
+ * [`IoError`]: Returned if an OS error occurs.
+
+ [`InvalidHandleError`]: ../errors/enum.WinError.html#InvalidHandle.v
+ [`IoError`]: ../errors/enum.WinError.html#Io.v
  */
 pub fn fill_character(chr: char, column: u16, row: u16, max_length: impl Into<Option<u32>>) -> WinResult<u32> {
 	let coords = COORD { X: column as i16, Y: row as i16 };
@@ -137,6 +156,13 @@ pub fn fill_character(chr: char, column: u16, row: u16, max_length: impl Into<Op
  console::fill_colors((ConsoleColor::Blue, ConsoleColor::Red), 0, 0, None).unwrap();
  # }
  ```
+
+ # Errors
+ * [`InvalidHandleError`]: Returned if an invalid handle to the console output is retrieved or used.
+ * [`IoError`]: Returned if an OS error occurs.
+
+ [`InvalidHandleError`]: ../errors/enum.WinError.html#InvalidHandle.v
+ [`IoError`]: ../errors/enum.WinError.html#Io.v
  */
 pub fn fill_colors(colors: (ConsoleColor, ConsoleColor), column: u16, row: u16, max_length: impl Into<Option<u32>>) -> WinResult<u32> {
 	let coords = COORD { X: column as i16, Y: row as i16 };
@@ -164,6 +190,13 @@ pub fn fill_colors(colors: (ConsoleColor, ConsoleColor), column: u16, row: u16, 
  console::flush_input().unwrap();
  # }
  ```
+
+ # Errors
+ * [`InvalidHandleError`]: Returned if an invalid handle to the console input is retrieved or used.
+ * [`IoError`]: Returned if an OS error occurs.
+ 
+ [`InvalidHandleError`]: ../errors/enum.WinError.html#InvalidHandle.v
+ [`IoError`]: ../errors/enum.WinError.html#Io.v
  */
 pub fn flush_input() -> WinResult<()> {
 	os_err!(unsafe {
@@ -183,6 +216,11 @@ pub fn flush_input() -> WinResult<()> {
  console::flush_output().unwrap();
  # }
  ```
+
+ # Errors
+ * [`IoError`]: Returned if an IO error occurs.
+ 
+ [`IoError`]: ../errors/enum.WinError.html#Io.v
  */
 pub fn flush_output() -> WinResult<()> {
 	io::stdout().flush()?;
@@ -207,6 +245,11 @@ pub fn flush_output() -> WinResult<()> {
  console::generate_ctrl_event(false, None).unwrap();
  # }
  ```
+
+ # Errors
+ * [`IoError`]: Returned if an OS error occurs.
+ 
+ [`IoError`]: ../errors/enum.WinError.html#Io.v
  */
 pub fn generate_ctrl_event(break_event: bool, process_group_id: impl Into<Option<u32>>) -> WinResult<()> {
 	let id: u32 = match process_group_id.into() {
@@ -235,6 +278,13 @@ pub fn generate_ctrl_event(break_event: bool, process_group_id: impl Into<Option
  console::getch(false).unwrap();
  # }
  ```
+
+ # Errors
+ * [`InvalidHandleError`]: Returned if an invalid handle to the console input/output is retrieved or used.
+ * [`IoError`]: Returned if an OS error occurs.
+ 
+ [`InvalidHandleError`]: ../errors/enum.WinError.html#InvalidHandle.v
+ [`IoError`]: ../errors/enum.WinError.html#Io.v
  */
 pub fn getch(suppress: bool) -> WinResult<char> {
 	let old_mode = get_input_mode()?;
@@ -272,6 +322,13 @@ pub fn getch(suppress: bool) -> WinResult<char> {
  println!("Background color: {}", background);
  # }
  ```
+
+ # Errors
+ * [`InvalidHandleError`]: Returned if an invalid handle to the console output is retrieved or used.
+ * [`IoError`]: Returned if an OS error occurs.
+ 
+ [`InvalidHandleError`]: ../errors/enum.WinError.html#InvalidHandle.v
+ [`IoError`]: ../errors/enum.WinError.html#Io.v
  */
 pub fn get_background_color() -> WinResult<ConsoleColor> {
 	let attrs = get_text_attributes()?;
@@ -289,6 +346,13 @@ pub fn get_background_color() -> WinResult<ConsoleColor> {
  console::set_buffer_size(buffer_size.x + 1, buffer_size.y + 1);
  # }
  ```
+
+ # Errors
+ * [`InvalidHandleError`]: Returned if an invalid handle to the console output is retrieved or used.
+ * [`IoError`]: Returned if an OS error occurs.
+ 
+ [`InvalidHandleError`]: ../errors/enum.WinError.html#InvalidHandle.v
+ [`IoError`]: ../errors/enum.WinError.html#Io.v
  */
 pub fn get_buffer_size() -> WinResult<Vector2<u16>> {
 	let coords = get_screen_buffer_info()?.dwSize;
@@ -310,6 +374,15 @@ pub fn get_buffer_size() -> WinResult<Vector2<u16>> {
  println!("{}", info.name);
  # }
  ```
+
+ # Errors
+ * [`FromUtf8Error`]: Returned if an error occurs while converting to a character.
+ * [`FromUtf16Error`]: Returned if an error occurs while converting to a character.
+ * [`IoError`]: Returned if an OS error occurs.
+
+ [`FromUtf8Error`]: ../errors/enum.WinError.html#FromUtf8.v
+ [`FromUtf16Error`]: ../errors/enum.WinError.html#FromUtf16.v
+ [`IoError`]: ../errors/enum.WinError.html#Io.v
  */
 pub fn get_code_page_info(page: CodePage) -> WinResult<CodePageInfo> {
 	let mut info: CPINFOEXA = unsafe { mem::zeroed() };
@@ -358,6 +431,13 @@ pub fn get_color(color: ConsoleColor) -> WinResult<RGB8> {
  println!("{:?}", black);
  # }
  ```
+
+ # Errors
+ * [`InvalidHandleError`]: Returned if an invalid handle to the console output is retrieved or used.
+ * [`IoError`]: Returned if an OS error occurs.
+
+ [`InvalidHandleError`]: ../errors/enum.WinError.html#InvalidHandle.v
+ [`IoError`]: ../errors/enum.WinError.html#Io.v
  */
 pub fn get_color_mapping() -> WinResult<[RGB8; 16]> {
 	let colors = get_screen_buffer_info_ex()?.ColorTable;
@@ -379,6 +459,13 @@ pub fn get_color_mapping() -> WinResult<[RGB8; 16]> {
  println!("{:?}", position);
  # }
  ```
+
+ # Errors
+ * [`InvalidHandleError`]: Returned if an invalid handle to the console output is retrieved or used.
+ * [`IoError`]: Returned if an OS error occurs.
+
+ [`InvalidHandleError`]: ../errors/enum.WinError.html#InvalidHandle.v
+ [`IoError`]: ../errors/enum.WinError.html#Io.v
  */
 pub fn get_cursor_position() -> WinResult<Vector2<u16>> {
 	let pos = get_screen_buffer_info()?.dwCursorPosition;
@@ -397,6 +484,13 @@ pub fn get_cursor_position() -> WinResult<Vector2<u16>> {
  println!("{}", cursor_size);
  # }
  ```
+
+ # Errors
+ * [`InvalidHandleError`]: Returned if an invalid handle to the console output is retrieved or used.
+ * [`IoError`]: Returned if an OS error occurs.
+
+ [`InvalidHandleError`]: ../errors/enum.WinError.html#InvalidHandle.v
+ [`IoError`]: ../errors/enum.WinError.html#Io.v
  */
 pub fn get_cursor_size() -> WinResult<u8> {
 	let info = get_cursor_info()?;
@@ -414,6 +508,15 @@ pub fn get_cursor_size() -> WinResult<u8> {
  println!("{}", font.name);
  # }
  ```
+
+ # Errors
+ * [`FromUtf8Error`]: Returned if an error occurs while converting to a string.
+ * [`InvalidHandleError`]: Returned if an invalid handle to the console output is retrieved or used.
+ * [`IoError`]: Returned if an OS error occurs.
+
+ [`FromUtf8Error`]: ../errors/enum.WinError.html#FromUtf8.v
+ [`InvalidHandleError`]: ../errors/enum.WinError.html#InvalidHandle.v
+ [`IoError`]: ../errors/enum.WinError.html#Io.v
  */
 pub fn get_font() -> WinResult<ConsoleFont> {
 	let info = get_font_info_ex(false)?;
@@ -438,13 +541,20 @@ pub fn get_font() -> WinResult<ConsoleFont> {
  println!("Foreground color: {}", foreground);
  # }
  ```
+
+ # Errors
+ * [`InvalidHandleError`]: Returned if an invalid handle to the console output is retrieved or used.
+ * [`IoError`]: Returned if an OS error occurs.
+
+ [`InvalidHandleError`]: ../errors/enum.WinError.html#InvalidHandle.v
+ [`IoError`]: ../errors/enum.WinError.html#Io.v
  */
 pub fn get_foreground_color() -> WinResult<ConsoleColor> {
 	let attrs = get_text_attributes()?;
 	Ok(ConsoleColor::from(attrs & 0xF))
 }
 /**
- Returns a HistoryInfo object containing information about console history settings.
+ Returns a HistoryInfo object containing information about console input history settings.
 
  # Examples
  ```
@@ -455,6 +565,11 @@ pub fn get_foreground_color() -> WinResult<ConsoleColor> {
  println!("{:?}", history_settings);
  # }
  ```
+
+ # Errors
+ * [`IoError`]: Returned if an OS error occurs.
+
+ [`IoError`]: ../errors/enum.WinError.html#Io.v
  */
 pub fn get_history_info() -> WinResult<HistoryInfo> {
 	let mut info: CONSOLE_HISTORY_INFO = unsafe { mem::zeroed() };
@@ -496,6 +611,13 @@ pub fn get_input_code_page() -> CodePage {
  println!("{}", mode);
  # }
  ```
+
+ # Errors
+ * [`InvalidHandleError`]: Returned if an invalid handle to the console input is retrieved or used.
+ * [`IoError`]: Returned if an OS error occurs.
+
+ [`InvalidHandleError`]: ../errors/enum.WinError.html#InvalidHandle.v
+ [`IoError`]: ../errors/enum.WinError.html#Io.v
  */
 pub fn get_input_mode() -> WinResult<InputSettings> {
 	let mode = get_mode(STDIN)?;
@@ -515,6 +637,11 @@ pub fn get_input_mode() -> WinResult<InputSettings> {
  }
  # }
  ```
+
+ # Errors
+ * [`IoError`]: Returned if an OS error occurs.
+
+ [`IoError`]: ../errors/enum.WinError.html#Io.v
  */
 pub fn get_installed_code_pages() -> WinResult<Vec<CodePage>> {
 	get_code_pages(1)
@@ -532,6 +659,13 @@ pub fn get_installed_code_pages() -> WinResult<Vec<CodePage>> {
  println!("Largest size: {:?}", largest_size);
  # }
  ```
+
+ # Errors
+ * [`InvalidHandleError`]: Returned if an invalid handle to the console output is retrieved or used.
+ * [`IoError`]: Returned if an OS error occurs.
+
+ [`InvalidHandleError`]: ../errors/enum.WinError.html#InvalidHandle.v
+ [`IoError`]: ../errors/enum.WinError.html#Io.v
  */
 pub fn get_largest_window_size() -> WinResult<Vector2<u16>> {
 	let coord = unsafe {
@@ -557,6 +691,13 @@ pub fn get_largest_window_size() -> WinResult<Vector2<u16>> {
  println!("{}", original_title);
  # }
  ```
+
+ # Errors
+ * [`FromUtf8Error`]: Returned if an error occurs while converting to a string.
+ * [`IoError`]: Returned if an OS error occurs.
+
+ [`FromUtf8Error`]: ../errors/enum.WinError.html#FromUtf8.v
+ [`IoError`]: ../errors/enum.WinError.html#Io.v
  */
 pub fn get_original_title() -> WinResult<String> {
 	let mut buffer: [CHAR; MAX_PATH] = [0; MAX_PATH];
@@ -596,6 +737,13 @@ pub fn get_output_code_page() -> CodePage {
  println!("{}", mode);
  # }
  ```
+
+ # Errors
+ * [`InvalidHandleError`]: Returned if an invalid handle to the console output is retrieved or used.
+ * [`IoError`]: Returned if an OS error occurs.
+
+ [`InvalidHandleError`]: ../errors/enum.WinError.html#InvalidHandle.v
+ [`IoError`]: ../errors/enum.WinError.html#Io.v
  */
 pub fn get_output_mode() -> WinResult<OutputSettings> {
 	let mode = get_mode(STDOUT)?;
@@ -616,6 +764,13 @@ pub fn get_output_mode() -> WinResult<OutputSettings> {
  println!("{}", vertical_position);
  # }
  ```
+
+ # Errors
+ * [`InvalidHandleError`]: Returned if an invalid handle to the console output is retrieved or used.
+ * [`IoError`]: Returned if an OS error occurs.
+
+ [`InvalidHandleError`]: ../errors/enum.WinError.html#InvalidHandle.v
+ [`IoError`]: ../errors/enum.WinError.html#Io.v
  */
 pub fn get_scroll_position(vertical: bool) -> WinResult<u16> {
 	let rect = get_screen_buffer_info()?.srWindow;
@@ -637,6 +792,11 @@ pub fn get_scroll_position(vertical: bool) -> WinResult<u16> {
  println!("{:?}", selection);
  # }
  ```
+
+ # Errors
+ * [`IoError`]: Returned if an OS error occurs.
+
+ [`IoError`]: ../errors/enum.WinError.html#Io.v
  */
 pub fn get_selection_info() -> WinResult<SelectionInfo> {
 	let mut info: CONSOLE_SELECTION_INFO = unsafe { mem::zeroed() };
@@ -676,6 +836,15 @@ pub fn get_selection_info() -> WinResult<SelectionInfo> {
  println!("{}", state.output.len());
  # }
  ```
+
+ # Errors
+ * [`FromUtf8Error`]: Returned if an error occurs while converting to a string.
+ * [`InvalidHandleError`]: Returned if an invalid handle to the console output is retrieved or used.
+ * [`IoError`]: Returned if an OS error occurs.
+
+ [`FromUtf8Error`]: ../errors/enum.WinError.html#FromUtf8.v
+ [`InvalidHandleError`]: ../errors/enum.WinError.html#InvalidHandle.v
+ [`IoError`]: ../errors/enum.WinError.html#Io.v
  */
 pub fn get_state(copy_output: bool, copy_all: bool) -> WinResult<ConsoleState> {
 	let mut state = ConsoleState::new();
@@ -721,6 +890,11 @@ pub fn get_state(copy_output: bool, copy_all: bool) -> WinResult<ConsoleState> {
  }
  # }
  ```
+
+ # Errors
+ * [`IoError`]: Returned if an OS error occurs.
+
+ [`IoError`]: ../errors/enum.WinError.html#Io.v
  */
 pub fn get_supported_code_pages() -> WinResult<Vec<CodePage>> {
 	get_code_pages(2)
@@ -737,6 +911,13 @@ pub fn get_supported_code_pages() -> WinResult<Vec<CodePage>> {
  println!("{}", title);
  # }
  ```
+
+ # Errors
+ * [`FromUtf8Error`]: Returned if an error occurs while converting to a string.
+ * [`IoError`]: Returned if an OS error occurs.
+
+ [`FromUtf8Error`]: ../errors/enum.WinError.html#FromUtf8.v
+ [`IoError`]: ../errors/enum.WinError.html#Io.v
  */
 pub fn get_title() -> WinResult<String> {
 	let mut buffer: [CHAR; MAX_PATH] = [0; MAX_PATH];
@@ -761,6 +942,13 @@ pub fn get_title() -> WinResult<String> {
  println!("Minimum columns: {}. Minimum rows: {}.", size.x, size.y);
  # }
  ```
+
+ # Errors
+ * [`InvalidHandleError`]: Returned if an invalid handle to the console output is retrieved or used.
+ * [`IoError`]: Returned if an OS error occurs.
+
+ [`InvalidHandleError`]: ../errors/enum.WinError.html#InvalidHandle.v
+ [`IoError`]: ../errors/enum.WinError.html#Io.v
  */
 pub fn get_window_size() -> WinResult<Vector2<u16>> {
 	let rect = get_screen_buffer_info()?.srWindow;
@@ -778,6 +966,13 @@ pub fn get_window_size() -> WinResult<Vector2<u16>> {
  println!("Is the cursor visible? {}", visible);
  # }
  ```
+
+ # Errors
+ * [`InvalidHandleError`]: Returned if an invalid handle to the console output is retrieved or used.
+ * [`IoError`]: Returned if an OS error occurs.
+
+ [`InvalidHandleError`]: ../errors/enum.WinError.html#InvalidHandle.v
+ [`IoError`]: ../errors/enum.WinError.html#Io.v
  */
 pub fn is_cursor_visible() -> WinResult<bool> {
 	let info = get_cursor_info()?;
@@ -824,6 +1019,13 @@ pub fn is_valid_code_page(identifier: u16) -> bool {
  console::map_color(ConsoleColor::Black, RGB8 { r: 255, g: 255, b: 255 }).unwrap();
  # }
  ```
+
+ # Errors
+ * [`InvalidHandleError`]: Returned if an invalid handle to the console output is retrieved or used.
+ * [`IoError`]: Returned if an OS error occurs.
+
+ [`InvalidHandleError`]: ../errors/enum.WinError.html#InvalidHandle.v
+ [`IoError`]: ../errors/enum.WinError.html#Io.v
  */
 pub fn map_color(color: ConsoleColor, rgb: RGB8) -> WinResult<()> {
 	let mut info = get_screen_buffer_info_ex()?;
@@ -858,6 +1060,13 @@ pub fn map_color(color: ConsoleColor, rgb: RGB8) -> WinResult<()> {
  console::move_contents(scroll, dest, None, None, None, None).unwrap();
  # }
  ```
+
+ # Errors
+ * [`InvalidHandleError`]: Returned if an invalid handle to the console output is retrieved or used.
+ * [`IoError`]: Returned if an OS error occurs.
+
+ [`InvalidHandleError`]: ../errors/enum.WinError.html#InvalidHandle.v
+ [`IoError`]: ../errors/enum.WinError.html#Io.v
  */
 pub fn move_contents(scroll: Rect, dest: Vector2<i16>, clip: impl Into<Option<Rect>>, fill_char: impl Into<Option<char>>,
 	fill_fg_color: impl Into<Option<ConsoleColor>>, fill_bg_color: impl Into<Option<ConsoleColor>>) -> WinResult<()> {
@@ -917,7 +1126,6 @@ pub fn move_contents(scroll: Rect, dest: Vector2<i16>, clip: impl Into<Option<Re
 }
 /**
  Reads a string from the console output starting at a specified location.
- Returns an error if the position is not within the buffer bounds.  
  Note that this method reads the output buffer _directly_ (i.e., an empty end of a line will
  be made up of multiple space characters rather than a newline character sequence).
 
@@ -937,6 +1145,17 @@ pub fn move_contents(scroll: Rect, dest: Vector2<i16>, clip: impl Into<Option<Re
  println!("{}", output.len());
  # }
  ```
+
+ # Errors
+ * [`ArgumentError`]: Returned if `column` or `row` is not within the output buffer.
+ * [`FromUtf8Error`]: Returned if an error occurs while converting to a string.
+ * [`InvalidHandleError`]: Returned if an invalid handle to the console output is retrieved or used.
+ * [`IoError`]: Returned if an OS error occurs.
+
+ [`ArgumentError`]: ../errors/enum.WinError.html#Argument.v
+ [`FromUtf8Error`]: ../errors/enum.WinError.html#FromUtf8.v
+ [`InvalidHandleError`]: ../errors/enum.WinError.html#InvalidHandle.v
+ [`IoError`]: ../errors/enum.WinError.html#Io.v
  */
 pub fn read_output(column: u16, row: u16, max_length: impl Into<Option<u32>>) -> WinResult<String> {
 	let buffer_size = get_buffer_size()?;
@@ -972,7 +1191,6 @@ pub fn read_output(column: u16, row: u16, max_length: impl Into<Option<u32>>) ->
 /**
  Reads colors from the console output starting at a specified location, and returns a vector of tuples.
  The first item in each tuple is the foreground color, and the second is the background color.
- Returns an error if the position is not within the buffer bounds.  
 
  # Arguments
  * `column` - The column at which reading should begin.
@@ -990,6 +1208,15 @@ pub fn read_output(column: u16, row: u16, max_length: impl Into<Option<u32>>) ->
  println!("{} {}", colors[0].0, colors[0].1);
  # }
  ```
+
+ # Errors
+ * [`ArgumentError`]: Returned if `column` or `row` is not within the output buffer.
+ * [`InvalidHandleError`]: Returned if an invalid handle to the console output is retrieved or used.
+ * [`IoError`]: Returned if an OS error occurs.
+
+ [`ArgumentError`]: ../errors/enum.WinError.html#Argument.v
+ [`InvalidHandleError`]: ../errors/enum.WinError.html#InvalidHandle.v
+ [`IoError`]: ../errors/enum.WinError.html#Io.v
  */
 pub fn read_output_colors(column: u16, row: u16, max_length: impl Into<Option<u32>>) -> WinResult<Vec<(ConsoleColor, ConsoleColor)>> {
 	let buffer_size = get_buffer_size()?;
@@ -1045,6 +1272,13 @@ pub fn read_output_colors(column: u16, row: u16, max_length: impl Into<Option<u3
  console::scroll_by(5, true).unwrap();
  # }
  ```
+
+ # Errors
+ * [`InvalidHandleError`]: Returned if an invalid handle to the console output is retrieved or used.
+ * [`IoError`]: Returned if an OS error occurs.
+
+ [`InvalidHandleError`]: ../errors/enum.WinError.html#InvalidHandle.v
+ [`IoError`]: ../errors/enum.WinError.html#Io.v
  */
 pub fn scroll_by(amount: i16, vertical: bool) -> WinResult<()> {
 	let position = get_screen_buffer_info()?.srWindow.Top;
@@ -1069,6 +1303,13 @@ pub fn scroll_by(amount: i16, vertical: bool) -> WinResult<()> {
  console::scroll_to(0, true).unwrap();
  # }
  ```
+
+ # Errors
+ * [`InvalidHandleError`]: Returned if an invalid handle to the console output is retrieved or used.
+ * [`IoError`]: Returned if an OS error occurs.
+
+ [`InvalidHandleError`]: ../errors/enum.WinError.html#InvalidHandle.v
+ [`IoError`]: ../errors/enum.WinError.html#Io.v
  */
 pub fn scroll_to(position: u16, vertical: bool) -> WinResult<()> {
 	scroll(position as i16, 1, vertical)
@@ -1088,6 +1329,13 @@ pub fn scroll_to(position: u16, vertical: bool) -> WinResult<()> {
  console::set_background_color(ConsoleColor::DarkBlue).unwrap();
  # }
  ```
+
+ # Errors
+ * [`InvalidHandleError`]: Returned if an invalid handle to the console output is retrieved or used.
+ * [`IoError`]: Returned if an OS error occurs.
+
+ [`InvalidHandleError`]: ../errors/enum.WinError.html#InvalidHandle.v
+ [`IoError`]: ../errors/enum.WinError.html#Io.v
  */
 pub fn set_background_color(color: ConsoleColor) -> WinResult<()> {
 	let color = color as WORD;
@@ -1097,7 +1345,6 @@ pub fn set_background_color(color: ConsoleColor) -> WinResult<()> {
 }
 /**
  Sets the size of the output buffer.
- Returns an error if this size is smaller than the window's minimum amount of cells.
 
  # Arguments
  * `width` - The amount of columns the screen buffer should have.
@@ -1111,6 +1358,15 @@ pub fn set_background_color(color: ConsoleColor) -> WinResult<()> {
  console::set_buffer_size(200, 100).unwrap();
  # }
  ```
+
+ # Errors
+ * [`ArgumentError`]: Returned if `width` or `height` is less than the window's minimum amounts.
+ * [`InvalidHandleError`]: Returned if an invalid handle to the console output is retrieved or used.
+ * [`IoError`]: Returned if an OS error occurs.
+
+ [`ArgumentError`]: ../errors/enum.WinError.html#Argument.v
+ [`InvalidHandleError`]: ../errors/enum.WinError.html#InvalidHandle.v
+ [`IoError`]: ../errors/enum.WinError.html#Io.v
  */
 pub fn set_buffer_size(width: u16, height: u16) -> WinResult<()> {
 	let window_size = get_window_size()?;
@@ -1147,6 +1403,13 @@ pub fn set_buffer_size(width: u16, height: u16) -> WinResult<()> {
  console::set_color_mapping(&mapping).unwrap();
  # }
  ```
+
+ # Errors
+ * [`InvalidHandleError`]: Returned if an invalid handle to the console output is retrieved or used.
+ * [`IoError`]: Returned if an OS error occurs.
+
+ [`InvalidHandleError`]: ../errors/enum.WinError.html#InvalidHandle.v
+ [`IoError`]: ../errors/enum.WinError.html#Io.v
  */
 pub fn set_color_mapping(mapping: &[RGB8; 16]) -> WinResult<()> {
 	let mut info = get_screen_buffer_info_ex()?;
@@ -1158,7 +1421,7 @@ pub fn set_color_mapping(mapping: &[RGB8; 16]) -> WinResult<()> {
 
 	info.ColorTable = colors;
 	info.srWindow.Bottom += 1;
-    	info.srWindow.Right += 1;
+    info.srWindow.Right += 1;
 	set_screen_buffer_info_ex(&mut info)
 }
 /**
@@ -1185,6 +1448,11 @@ pub fn set_color_mapping(mapping: &[RGB8; 16]) -> WinResult<()> {
  # }
  ```
 
+ # Errors
+ * [`IoError`]: Returned if an OS error occurs.
+
+ [`IoError`]: ../errors/enum.WinError.html#Io.v
+
  # See
  [HandlerRoutine](https://docs.microsoft.com/en-us/windows/console/handlerroutine).
  */
@@ -1194,7 +1462,6 @@ pub fn set_ctrl_handler(handler: Option<HandlerRoutine>, add: bool) -> WinResult
 }
 /**
  Sets the position of the console cursor.
- Returns an error if the position is not within the buffer bounds.
 
  # Arguments
  * `column` - The column of the new cursor position.
@@ -1210,6 +1477,15 @@ pub fn set_ctrl_handler(handler: Option<HandlerRoutine>, add: bool) -> WinResult
  console::set_cursor_position(0, 0).unwrap();
  # }
  ```
+
+ # Errors
+ * [`ArgumentError`]: Returned if `column` or `row` is not within the output buffer.
+ * [`InvalidHandleError`]: Returned if an invalid handle to the console output is retrieved or used.
+ * [`IoError`]: Returned if an OS error occurs.
+
+ [`ArgumentError`]: ../errors/enum.WinError.html#Argument.v
+ [`InvalidHandleError`]: ../errors/enum.WinError.html#InvalidHandle.v
+ [`IoError`]: ../errors/enum.WinError.html#Io.v
  */
 pub fn set_cursor_position(column: u16, row: u16) -> WinResult<()> {
 	let buffer_size = get_buffer_size()?;
@@ -1241,6 +1517,15 @@ pub fn set_cursor_position(column: u16, row: u16) -> WinResult<()> {
  console::set_cursor_size(50).unwrap();
  # }
  ```
+
+ # Errors
+ * [`ArgumentError`]: Returned if `size` exceeds 100.
+ * [`InvalidHandleError`]: Returned if an invalid handle to the console output is retrieved or used.
+ * [`IoError`]: Returned if an OS error occurs.
+
+ [`ArgumentError`]: ../errors/enum.WinError.html#Argument.v
+ [`InvalidHandleError`]: ../errors/enum.WinError.html#InvalidHandle.v
+ [`IoError`]: ../errors/enum.WinError.html#Io.v
  */
 pub fn set_cursor_size(size: u8) -> WinResult<()> {
 	if size > 100 {
@@ -1268,6 +1553,13 @@ pub fn set_cursor_size(size: u8) -> WinResult<()> {
  console::set_cursor_visible(false).unwrap();
  # }
  ```
+
+ # Errors
+ * [`InvalidHandleError`]: Returned if an invalid handle to the console output is retrieved or used.
+ * [`IoError`]: Returned if an OS error occurs.
+
+ [`InvalidHandleError`]: ../errors/enum.WinError.html#InvalidHandle.v
+ [`IoError`]: ../errors/enum.WinError.html#Io.v
  */
 pub fn set_cursor_visible(visible: bool) -> WinResult<()> {
 	let mut info = get_cursor_info()?;
@@ -1293,6 +1585,13 @@ pub fn set_cursor_visible(visible: bool) -> WinResult<()> {
  console::set_font(&font).unwrap();
  # }
  ```
+
+ # Errors
+ * [`InvalidHandleError`]: Returned if an invalid handle to the console output is retrieved or used.
+ * [`IoError`]: Returned if an OS error occurs.
+
+ [`InvalidHandleError`]: ../errors/enum.WinError.html#InvalidHandle.v
+ [`IoError`]: ../errors/enum.WinError.html#Io.v
  */
 pub fn set_font(font: &ConsoleFont) -> WinResult<()> {
 	let mut info: CONSOLE_FONT_INFOEX = unsafe { mem::zeroed() };
@@ -1318,6 +1617,13 @@ pub fn set_font(font: &ConsoleFont) -> WinResult<()> {
  console::set_foreground_color(ConsoleColor::Red).unwrap();
  # }
  ```
+
+ # Errors
+ * [`InvalidHandleError`]: Returned if an invalid handle to the console output is retrieved or used.
+ * [`IoError`]: Returned if an OS error occurs.
+
+ [`InvalidHandleError`]: ../errors/enum.WinError.html#InvalidHandle.v
+ [`IoError`]: ../errors/enum.WinError.html#Io.v
  */
 pub fn set_foreground_color(color: ConsoleColor) -> WinResult<()> {
 	let color = color as WORD;
@@ -1326,7 +1632,7 @@ pub fn set_foreground_color(color: ConsoleColor) -> WinResult<()> {
 	set_text_attributes((current & 0xF0) | color)
 }
 /**
- Sets information about console history settings.
+ Sets information about console input history settings.
 
  # Arguments
  * `history` - The HistoryInfo to assign.
@@ -1341,6 +1647,11 @@ pub fn set_foreground_color(color: ConsoleColor) -> WinResult<()> {
  console::set_history_info(history_settings).unwrap();
  # }
  ```
+
+ # Errors
+ * [`IoError`]: Returned if an OS error occurs.
+
+ [`IoError`]: ../errors/enum.WinError.html#Io.v
  */
 pub fn set_history_info(history: HistoryInfo) -> WinResult<()> {
 	let mut info: CONSOLE_HISTORY_INFO = unsafe { mem::zeroed() };
@@ -1367,6 +1678,13 @@ pub fn set_history_info(history: HistoryInfo) -> WinResult<()> {
  console::set_input_code_page(CodePage::utf_8).unwrap();
  # }
  ```
+
+ # Errors
+ * [`ArgumentError`]: Returned if `page` is `CodePage::None` or `CodePage::Invalid`.
+ * [`IoError`]: Returned if an OS error occurs.
+
+ [`ArgumentError`]: ../errors/enum.WinError.html#Argument.v
+ [`IoError`]: ../errors/enum.WinError.html#Io.v
  */
 pub fn set_input_code_page(page: CodePage) -> WinResult<()> {
 	if page == CodePage::None || page == CodePage::Invalid {
@@ -1378,7 +1696,6 @@ pub fn set_input_code_page(page: CodePage) -> WinResult<()> {
 }
 /**
  Sets settings related to console input.
- Returns an error if the settings are invalid.
 
  # Arguments
  * `settings` - Settings to assign to the console input.
@@ -1393,6 +1710,15 @@ pub fn set_input_code_page(page: CodePage) -> WinResult<()> {
  console::set_input_mode(mode).unwrap();
  # }
  ```
+
+ # Errors
+ * [`ArgumentError`]: Returned if `settings.LineInput` is disabled while `settings.EchoInput` is enabled.
+ * [`InvalidHandleError`]: Returned if an invalid handle to the console input is retrieved or used.
+ * [`IoError`]: Returned if an OS error occurs.
+
+ [`ArgumentError`]: ../errors/enum.WinError.html#Argument.v
+ [`InvalidHandleError`]: ../errors/enum.WinError.html#InvalidHandle.v
+ [`IoError`]: ../errors/enum.WinError.html#Io.v
  */
 pub fn set_input_mode(settings: InputSettings) -> WinResult<()> {
 	if settings.EchoInput && !settings.LineInput {
@@ -1417,6 +1743,13 @@ pub fn set_input_mode(settings: InputSettings) -> WinResult<()> {
  console::set_output_code_page(CodePage::IBM437).unwrap();
  # }
  ```
+
+ # Errors
+ * [`ArgumentError`]: Returned if `page` is `CodePage::None` or `CodePage::Invalid`.
+ * [`IoError`]: Returned if an OS error occurs.
+
+ [`ArgumentError`]: ../errors/enum.WinError.html#Argument.v
+ [`IoError`]: ../errors/enum.WinError.html#Io.v
  */
 pub fn set_output_code_page(page: CodePage) -> WinResult<()> {
 	if page == CodePage::None || page == CodePage::Invalid {
@@ -1443,6 +1776,13 @@ pub fn set_output_code_page(page: CodePage) -> WinResult<()> {
  console::set_output_mode(mode).unwrap();
  # }
  ```
+
+ # Errors
+ * [`InvalidHandleError`]: Returned if an invalid handle to the console output is retrieved or used.
+ * [`IoError`]: Returned if an OS error occurs.
+
+ [`InvalidHandleError`]: ../errors/enum.WinError.html#InvalidHandle.v
+ [`IoError`]: ../errors/enum.WinError.html#Io.v
  */
 pub fn set_output_mode(settings: OutputSettings) -> WinResult<()> {
 	let mode: u32 = settings.into();
@@ -1468,6 +1808,17 @@ pub fn set_output_mode(settings: OutputSettings) -> WinResult<()> {
  println!("Great Scott!");
  # }
  ```
+
+ # Errors
+ * [`ArgumentError`]: Returned if data in the state is invalid.
+ * [`FromUtf8Error`]: Returned if an error occurs while converting to a string.
+ * [`InvalidHandleError`]: Returned if an invalid handle to the console input/output is retrieved or used.
+ * [`IoError`]: Returned if an OS error occurs.
+
+ [`ArgumentError`]: ../errors/enum.WinError.html#Argument.v
+ [`FromUtf8Error`]: ../errors/enum.WinError.html#FromUtf8.v
+ [`InvalidHandleError`]: ../errors/enum.WinError.html#InvalidHandle.v
+ [`IoError`]: ../errors/enum.WinError.html#Io.v
  */
 pub fn set_state(state: &ConsoleState, clear: bool, write_output: bool) -> WinResult<()> {
 	set_background_color(state.background_color)?;
@@ -1504,6 +1855,11 @@ pub fn set_state(state: &ConsoleState, clear: bool, write_output: bool) -> WinRe
  console::set_title("My Console").unwrap();
  # }
  ```
+
+ # Errors
+ * [`IoError`]: Returned if an OS error occurs.
+
+ [`IoError`]: ../errors/enum.WinError.html#Io.v
  */
 pub fn set_title(title: &str) -> WinResult<()> {
 	let mut buffer = str_to_buf!(title, MAX_PATH);
@@ -1516,7 +1872,8 @@ pub fn set_title(title: &str) -> WinResult<()> {
 }
 /**
  Writes characters to the output at a specified position, and returns the
- number of cells which were written to. Returns an error if the position is not within the buffer bounds.  
+ number of cells which were written to.  
+
  Note that this method writes characters  _directly_ to the output buffer
  (i.e., newline characters do not move output to the next line,
  but instead write the newline character).
@@ -1536,6 +1893,15 @@ pub fn set_title(title: &str) -> WinResult<()> {
  console::write_output("Hello, world!", 10, 10).unwrap();
  # }
  ```
+
+ # Errors
+ * [`ArgumentError`]: Returned if `column` or `row` is not within the output buffer.
+ * [`InvalidHandleError`]: Returned if an invalid handle to the console output is retrieved or used.
+ * [`IoError`]: Returned if an OS error occurs.
+
+ [`ArgumentError`]: ../errors/enum.WinError.html#Argument.v
+ [`InvalidHandleError`]: ../errors/enum.WinError.html#InvalidHandle.v
+ [`IoError`]: ../errors/enum.WinError.html#Io.v
  */
 pub fn write_output(string: &str, column: u16, row: u16) -> WinResult<u32> {
 	let buffer_size = get_buffer_size()?;
@@ -1563,7 +1929,6 @@ pub fn write_output(string: &str, column: u16, row: u16) -> WinResult<u32> {
 /**
  Changes the output colors starting at a specified position, and returns the
  number of cells which were written to.
- Returns an error if the position is not within the buffer bounds.
 
  # Arguments
  * `colors` - The colors to write to the console. The first item in each tuple is the foreground color,
@@ -1588,6 +1953,15 @@ pub fn write_output(string: &str, column: u16, row: u16) -> WinResult<u32> {
  console::write_output_colors(&colors, 0, 0).unwrap();
  # }
  ```
+
+ # Errors
+ * [`ArgumentError`]: Returned if `column` or `row` is not within the output buffer.
+ * [`InvalidHandleError`]: Returned if an invalid handle to the console output is retrieved or used.
+ * [`IoError`]: Returned if an OS error occurs.
+
+ [`ArgumentError`]: ../errors/enum.WinError.html#Argument.v
+ [`InvalidHandleError`]: ../errors/enum.WinError.html#InvalidHandle.v
+ [`IoError`]: ../errors/enum.WinError.html#Io.v
  */
 pub fn write_output_colors(colors: &Vec<(ConsoleColor, ConsoleColor)>, column: u16, row: u16) -> WinResult<u32> {
 	let buffer_size = get_buffer_size()?;

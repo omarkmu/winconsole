@@ -11,6 +11,13 @@ use super::*;
  input::flush().unwrap();
  # }
  ```
+
+ # Errors
+ * [`InvalidHandleError`]: Returned if an invalid handle to the console input is retrieved or used.
+ * [`IoError`]: Returned if an OS error occurs.
+
+ [`InvalidHandleError`]: ../errors/enum.WinError.html#InvalidHandle.v
+ [`IoError`]: ../errors/enum.WinError.html#Io.v
  */
 pub fn flush() -> WinResult<()> {
 	console::flush_input()
@@ -28,6 +35,13 @@ pub fn flush() -> WinResult<()> {
  println!("input events available: {}", num);
  # }
  ```
+
+ # Errors
+ * [`InvalidHandleError`]: Returned if an invalid handle to the console input is retrieved or used.
+ * [`IoError`]: Returned if an OS error occurs.
+
+ [`InvalidHandleError`]: ../errors/enum.WinError.html#InvalidHandle.v
+ [`IoError`]: ../errors/enum.WinError.html#Io.v
  */
 pub fn get_num_input_events() -> WinResult<u32> {
 	console::num_input_events()
@@ -44,6 +58,11 @@ pub fn get_num_input_events() -> WinResult<u32> {
  println!("Mouse buttons available: {}", num);
  # }
  ```
+
+ # Errors
+ * [`IoError`]: Returned if an OS error occurs.
+
+ [`IoError`]: ../errors/enum.WinError.html#Io.v
  */
 pub fn get_num_mouse_buttons() -> WinResult<u32> {
 	console::num_mouse_buttons()
@@ -62,6 +81,11 @@ pub fn get_num_mouse_buttons() -> WinResult<u32> {
  }
  # }
  ```
+
+ # Errors
+ * [`IoError`]: Returned if an OS error occurs.
+
+ [`IoError`]: ../errors/enum.WinError.html#Io.v
  */
 pub fn get_pressed_keys() -> WinResult<Vec<KeyCode>> {
 	let mut ret = Vec::new();
@@ -134,6 +158,13 @@ pub fn is_key_toggled(key_code: KeyCode) -> bool {
  println!("{}", event);
  # }
  ```
+
+ # Errors
+ * [`InvalidHandleError`]: Returned if an invalid handle to the console input is retrieved or used.
+ * [`IoError`]: Returned if an OS error occurs.
+
+ [`InvalidHandleError`]: ../errors/enum.WinError.html#InvalidHandle.v
+ [`IoError`]: ../errors/enum.WinError.html#Io.v
  */
 pub fn start() -> WinResult<InputContext> {
 	let mut ctx = InputContext::new(console::get_input_mode()?);
@@ -160,6 +191,13 @@ pub fn start() -> WinResult<InputContext> {
  input::write(event, None).unwrap();
  # }
  ```
+
+ # Errors
+ * [`InvalidHandleError`]: Returned if an invalid handle to the console input is retrieved or used.
+ * [`IoError`]: Returned if an OS error occurs.
+
+ [`InvalidHandleError`]: ../errors/enum.WinError.html#InvalidHandle.v
+ [`IoError`]: ../errors/enum.WinError.html#Io.v
  */
 pub fn write(event: impl Into<InputEvent>, button_status: impl Into<Option<[bool; 5]>>) -> WinResult<()> {
 	let event = event.into();

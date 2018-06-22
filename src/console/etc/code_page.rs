@@ -328,6 +328,16 @@ impl CodePage {
 	 let info = CodePage::utf_8.get_info().unwrap();
 	 println!("{}", info.name);
 	 # }
+	 ```
+
+	 # Errors
+ 	 * [`FromUtf8Error`]: Returned if an error occurs while converting to a character.
+ 	 * [`FromUtf16Error`]: Returned if an error occurs while converting to a character.
+ 	 * [`IoError`]: Returned if an OS error occurs.
+
+ 	 [`FromUtf8Error`]: ../errors/enum.WinError.html#FromUtf8.v
+ 	 [`FromUtf16Error`]: ../errors/enum.WinError.html#FromUtf16.v
+ 	 [`IoError`]: ../errors/enum.WinError.html#Io.v
 	 */
 	pub fn get_info(&self) -> WinResult<CodePageInfo> {
 		console::get_code_page_info(*self)
