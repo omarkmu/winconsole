@@ -281,7 +281,7 @@ pub fn generate_ctrl_event(break_event: bool, process_group_id: impl Into<Option
 
  # Errors
  * [`InvalidHandleError`]: Returned if an invalid handle to the console input/output is retrieved or used.
- * [`IoError`]: Returned if an OS error occurs.
+ * [`IoError`]: Returned if an IO or OS error occurs.
 
  [`InvalidHandleError`]: ../errors/enum.WinError.html#InvalidHandle.v
  [`IoError`]: ../errors/enum.WinError.html#Io.v
@@ -301,14 +301,16 @@ pub fn getch(suppress: bool) -> WinResult<char> {
 		let control_p: *mut CONSOLE_READCONSOLE_CONTROL = ptr::null_mut();
 		consoleapi::ReadConsoleA(handle, buffer_p, 1, &mut num, control_p)
 	});
-	let res = res as u8 as char;
+	let res = res as u8;
 	set_input_mode(old_mode)?;
 
 	if !suppress {
-		print!("{}", res);
-		flush_output()?;
+		let out = io::stdout();
+		let mut out = out.lock();
+		out.write(&[res])?;
+		out.flush()?;
 	}
-	Ok(res)
+	Ok(res as char)
 }
 /**
  Returns the current background color of the console.
