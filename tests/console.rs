@@ -110,3 +110,15 @@ fn title_empty() {
     console::set_title(&original_title).unwrap();
     assert_eq!(console::get_title().unwrap(), original_title)
 }
+
+#[test]
+fn window_size() {
+	let max_size = console::get_largest_window_size().unwrap();
+	let size = console::get_window_size().unwrap();
+	if size.x + 1 < max_size.x && size.y + 1 < max_size.y {
+		console::set_window_size(size.x + 1, size.y + 1).unwrap();
+		assert_eq!(console::get_window_size().unwrap(), Vector2::new(size.x + 1, size.y + 1));
+		console::set_window_size(size.x, size.y).unwrap();
+	}
+	assert_eq!(console::get_window_size().unwrap(), Vector2::new(size.x, size.y));
+}
