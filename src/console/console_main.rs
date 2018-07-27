@@ -1,4 +1,5 @@
 use super::*;
+use std;
 use std::io::Write;
 use std::sync::Mutex;
 
@@ -1869,6 +1870,95 @@ pub fn set_title(title: &str) -> WinResult<()> {
 		let buffer_p = &mut buffer[0] as *mut CHAR;
 		wincon::SetConsoleTitleA(buffer_p)
 	});
+
+	Ok(())
+}
+/**
+ Sets the size of the console window in character cells.
+ If the screen buffer is too small for the new size, it is resized as well.
+
+ # Examples
+ ```
+ # extern crate winconsole;
+ # use winconsole::console;
+ # fn main() {
+ let size = console::get_window_size().unwrap();
+ console::set_window_size(size.x + 10, size.y + 10).unwrap();
+ # }
+ ```
+
+ # Errors
+ * [`ArgumentError`]: Returned if either `columns` or `rows` is less than zero,
+ exceeds the maximum window size, or if addition will result in a value which is
+ greater than the i16 maximum value.
+ * [`InvalidHandleError`]: Returned if an invalid handle to the console output is retrieved or used.
+ * [`IoError`]: Returned if an OS error occurs.
+
+ [`ArgumentError`]: ../errors/enum.WinError.html#Argument.v
+ [`InvalidHandleError`]: ../errors/enum.WinError.html#InvalidHandle.v
+ [`IoError`]: ../errors/enum.WinError.html#Io.v
+ */
+pub fn set_window_size(columns: u16, rows: u16) -> WinResult<()> {
+	if columns == 0 {
+		throw_err!(ArgumentError::new("columns", "columns must greater than zero"));
+	} else if rows == 0 {
+		throw_err!(ArgumentError::new("rows", "rows must greater than zero"));
+	}
+
+	let csbi = get_screen_buffer_info()?;
+	let buffer_size = csbi.dwSize;
+	let mut window_rect = csbi.srWindow;
+
+	let mut needs_resize = false;
+	let mut resize_x = buffer_size.X;
+	let mut resize_y = buffer_size.Y;
+
+	let columns = columns as i16;
+	let rows = rows as i16;
+	let left = window_rect.Left;
+	let top = window_rect.Top;
+
+	if buffer_size.X < left + columns {
+		if window_rect.Left >= std::i16::MAX - columns {
+			throw_err!(ArgumentError::new("columns", "(window left + columns) is greater than i16::MAX"));
+		}
+		resize_x = left + columns;
+		needs_resize = true;
+	}
+	if buffer_size.Y < top + rows {
+		if window_rect.Top >= std::i16::MAX - rows {
+			throw_err!(ArgumentError::new("rows", "(window top + rows) is greater than i16::MAX"));
+		}
+		resize_y = top + rows;
+		needs_resize = true;
+	}
+
+	if needs_resize {
+		set_buffer_size(resize_x as u16, resize_y as u16)?;
+	}
+
+	window_rect.Right = left + columns - 1;
+	window_rect.Bottom = top + rows - 1;
+	unsafe {
+		let handle = handle!(STDOUT);
+		let rect_p = &window_rect as *const SMALL_RECT;
+
+		if wincon::SetConsoleWindowInfo(handle, 1, rect_p) == 0 {
+			let err = os_err!();
+			if needs_resize {
+				wincon::SetConsoleScreenBufferSize(handle, buffer_size);
+			}
+
+			let max = wincon::GetLargestConsoleWindowSize(handle);
+			if columns > max.X {
+				throw_err!(ArgumentError::new("columns", "columns is greater than maximum window columns"));
+			} else if rows > max.Y {
+				throw_err!(ArgumentError::new("rows", "rows is greater than maximum window rows"));
+			}
+
+			return err;
+		}
+	}
 
 	Ok(())
 }
