@@ -1913,23 +1913,23 @@ pub fn set_window_size(columns: u16, rows: u16) -> WinResult<()> {
 	let mut resize_x = buffer_size.X;
 	let mut resize_y = buffer_size.Y;
 
-	let columns = columns as i16;
-	let rows = rows as i16;
+	let columns_i16 = columns as i16;
+	let rows_i16 = rows as i16;
 	let left = window_rect.Left;
 	let top = window_rect.Top;
 
-	if buffer_size.X < left + columns {
-		if window_rect.Left >= std::i16::MAX - columns {
+	if buffer_size.X < left + columns_i16 {
+		if window_rect.Left >= std::i16::MAX - columns_i16 {
 			throw_err!(ArgumentError::new("columns", "(window left + columns) is greater than i16::MAX"));
 		}
-		resize_x = left + columns;
+		resize_x = left + columns_i16;
 		needs_resize = true;
 	}
-	if buffer_size.Y < top + rows {
-		if window_rect.Top >= std::i16::MAX - rows {
+	if buffer_size.Y < top + rows_i16 {
+		if window_rect.Top >= std::i16::MAX - rows_i16 {
 			throw_err!(ArgumentError::new("rows", "(window top + rows) is greater than i16::MAX"));
 		}
-		resize_y = top + rows;
+		resize_y = top + rows_i16;
 		needs_resize = true;
 	}
 
@@ -1937,8 +1937,8 @@ pub fn set_window_size(columns: u16, rows: u16) -> WinResult<()> {
 		set_buffer_size(resize_x as u16, resize_y as u16)?;
 	}
 
-	window_rect.Right = left + columns - 1;
-	window_rect.Bottom = top + rows - 1;
+	window_rect.Right = left + columns_i16 - 1;
+	window_rect.Bottom = top + rows_i16 - 1;
 	unsafe {
 		let handle = handle!(STDOUT);
 		let rect_p = &window_rect as *const SMALL_RECT;
@@ -1950,9 +1950,9 @@ pub fn set_window_size(columns: u16, rows: u16) -> WinResult<()> {
 			}
 
 			let max = wincon::GetLargestConsoleWindowSize(handle);
-			if columns > max.X {
+			if columns > (max.X as u16) {
 				throw_err!(ArgumentError::new("columns", "columns is greater than maximum window columns"));
-			} else if rows > max.Y {
+			} else if rows > (max.Y as u16) {
 				throw_err!(ArgumentError::new("rows", "rows is greater than maximum window rows"));
 			}
 
