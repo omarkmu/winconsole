@@ -7,7 +7,7 @@ This crate provides a wrapper for console-related functions in the Windows API.
 Add the following to `Cargo.toml`:
 ```toml
 [dependencies]
-winconsole = "0.10"
+winconsole = "0.11"
 ```
 Then, add the following to your code:
 ```rust
@@ -24,6 +24,6 @@ There are a few optional features:
 These features must be added to `Cargo.toml`:
 ```toml
 [dependencies.winconsole]
-version = "0.10"
+version = "0.11"
 features = ["input", "serde", "window"]
 ```
