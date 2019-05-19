@@ -12,22 +12,25 @@ fn beep() {
 
 #[test]
 fn color_mapping() {
-	let old_black = console::get_color(ConsoleColor::Black).unwrap();
-	let mut black = old_black.clone();
-	black.r = 50;
-	black.g = 210;
-	black.b = 15;
+    let old_black = console::get_color(ConsoleColor::Black).unwrap();
+    let mut black = old_black;
+    black.r = 50;
+    black.g = 210;
+    black.b = 15;
 
-	console::map_color(ConsoleColor::Black, black).unwrap();
-	assert_eq!(console::get_color(ConsoleColor::Black).unwrap(), black);
+    console::map_color(ConsoleColor::Black, black).unwrap();
+    assert_eq!(console::get_color(ConsoleColor::Black).unwrap(), black);
 
-	console::map_color(ConsoleColor::Black, old_black).unwrap();
+    console::map_color(ConsoleColor::Black, old_black).unwrap();
 }
 #[test]
 fn cursor_position() {
     let position = console::get_cursor_position().unwrap();
     console::set_cursor_position(10, 10).unwrap();
-    assert_eq!(console::get_cursor_position().unwrap(), Vector2::new(10, 10));
+    assert_eq!(
+        console::get_cursor_position().unwrap(),
+        Vector2::new(10, 10)
+    );
     console::set_cursor_position(position.x, position.y).unwrap();
 }
 #[test]
@@ -37,7 +40,8 @@ fn cursor_size() {
     assert_eq!(console::get_cursor_size().unwrap(), 35);
     console::set_cursor_size(old_size).unwrap();
 }
-#[test] #[should_panic]
+#[test]
+#[should_panic]
 fn cursor_size_fail() {
     console::set_cursor_size(101).unwrap();
 }
@@ -74,7 +78,7 @@ fn foreground_color() {
 #[test]
 fn input_mode() {
     let input_mode_orig = console::get_input_mode().unwrap();
-    let mut input_mode = input_mode_orig.clone();
+    let mut input_mode = input_mode_orig;
 
     input_mode.WindowInput = !input_mode.WindowInput;
     console::set_input_mode(input_mode).unwrap();
@@ -82,11 +86,12 @@ fn input_mode() {
 
     console::set_input_mode(input_mode_orig).unwrap();
 }
-#[test] #[should_panic]
+#[test]
+#[should_panic]
 fn input_mode_fail() {
-	let mut input_mode = console::get_input_mode().unwrap();
-	input_mode.LineInput = false;
-	input_mode.EchoInput = true;
+    let mut input_mode = console::get_input_mode().unwrap();
+    input_mode.LineInput = false;
+    input_mode.EchoInput = true;
     console::set_input_mode(input_mode).unwrap();
 }
 
@@ -113,12 +118,18 @@ fn title_empty() {
 
 #[test]
 fn window_size() {
-	let max_size = console::get_largest_window_size().unwrap();
-	let size = console::get_window_size().unwrap();
-	if size.x + 1 < max_size.x && size.y + 1 < max_size.y {
-		console::set_window_size(size.x + 1, size.y + 1).unwrap();
-		assert_eq!(console::get_window_size().unwrap(), Vector2::new(size.x + 1, size.y + 1));
-		console::set_window_size(size.x, size.y).unwrap();
-	}
-	assert_eq!(console::get_window_size().unwrap(), Vector2::new(size.x, size.y));
+    let max_size = console::get_largest_window_size().unwrap();
+    let size = console::get_window_size().unwrap();
+    if size.x + 1 < max_size.x && size.y + 1 < max_size.y {
+        console::set_window_size(size.x + 1, size.y + 1).unwrap();
+        assert_eq!(
+            console::get_window_size().unwrap(),
+            Vector2::new(size.x + 1, size.y + 1)
+        );
+        console::set_window_size(size.x, size.y).unwrap();
+    }
+    assert_eq!(
+        console::get_window_size().unwrap(),
+        Vector2::new(size.x, size.y)
+    );
 }

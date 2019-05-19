@@ -1,59 +1,61 @@
 macro_rules! bool_to_num {
-	($x:expr) => (if $x { 1 } else { 0 });
+    ($x:expr) => {
+        if $x {
+            1
+        } else {
+            0
+        }
+    };
 }
 macro_rules! buf {
-	($size:expr) => {
-		{
-			let vec = vec![0; $size];
-			vec.into_boxed_slice()
-		}
-	};
+    ($size:expr) => {{
+        let vec = vec![0; $size];
+        vec.into_boxed_slice()
+    }};
 }
 macro_rules! buf_to_str {
-	($buf:expr) => {
-		{
-			let mut vec: Vec<u8> = vec![];
-			for c in $buf.to_vec().iter() {
-				if *c == 0 { break; }
-				vec.push(*c as u8)
-			}
-			String::from_utf8(vec)?
-		}
-	}
+    ($buf:expr) => {{
+        let mut vec: Vec<u8> = vec![];
+        for c in $buf.to_vec().iter() {
+            if *c == 0 {
+                break;
+            }
+            vec.push(*c as u8)
+        }
+        String::from_utf8(vec)?
+    }};
 }
 #[cfg(feature = "input")]
 macro_rules! buf_to_vec {
-	($buf:expr, $len:expr) => {
-		{
-			let mut result = Vec::new();
-			for i in 0usize..($len as usize) {
-				let value = $buf[i];
-				result.push(value);
-			}
-			result
-		}
-	}
+    ($buf:expr, $len:expr) => {{
+        let mut result = Vec::new();
+        for i in 0usize..($len as usize) {
+            let value = $buf[i];
+            result.push(value);
+        }
+        result
+    }};
 }
 /**
- Prints a colored message to the console.
- This has a side effect of flushing the console output.
+Prints a colored message to the console.
+This has a side effect of flushing the console output.
 
- # Examples
- ```
- #[macro_use] extern crate winconsole;
- use winconsole::console::ConsoleColor;
+# Examples
+```
+#[macro_use] extern crate winconsole;
+use winconsole::console::ConsoleColor;
 
- fn main() {
- 	let thing = "world";
- 	cprint!(ConsoleColor::Blue, "Hello, {}!", thing);
- 	cprint!(ConsoleColor::Red, " Goodbye, world!");
- }
- ```
+fn main() {
+    let thing = "world";
+    cprint!(ConsoleColor::Blue, "Hello, {}!", thing);
+    cprint!(ConsoleColor::Red, " Goodbye, world!");
+}
+```
 
- # Panics
- Panics if foreground color cannot be retrieved/set, flushing console output fails,
- or if printing fails.
- */
+# Panics
+Panics if foreground color cannot be retrieved/set, flushing console output fails,
+or if printing fails.
+*/
 #[macro_export]
 macro_rules! cprint {
     ($color:expr, $($arg:tt)*) => {
@@ -68,28 +70,28 @@ macro_rules! cprint {
 	}
 }
 /**
- Prints a colored message to the console with a newline.
- This has a side effect of flushing the console output.
+Prints a colored message to the console with a newline.
+This has a side effect of flushing the console output.
 
- # Examples
- ```
- #[macro_use] extern crate winconsole;
- use winconsole::console;
- use winconsole::console::ConsoleColor;
+# Examples
+```
+#[macro_use] extern crate winconsole;
+use winconsole::console;
+use winconsole::console::ConsoleColor;
 
- fn main() {
- 	let person = "Ada";
- 	print!("Hello, ");
- 	console::flush_output().unwrap();
- 	cprintln!(ConsoleColor::Magenta, "{}.", person);
- 	cprintln!(ConsoleColor::Blue, "How are you?");
- }
- ```
+fn main() {
+    let person = "Ada";
+    print!("Hello, ");
+    console::flush_output().unwrap();
+    cprintln!(ConsoleColor::Magenta, "{}.", person);
+    cprintln!(ConsoleColor::Blue, "How are you?");
+}
+```
 
- # Panics
- Panics if foreground color cannot be retrieved/set, flushing console output fails,
- or if printing fails.
- */
+# Panics
+Panics if foreground color cannot be retrieved/set, flushing console output fails,
+or if printing fails.
+*/
 #[macro_export]
 macro_rules! cprintln {
     ($color: expr, $fmt:expr) => (cprint!($color, concat!($fmt, "\n")));
@@ -230,11 +232,11 @@ macro_rules! flags {
 			)+
 		}
 
-		impl $name {
+		impl Default for $name {
 			#[doc = "Creates a new"]
 			#[doc = $sname]
 			#[doc = "object with all fields set to false."]
-			pub fn new() -> $name {
+			fn default() -> $name {
 				$name {
 					$($member: false,)+
 				}
@@ -242,7 +244,7 @@ macro_rules! flags {
 		}
 		impl From<$type> for $name {
 			fn from(value: $type) -> $name {
-				let mut flags = $name::new();
+				let mut flags = $name::default();
 				$(flags.$member = value & $value != 0;)+
 				flags
 			}
@@ -311,55 +313,55 @@ macro_rules! flags {
 	});
 }
 macro_rules! handle {
-	($x:expr) => {
-		{
-			let handle = processenv::GetStdHandle($x);
-			if handle as isize == -1 { throw_err!($crate::errors::InvalidHandleError::new()); }
-			handle
-		}
-	};
+    ($x:expr) => {{
+        let handle = processenv::GetStdHandle($x);
+        if handle as isize == -1 {
+            throw_err!($crate::errors::InvalidHandleError::default());
+        }
+        handle
+    }};
 }
 macro_rules! make_colorref {
-	($x:expr) => ($x.r as u32 | (($x.g as u32) << 8) | (($x.b as u32) << 16));
+    ($x:expr) => {
+        u32::from($x.r) | (u32::from($x.g) << 8) | (u32::from($x.b) << 16)
+    };
 }
 macro_rules! make_rgb {
-	($x:expr) => {
-		RGB8 {
-			r: ($x & 0x0000ff) as u8,
-			g: (($x >> 8) & 0x00ff) as u8,
-			b: (($x >> 16) & 0xff) as u8
-		}
-	}
+    ($x:expr) => {
+        RGB8 {
+            r: ($x & 0x00_00ff) as u8,
+            g: (($x >> 8) & 0x00ff) as u8,
+            b: (($x >> 16) & 0xff) as u8,
+        }
+    };
 }
 macro_rules! os_err {
-	() => (
-		{
-			use std::io;
-			use $crate::errors::*;
-			let last_err = io::Error::last_os_error();
-			let err = match last_err.raw_os_error().unwrap() {
-				6 => WinError::from(InvalidHandleError::new()),
-				_ => WinError::from(last_err)
-			};
-			Err(err)
-		}
-	);
-	($i:expr) => {
-		if $i == 0 {
-			return os_err!();
-		}
-	};
-	($i:expr, $x:expr) => {
-		if $x {
-			use std::io;
-			let err = io::Error::last_os_error();
-			if err.raw_os_error().unwrap() != 0 {
-				os_err!($i);
-			}
-		} else {
-			os_err!($i);
-		}
-	}
+    () => {{
+        use std::io;
+        use $crate::errors::*;
+        let last_err = io::Error::last_os_error();
+        let err = match last_err.raw_os_error().unwrap() {
+            6 => WinError::from(InvalidHandleError::default()),
+            _ => WinError::from(last_err),
+        };
+        Err(err)
+    }};
+    ($i:expr) => {
+        if $i == 0 {
+            return os_err!();
+        }
+    };
+    ($i:expr, $x:expr) => {
+        if $x {
+            use std::io;
+            let err = io::Error::last_os_error();
+            if err.raw_os_error().unwrap() != 0 {
+                os_err!($i);
+            }
+        } else {
+            os_err!($i);
+        }
+    };
 }
 macro_rules! str_to_buf {
 	(@inner $s:expr, $type:ty) => {
@@ -390,11 +392,13 @@ macro_rules! str_to_buf_w {
 	($s:expr, $size:expr) => (str_to_buf!(@inner $s, $size, WCHAR));
 }
 macro_rules! throw_err {
-	($err:expr) => {
-		Err($crate::errors::WinError::from($err))?;
-	}
+    ($err:expr) => {
+        Err($crate::errors::WinError::from($err))?;
+    };
 }
 #[cfg(feature = "window")]
 macro_rules! window_handle {
-	() => (wincon::GetConsoleWindow());
+    () => {
+        wincon::GetConsoleWindow()
+    };
 }

@@ -25,5 +25,5 @@ pub use self::argument_error::ArgumentError;
 pub use self::invalid_handle_error::InvalidHandleError;
 pub use self::win_error::WinError;
 
-/// Represents a result which contains either a returned value or a WinError.
+/// Represents a result which contains either a returned value or a `WinError`.
 pub type WinResult<T> = Result<T, WinError>;

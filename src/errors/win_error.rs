@@ -1,6 +1,6 @@
 use super::*;
 use std::io::Error as IoError;
-use std::string::{FromUtf8Error, FromUtf16Error};
+use std::string::{FromUtf16Error, FromUtf8Error};
 
 macro_rules! win_errs {
 	($($(#[$item_attrs:meta])* $name:ident : $err_name:ident),*) => (
@@ -20,25 +20,25 @@ macro_rules! win_errs {
 
 		impl Error for WinError {
 			fn description(&self) -> &str {
-				match self {
+				match *self {
 					$(
-						&WinError::$name(ref err) => Error::description(err as &Error),
+						WinError::$name(ref err) => Error::description(err as &Error),
 					)*
 				}
 			}
 			fn cause(&self) -> Option<&Error> {
-				match self {
+				match *self {
 					$(
-						&WinError::$name(ref err) => Some(err as &Error),
+						WinError::$name(ref err) => Some(err as &Error),
 					)*
 				}
 			}
 		}
 		impl Display for WinError {
 			fn fmt(&self, f: &mut Formatter) -> Result {
-				match self {
+				match *self {
 					$(
-						&WinError::$name(ref err) => Display::fmt(&err, f),
+						WinError::$name(ref err) => Display::fmt(&err, f),
 					)*
 				}
 			}
@@ -55,16 +55,16 @@ macro_rules! win_errs {
 }
 
 win_errs! {
-	/// An argument error.
-	Argument: ArgumentError,
-	/// An error which occurred while converting to a string from a
-	/// UTF-8 byte vector.
-	FromUtf8: FromUtf8Error,
-	/// An error which occurred while converting to a string from a
-	/// UTF-16 byte vector.
-	FromUtf16: FromUtf16Error,
-	/// An invalid handle error.
-	InvalidHandle: InvalidHandleError,
-	/// An IO or OS error.
-	Io: IoError
+    /// An argument error.
+    Argument: ArgumentError,
+    /// An error which occurred while converting to a string from a
+    /// UTF-8 byte vector.
+    FromUtf8: FromUtf8Error,
+    /// An error which occurred while converting to a string from a
+    /// UTF-16 byte vector.
+    FromUtf16: FromUtf16Error,
+    /// An invalid handle error.
+    InvalidHandle: InvalidHandleError,
+    /// An IO or OS error.
+    Io: IoError
 }
