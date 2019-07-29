@@ -1,4 +1,4 @@
-use cgmath::Vector2;
+use super::Vector2;
 
 #[cfg(feature = "serde")]
 use serde::de::{self, Deserialize, Deserializer, MapAccess, SeqAccess, Visitor};
@@ -138,7 +138,7 @@ impl<'de> Deserialize<'de> for ConsoleFont {
                 element!(height, 4);
                 element!(weight, 5);
 
-                let mut ret = ConsoleFont::new();
+                let mut ret = ConsoleFont::default();
                 ret.family = family;
                 ret.index = index;
                 ret.name = name;
@@ -195,7 +195,7 @@ impl<'de> Deserialize<'de> for ConsoleFont {
                 set!(height);
                 set!(weight);
 
-                let mut ret = ConsoleFont::new();
+                let mut ret = ConsoleFont::default();
                 ret.family = family;
                 ret.index = index;
                 ret.name = name;

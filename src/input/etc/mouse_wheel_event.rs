@@ -28,7 +28,7 @@ impl MouseWheelEvent {
         MouseWheelEvent {
             delta: 0,
             horizontal: false,
-            modifiers: ControlKeyState::new(),
+            modifiers: ControlKeyState::default(),
             position: Vector2::new(0, 0),
         }
     }

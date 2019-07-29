@@ -30,7 +30,7 @@ impl MouseEvent {
         MouseEvent {
             button: 0,
             key_code: KeyCode::None,
-            modifiers: ControlKeyState::new(),
+            modifiers: ControlKeyState::default(),
             position: Vector2::new(0, 0),
             pressed: false,
         }

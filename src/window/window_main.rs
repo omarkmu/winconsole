@@ -1,5 +1,4 @@
 use super::*;
-use cgmath::Vector2;
 
 /**
 Brings the window to the foreground and activates it, optionally displaying it.

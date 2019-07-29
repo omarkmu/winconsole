@@ -1,5 +1,4 @@
-use super::Rect;
-use cgmath::Vector2;
+use super::{Rect, Vector2};
 
 #[cfg(feature = "serde")]
 use serde::de::{self, Deserialize, Deserializer, MapAccess, SeqAccess, Visitor};
@@ -134,7 +133,7 @@ impl<'de> Deserialize<'de> for SelectionInfo {
                 element!(rect, 4);
                 element!(selecting, 5);
 
-                let mut ret = SelectionInfo::new();
+                let mut ret = SelectionInfo::default();
                 ret.anchor = Vector2::new(anchor_x, anchor_y);
                 ret.empty = empty;
                 ret.mouse_down = mouse_down;
@@ -191,7 +190,7 @@ impl<'de> Deserialize<'de> for SelectionInfo {
                 set!(rect);
                 set!(selecting);
 
-                let mut ret = SelectionInfo::new();
+                let mut ret = SelectionInfo::default();
                 ret.anchor = Vector2::new(anchor_x, anchor_y);
                 ret.empty = empty;
                 ret.mouse_down = mouse_down;

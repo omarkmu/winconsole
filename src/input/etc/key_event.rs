@@ -27,7 +27,7 @@ impl KeyEvent {
     pub fn new() -> KeyEvent {
         KeyEvent {
             character: '\0',
-            modifiers: ControlKeyState::new(),
+            modifiers: ControlKeyState::default(),
             key_code: KeyCode::None,
             pressed: false,
             repeat_count: 0,

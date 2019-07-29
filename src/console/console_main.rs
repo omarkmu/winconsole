@@ -1087,10 +1087,8 @@ so the contents of the console screen buffer outside the clipping rectangle are 
 # Examples
 ```
 # extern crate winconsole;
-# extern crate cgmath;
-# use cgmath::Vector2;
 # use winconsole::console;
-# use winconsole::console::Rect;
+# use winconsole::console::{Rect, Vector2};
 # fn main() {
 let scroll = Rect::new(0, 0, 10, 10);
 let dest = Vector2::new(0, 3);
@@ -2210,7 +2208,7 @@ pub fn write_output_colors(
     }
 
     let attrs: Box<[WORD]> = {
-        let mut res: Vec<WORD> = colors
+        let res: Vec<WORD> = colors
             .iter()
             .map(|&(ref fg, ref bg)| WORD::from(fg.get_value() | ((bg.get_value()) << 4)))
             .collect();

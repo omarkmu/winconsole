@@ -1,9 +1,7 @@
 #![cfg(test)]
-extern crate cgmath;
 extern crate winconsole;
 
-use cgmath::Vector2;
-use winconsole::console::{self, ConsoleColor};
+use winconsole::console::{self, ConsoleColor, Vector2};
 
 #[test]
 fn beep() {

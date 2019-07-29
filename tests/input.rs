@@ -1,11 +1,9 @@
 #![cfg(test)]
 #![cfg(feature = "input")]
-extern crate cgmath;
 extern crate winconsole;
 
-use cgmath::Vector2;
 use winconsole::{
-    console,
+    console::{self, Vector2},
     input::{self, KeyCode, KeyEvent, MouseWheelEvent},
 };
 

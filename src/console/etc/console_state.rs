@@ -1,5 +1,4 @@
-use super::{CodePage, ConsoleColor, ConsoleFont, InputSettings, OutputSettings};
-use cgmath::Vector2;
+use super::{CodePage, ConsoleColor, ConsoleFont, InputSettings, OutputSettings, Vector2};
 use rgb::RGB8;
 
 #[cfg(feature = "serde")]
@@ -221,7 +220,7 @@ impl<'de> Deserialize<'de> for ConsoleState {
                 element!(output_mode, 15);
                 element!(title, 16);
 
-                let mut ret = ConsoleState::new();
+                let mut ret = ConsoleState::default();
                 ret.background_color = background_color;
                 ret.buffer_size = Vector2::new(buffer_x, buffer_y);
                 ret.cursor_position = Vector2::new(cursor_x, cursor_y);
@@ -323,7 +322,7 @@ impl<'de> Deserialize<'de> for ConsoleState {
                 set!(output_mode);
                 set!(title);
 
-                let mut ret = ConsoleState::new();
+                let mut ret = ConsoleState::default();
                 ret.background_color = background_color;
                 ret.buffer_size = Vector2::new(buffer_x, buffer_y);
                 ret.cursor_position = Vector2::new(cursor_x, cursor_y);

@@ -8,6 +8,7 @@ mod input_settings;
 mod output_settings;
 mod rect;
 mod selection_info;
+mod vector2;
 
 pub use self::code_page::CodePage;
 pub use self::code_page_info::CodePageInfo;
@@ -19,3 +20,4 @@ pub use self::input_settings::InputSettings;
 pub use self::output_settings::OutputSettings;
 pub use self::rect::Rect;
 pub use self::selection_info::SelectionInfo;
+pub use self::vector2::Vector2;

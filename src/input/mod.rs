@@ -2,8 +2,6 @@ use super::console;
 use super::console::*;
 use super::errors::*;
 
-use cgmath::Vector2;
-
 use std::{
     fmt,
     fmt::{Display, Formatter},

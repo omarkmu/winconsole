@@ -1,4 +1,3 @@
-use cgmath::Vector2;
 use rgb::RGB8;
 
 use std::{io, mem, ptr};

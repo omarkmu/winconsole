@@ -22,7 +22,7 @@ impl MouseMoveEvent {
     */
     pub fn new() -> MouseMoveEvent {
         MouseMoveEvent {
-            modifiers: ControlKeyState::new(),
+            modifiers: ControlKeyState::default(),
             position: Vector2::new(0, 0),
         }
     }

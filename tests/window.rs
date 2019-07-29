@@ -1,9 +1,8 @@
 #![cfg(test)]
 #![cfg(feature = "window")]
-extern crate cgmath;
 extern crate winconsole;
 
-use cgmath::Vector2;
+use winconsole::console::Vector2;
 use winconsole::window;
 
 #[test]

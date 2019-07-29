@@ -1,4 +1,4 @@
-use cgmath::Vector2;
+use super::Vector2;
 
 /// Defines the coordinates of the corners of a rectangle.
 #[derive(Clone, Copy, Debug, PartialEq)]
@@ -33,9 +33,7 @@ impl Rect {
     # Examples
     ```
     # extern crate winconsole;
-    # extern crate cgmath;
-    # use winconsole::console::Rect;
-    # use cgmath::Vector2;
+    # use winconsole::console::{Rect, Vector2};
     # fn main() {
     let rect = Rect::new(0, 10, 20, 30);
     let bottom_left = rect.bottom_left();
@@ -52,9 +50,7 @@ impl Rect {
     # Examples
     ```
     # extern crate winconsole;
-    # extern crate cgmath;
-    # use winconsole::console::Rect;
-    # use cgmath::Vector2;
+    # use winconsole::console::{Rect, Vector2};
     # fn main() {
     let rect = Rect::new(0, 10, 20, 30);
     let bottom_right = rect.bottom_right();
@@ -71,9 +67,7 @@ impl Rect {
     # Examples
     ```
     # extern crate winconsole;
-    # extern crate cgmath;
-    # use winconsole::console::Rect;
-    # use cgmath::Vector2;
+    # use winconsole::console::{Rect, Vector2};
     # fn main() {
     let rect = Rect::new(0, 10, 20, 30);
     let top_left = rect.top_left();
@@ -90,9 +84,7 @@ impl Rect {
     # Examples
     ```
     # extern crate winconsole;
-    # extern crate cgmath;
-    # use winconsole::console::Rect;
-    # use cgmath::Vector2;
+    # use winconsole::console::{Rect, Vector2};
     # fn main() {
     let rect = Rect::new(0, 10, 20, 30);
     let top_right = rect.top_right();
