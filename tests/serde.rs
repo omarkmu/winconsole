@@ -86,3 +86,8 @@ fn selection_info() {
     use winconsole::console::SelectionInfo;
     serde_test!(console::get_selection_info().unwrap(), SelectionInfo);
 }
+#[test]
+fn vector2() {
+	use winconsole::console::Vector2;
+	serde_test!(Vector2::<u8>::new(10, 10), Vector2::<u8>);
+}
