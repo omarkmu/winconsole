@@ -30,6 +30,8 @@ version = "0.10"
 features = ["input", "serde", "window"]
 ```
 */
+#[cfg(feature = "cgmath")]
+extern crate cgmath;
 #[macro_use]
 extern crate lazy_static;
 extern crate rgb;
