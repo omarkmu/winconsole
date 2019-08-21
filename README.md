@@ -26,5 +26,5 @@ These features must be added to `Cargo.toml`:
 ```toml
 [dependencies.winconsole]
 version = "0.11"
-features = ["input", "serde", "window"]
+features = ["cgmath", "input", "serde", "window"]
 ```
