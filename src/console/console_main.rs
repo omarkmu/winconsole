@@ -21,7 +21,7 @@ Plays a note of A4 frequency for 1 second.
 # extern crate winconsole;
 # use winconsole::console;
 # fn main() {
-console::beep(440, 1000).unwrap();
+console::beep(440, 1000);
 # }
 ```
 */
@@ -1352,7 +1352,12 @@ console::scroll_by(5, true).unwrap();
 [`IoError`]: ../errors/enum.WinError.html#Io.v
 */
 pub fn scroll_by(amount: i16, vertical: bool) -> WinResult<()> {
-    let position = get_screen_buffer_info()?.srWindow.Top;
+    let position = if vertical {
+        get_screen_buffer_info()?.srWindow.Top
+    } else {
+        get_screen_buffer_info()?.srWindow.Left
+    };
+
     scroll(position + amount, 1, vertical)
 }
 /**

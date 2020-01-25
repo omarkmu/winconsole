@@ -22,14 +22,14 @@ macro_rules! win_errs {
 			fn description(&self) -> &str {
 				match *self {
 					$(
-						WinError::$name(ref err) => Error::description(err as &Error),
+						WinError::$name(ref err) => Error::description(err as &dyn Error),
 					)*
 				}
 			}
-			fn cause(&self) -> Option<&Error> {
+			fn cause(&self) -> Option<&dyn Error> {
 				match *self {
 					$(
-						WinError::$name(ref err) => Some(err as &Error),
+						WinError::$name(ref err) => Some(err as &dyn Error),
 					)*
 				}
 			}
